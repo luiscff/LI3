@@ -3,15 +3,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#define MAX_NAME 256
-#define MAX_EMAIL 256
-#define MAX_PHONE 12
-#define MAX_ADDRESS 256
-#define MAX_BIRTH_DATE 10
-#define MAX_PASSPORT 8
-#define MAX_COUNTRY_CODE 2
-#define MAX_DATE_TIME 20
-
 enum Account_status
 {
     active,
@@ -31,130 +22,122 @@ enum PaymentMethod
     cash
 };
 
-typedef struct users
+typedef struct user
 {
     int id;
-    char name[MAX_NAME];
-    char email[MAX_EMAIL];
-    char birth_date[MAX_BIRTH_DATE]; // formato é aaaa/mm/dd
-    char phone_number[MAX_PHONE];
+    char *name;
+    char *email;
+    char *birth_date; // formato é aaaa/mm/dd
+    char *phone_number;
     enum Gender gender;
-    char passport[MAX_PASSPORT];
-    char country_code[MAX_COUNTRY_CODE];
-    char address[MAX_ADDRESS];
-    char account_creation[MAX_DATE_TIME];
+    char *passport;
+    char *country_code;
+    char *address;
+    char *account_creation;
     enum PaymentMethod payment_method;
     enum Account_status active_status;
-} Users;
+} USER;
 
 
-void set_id(Users *user, int id) {
+void set_id(USER *user, int id) {
     user->id = id;
 }
 
-void set_name(Users *user, const char *name) {
-    strncpy(user->name, name, MAX_NAME);
-    user->name[MAX_NAME - 1] = '\0'; // Certifica-se de que a string esteja terminada corretamente.
+void set_name(USER *user, const char *name) {
+     user->name = strdup(name);
 }
 
-void set_email(Users *user, const char *email) {
-    strncpy(user->email, email, MAX_EMAIL);
-    user->email[MAX_EMAIL - 1] = '\0';
+void set_email(USER *user, const char *email) {
+     user->email = strdup(email);
 }
 
 
-void set_birth_date(Users *user, const char *birth_date) {
-    strncpy(user->birth_date, birth_date, MAX_BIRTH_DATE);
-    user->birth_date[MAX_BIRTH_DATE - 1] = '\0';
+void set_birth_date(USER *user, const char *birth_date) {
+    user->birth_date = strdup(birth_date);
 }
 
-void set_phone_number(Users *user, const char *phone_number) {
-    strncpy(user->phone_number, phone_number, MAX_PHONE);
-    user->phone_number[MAX_PHONE - 1] = '\0';
+void set_phone_number(USER *user, const char *phone_number) {
+     user->phone_number = strdup(phone_number);
 }
 
-void set_gender(Users *user, enum Gender gender) {
+void set_gender(USER *user, enum Gender gender) {
     user->gender = gender;
 }
 
-void set_passport(Users *user, const char *passport) {
-    strncpy(user->passport, passport, MAX_PASSPORT);
-    user->passport[MAX_PASSPORT - 1] = '\0';
+void set_passport(USER *user, const char *passport) {
+     user->passport = strdup(passport);
 }
 
-void set_country_code(Users *user, const char *country_code) {
-    strncpy(user->country_code, country_code, MAX_COUNTRY_CODE);
-    user->country_code[MAX_COUNTRY_CODE - 1] = '\0';
+void set_country_code(USER *user, const char *country_code) {
+     user->country_code = strdup(country_code);
 }
 
-void set_address(Users *user, const char *address) {
-    strncpy(user->address, address, MAX_ADDRESS);
-    user->address[MAX_ADDRESS - 1] = '\0';
+void set_address(USER *user, const char *address) {
+     user->address = strdup(address);
 }
 
-void set_account_creation(Users *user, const char *account_creation) {
-    strncpy(user->account_creation, account_creation, MAX_DATE_TIME);
-    user->account_creation[MAX_DATE_TIME - 1] = '\0';
+void set_account_creation(USER *user, const char *account_creation) {
+     user->account_creation = strdup(account_creation);
 }
 
-void set_payment_method(Users *user, enum PaymentMethod payment_method) {
+void set_payment_method(USER *user, enum PaymentMethod payment_method) {
     user->payment_method = payment_method;
 }
 
-void set_active_status(Users *user, enum Account_status active_status) {
+void set_active_status(USER *user, enum Account_status active_status) {
     user->active_status = active_status;
 }
 
-const char *get_birth_date(const Users *user) {
+const char *get_birth_date(const USER *user) {
     return user->birth_date;
 }
 
-const char *get_phone_number(const Users *user) {
+const char *get_phone_number(const USER *user) {
     return user->phone_number;
 }
 
-enum Gender get_gender(const Users *user) {
+enum Gender get_gender(const USER *user) {
     return user->gender;
 }
 
-const char *get_passport(const Users *user) {
+const char *get_passport(const USER *user) {
     return user->passport;
 }
 
-const char *get_country_code(const Users *user) {
+const char *get_country_code(const USER *user) {
     return user->country_code;
 }
 
-const char *get_address(const Users *user) {
+const char *get_address(const USER *user) {
     return user->address;
 }
 
-const char *get_account_creation(const Users *user) {
+const char *get_account_creation(const USER *user) {
     return user->account_creation;
 }
 
-enum PaymentMethod get_payment_method(const Users *user) {
+enum PaymentMethod get_payment_method(const USER *user) {
     return user->payment_method;
 }
 
-enum Account_status get_active_status(const Users *user) {
+enum Account_status get_active_status(const USER *user) {
     return user->active_status;
 }
 
-int get_id(const Users *user) {
+int get_id(const USER *user) {
     return user->id;
 }
 
-const char *get_name(const Users *user) {
+const char *get_name(const USER *user) {
     return user->name;
 }
 
-const char *get_email(const Users *user) {
+const char *get_email(const USER *user) {
     return user->email;
 }
 
 int main() {
-    Users user1;
+    USER user1;
     char nome[256];
     char email[256];
     char data_nascimento[10];

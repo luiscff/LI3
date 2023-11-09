@@ -1,0 +1,8 @@
+#define MAX_NAME 256
+#define MAX_EMAIL 256
+#define MAX_PHONE 12
+#define MAX_ADDRESS 256
+#define MAX_BIRTH_DATE 10
+#define MAX_PASSPORT 8
+#define MAX_COUNTRY_CODE 2
+#define MAX_DATE_TIME 20
