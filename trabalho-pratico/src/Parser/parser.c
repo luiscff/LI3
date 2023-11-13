@@ -1,17 +1,21 @@
+#include "parser.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
 
-#define MAX_NAME 256
-#define MAX_EMAIL 256
+// #define MAX_NAME 256
+// #define MAX_EMAIL 256
 #define MAX_PHONE 12
-#define MAX_ADDRESS 256
-#define MAX_BIRTH_DATE 10
+// #define MAX_ADDRESS 256
+// #define MAX_BIRTH_DATE 10
 #define MAX_PASSPORT 8
 #define MAX_COUNTRY_CODE 2
-#define MAX_DATE_TIME 20
+// #define MAX_DATE_TIME 20
+
+
 
 bool isValidAddress(const char *str) {
     return (str != NULL);
@@ -201,6 +205,8 @@ void parseLine(char *line) {
 void parseCSV(const char *filepath) {
     FILE *file = fopen(filepath, "r");
 
+
+
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
         return;
@@ -210,16 +216,16 @@ void parseCSV(const char *filepath) {
     size_t len = 0;
     size_t read;
 
+    //gets rid of first line 
+    if ((read = getline(&line, &len, file)) != -1) {
+        line = NULL;
+        len = 0;
+    }
+
     while ((read = getline(&line, &len, file)) != -1) {
         parseLine(line);
     }
 
     free(line);
     fclose(file);
-}
-
-int main(int argc, char const *argv[]) {
-    const char *filename = "users.csv";
-    parseCSV(filename);
-    return 0;
 }
