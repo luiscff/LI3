@@ -21,11 +21,6 @@ int main(int argc, char const *argv[]) {
 
     char filePath[MAX_PATH_SIZE];
 
-    // // for test.csv
-    // strcpy(filePath,folderPathDataset);
-    // strcat(filePath,"test.csv");
-    // parseCSV(filePath);
-
     // for users.csv
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "users.csv");

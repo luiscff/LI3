@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,13 +12,14 @@
 #define MAX_PHONE 12
 // #define MAX_ADDRESS 256
 // #define MAX_BIRTH_DATE 10
-#define MAX_PASSPORT 8
+// #define MAX_PASSPORT 8
 #define MAX_COUNTRY_CODE 2
 // #define MAX_DATE_TIME 20
 
 
-
-bool isValidAddress(const char *str) {
+//=========== VALIDATION =============
+//geral
+bool isValidNotNull(const char *str) {
     return (str != NULL);
 }
 
@@ -73,46 +75,7 @@ bool isValidDate_Time(const char *dateTime) {
     return isValidDate(date) && isValidTime(time);
 }
 
-bool isValidAccountStatus(const char *str) {
-    return (strcmp(str, "active") == 0 || strcmp(str, "inactive") == 0);
-}
-
-bool isValidPaymentMethod(const char *str) {
-    return (strcmp(str, "cash") == 0 || strcmp(str, "debit_card") == 0 || strcmp(str, "credit_card") == 0);
-}
-
-bool isValidCountryCode(const char *str) {
-    if (strlen(str) != MAX_COUNTRY_CODE) {
-        return false;
-    }
-    if (!isupper(str[0]) || !isupper(str[1])) {
-        return false;
-    }
-    return true;
-}
-
-bool isValidPassport(const char *str) {
-    if (strlen(str) != MAX_PASSPORT) {
-        return false;
-    }
-
-    if (!isupper(str[0]) || !isupper(str[1])) {
-        return false;
-    }
-
-    for (int i = 2; i < MAX_PASSPORT; i++) {
-        if (!isdigit(str[i])) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool isGenderValid(const char *gender) {
-    return (gender[0] == 'M' || gender[0] == 'F') && strlen(gender) == 1;
-}
-
+//users
 bool isValidEmail(const char *email) {
     const char *atSymbol = strchr(email, '@');
 
@@ -128,17 +91,6 @@ bool isValidEmail(const char *email) {
     return true;
 }
 
-void removeNonNumericChars(char *str) {
-    int count = 0;
-    for (int i = 0; str[i]; i++) {
-        if (str[i] == ' ' || str[i] == '(' || str[i] == ')') {
-            continue;
-        }
-        str[count++] = str[i];
-    }
-    str[count] = '\0';
-}
-
 bool isValidPhoneNumber(const char *phoneNumber) {
     char cleanedNumber[20];
     strcpy(cleanedNumber, phoneNumber);
@@ -151,13 +103,96 @@ bool isValidPhoneNumber(const char *phoneNumber) {
     return len >= 9 && len <= MAX_PHONE;
 }
 
+void removeNonNumericChars(char *str) { //auxiliar function to isValidPhoneNumber
+    int count = 0;
+    for (int i = 0; str[i]; i++) {
+        if (str[i] == ' ' || str[i] == '(' || str[i] == ')') {
+            continue;
+        }
+        str[count++] = str[i];
+    }
+    str[count] = '\0';
+}
+
+bool isGenderValid(const char *gender) {
+    return (gender[0] == 'M' || gender[0] == 'F') && strlen(gender) == 1;
+}
+
+
+bool isValidCountryCode(const char *str) {
+    if (strlen(str) != MAX_COUNTRY_CODE) {
+        return false;
+    }
+    if (!isupper(str[0]) || !isupper(str[1])) {
+        return false;
+    }
+    return true;
+}
+
+bool isValidAccountStatus(const char *str) { //strcasecmp is case insensitive
+    return (strcasecmp(str, "active") == 0 || strcasecmp(str, "inactive") == 0);
+}
+
+bool isValidPaymentMethod(const char *str) {
+    return (strcmp(str, "cash") == 0 || strcmp(str, "debit_card") == 0 || strcmp(str, "credit_card") == 0);
+}
+
+//flights
+bool isValidOriginAndDestination (const char *str) {
+    return (strlen(str) == 3 && isalpha(str[0]) && isalpha(str[1]) && isalpha(str[2]));
+};
+
+//reservations
+bool isValidHotelStars (const char *str) {
+    int stars = atoi(str);
+    return (stars >= 1 && stars <= 5);
+}
+
+bool isValidCityTax(const char *str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)str[i])) {
+            return false;
+        }
+    }
+    int tax = atoi(str);
+    return (tax >= 0);
+}
+
+bool isValidPricePerNight(const char *str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)str[i])) {
+            return false;
+        }
+    }
+    int price = atoi(str);
+    return (price > 0);
+}
+
+bool isValidInclude_Breakfast(const char *str) { //strcasecmp is case insensitive
+   return (strcasecmp(str,"f") == 0 || strcasecmp(str,"false") == 0 || strcasecmp(str,"0") == 0 || strcasecmp(str,"") == 0 || strcasecmp(str,"t") == 0 || strcasecmp(str,"true") == 0 || strcasecmp(str,"1") == 0);
+}
+
+bool isValidRating(const char *str) {
+    if (str[0] == '\0') { // Allow empty strings
+        return true;
+    }
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit((unsigned char)str[i])) {
+            return false;
+        }
+    }
+    int rating = atoi(str);
+    return (rating >= 1 && rating <= 5);
+}
+
+
 bool isValidField_user(const char *value, int fieldIndex) {
     switch (fieldIndex) {
         case 1: // ID
-            return isValidAddress(value);
+            return isValidNotNull(value);
             break;
         case 2: // Nome
-            return isValidAddress(value);
+            return isValidNotNull(value);
             break;
         case 3: // Email
             return isValidEmail(value);
@@ -168,15 +203,17 @@ bool isValidField_user(const char *value, int fieldIndex) {
         case 6: // Sexo
             return isGenderValid(value);
         case 7: // Passaporte
-            return isValidPassport(value);
+            return isValidNotNull(value);
         case 8: // Country Code
             return isValidCountryCode(value);
         case 9: // Morada
-            return isValidAddress(value);
-        case 10: // Método de pagamento
-            return isValidPaymentMethod(value);
-        case 11: // Estado da conta
-            return isValidAccountStatus(value);
+            return isValidNotNull(value);
+        case 10: //Account creation
+            return isValidDate_Time(value);
+        case 11: // Método de pagamento
+            return isValidNotNull(value);
+        case 12: // Estado da conta
+            return isValidAccountStatus(value); //FIXME dá sempre erro no campo 12 e n sei pq
         default:
             break;
     }
@@ -207,31 +244,31 @@ void parseLine_user(char *line) {
 bool isValidField_flight(const char *value, int fieldIndex) {
     switch (fieldIndex) {
         case 1: // ID
-            return isValidAddress(value);
-            break;
+            return isValidNotNull(value);
         case 2: // Airline
-            return isValidAddress(value);
-            break;
+            return isValidNotNull(value);
         case 3: // plain_model
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 4: // total_seats
-            return isValidAddress(value);
+            return true; //TODO O número de lugares de um voo (total_seats) não poderá ser inferior ao número de passageiros nesse voo;
         case 5: // origin
-            return isValidAddress(value);
+            return isValidOriginAndDestination(value);
         case 6: // destination
-            return isValidAddress(value);
+            return isValidOriginAndDestination(value);
         case 7: // schedule_departure_date
-            return isValidDate_Time(value);
+            return isValidDate_Time(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
         case 8: // schedule_arrival_date
             return isValidDate_Time(value);
         case 9: // real_departure_date
-            return isValidDate_Time(value);
+            return isValidDate_Time(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
         case 10: // real_arrival_date
             return isValidDate_Time(value);
         case 11: // pilot
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 12: // copilot
-            return isValidAddress(value);
+            return isValidNotNull(value);
+        case 13:
+            return true;
         default:
             break;
     }
@@ -262,10 +299,10 @@ void parseLine_flight(char *line) {
 bool isValidField_passenger(const char *value, int fieldIndex) {
     switch (fieldIndex) {
         case 1: // user_id
-            return isValidAddress(value);
+            return isValidNotNull(value);
 
         case 2: // flight_id
-            return isValidAddress(value);
+            return isValidNotNull(value);
 
         default:
             break;
@@ -291,34 +328,37 @@ void parseLine_passenger(char *line) {
     printf("\n");
 }
 
+
 bool isValidField_reservation(const char *value, int fieldIndex) {
     switch (fieldIndex) {
         case 1: // ID
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 2: // user_id
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 3: // hotel_id
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 4: // hotel_name
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 5: // hotel_stars
-            return isValidAddress(value);
+            return isValidHotelStars(value);
         case 6: // city_tax
-            return isValidAddress(value);
+            return isValidCityTax(value);
         case 7: // address
-            return isValidAddress(value);
+            return isValidNotNull(value);
         case 8: // begin date
             return isValidDate_Time(value);
         case 9: // end_date
-            return isValidDate_Time(value);
+            return isValidDate_Time(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
         case 10: // price_per_night
-            return isValidAddress(value);
-        case 11: // room_details
-            return isValidAddress(value);
-        case 12: // rating
-            return isValidAddress(value);
-        case 13: // comment
-            return isValidAddress(value); //?
+            return isValidPricePerNight(value);
+        case 11: //include_breakfast
+            return isValidInclude_Breakfast(value);
+        case 12: // room_details
+            return true;
+        case 13: // rating
+            return isValidRating(value);
+        case 14: // comment
+            return true;
         default:
             break;
     }
@@ -347,7 +387,6 @@ void parseLine_reservation(char *line) {
 
 void parseCSV(const char *filepath,int token) {
     FILE *file = fopen(filepath, "r");
-    int opt = token;
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
         return;
@@ -386,6 +425,5 @@ void parseCSV(const char *filepath,int token) {
     free(line);
     fclose(file);
 }
-
 
 
