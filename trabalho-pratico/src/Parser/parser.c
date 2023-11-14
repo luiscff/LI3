@@ -198,7 +198,7 @@ bool isValidField_user(const char *value, int fieldIndex) {
         case 11: // Método de pagamento
             return isValidNotNull(value);
         case 12: // Estado da conta
-            return isValidAccountStatus(value); //FIXME dá sempre erro no campo 12 e n sei pq
+            return isValidAccountStatus(value);
         default:
             break;
     }
@@ -330,9 +330,9 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 7: // address
             return isValidNotNull(value);
         case 8: // begin date
-            return isValidDate_Time(value);
+            return isValidDate(value);
         case 9: // end_date
-            return isValidDate_Time(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+            return isValidDate(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
         case 10: // price_per_night
             return isValidPricePerNight(value);
         case 11: //include_breakfast
