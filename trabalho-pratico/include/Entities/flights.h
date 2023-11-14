@@ -1,7 +1,7 @@
 #ifndef DRIVERS_CATALOG_H
 #define DRIVERS_CATALOG_H
 
-
+typedef struct flight FLIGHT;
 
 FLIGHT *create_flight();
 void free_flight(FLIGHT *flight);

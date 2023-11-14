@@ -15,6 +15,11 @@ struct passenger *create_passenger() {
     return new_passenger;
 }
 
+void free_passenger(PASSENGER *p) {
+    free(p);
+}
+
+
 void set_flight_id(PASSENGER *p, int flight_id) {
     p->flight_id =flight_id;
 }
