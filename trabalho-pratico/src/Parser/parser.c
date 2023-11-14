@@ -91,28 +91,6 @@ bool isValidEmail(const char *email) {
     return true;
 }
 
-bool isValidPhoneNumber(const char *phoneNumber) {
-    char cleanedNumber[20];
-    strcpy(cleanedNumber, phoneNumber);
-    removeNonNumericChars(cleanedNumber);
-
-    size_t len = strlen(cleanedNumber);
-    for (int j = 0; j < len; j++) {
-        if (!isdigit(cleanedNumber[j])) return false;
-    }
-    return len >= 9 && len <= MAX_PHONE;
-}
-
-void removeNonNumericChars(char *str) { //auxiliar function to isValidPhoneNumber
-    int count = 0;
-    for (int i = 0; str[i]; i++) {
-        if (str[i] == ' ' || str[i] == '(' || str[i] == ')') {
-            continue;
-        }
-        str[count++] = str[i];
-    }
-    str[count] = '\0';
-}
 
 bool isGenderValid(const char *gender) {
     return (gender[0] == 'M' || gender[0] == 'F') && strlen(gender) == 1;
@@ -197,7 +175,7 @@ bool isValidField_user(const char *value, int fieldIndex) {
         case 3: // Email
             return isValidEmail(value);
         case 4: // Número de telefone
-            return isValidPhoneNumber(value);
+            return isValidNotNull(value);
         case 5: // Data de nascimento
             return isValidDate(value);
         case 6: // Sexo

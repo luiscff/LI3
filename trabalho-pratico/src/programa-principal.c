@@ -12,7 +12,7 @@ int main(int argc, char const *argv[]) {
     clock_t start = clock();
     if (argc != 3) {
         // parser só funciona se receber um folderPathDataset e inputPath ao executar programa
-        printf("Usage: %s <folderPathDataset> <inputPath>\n", argv[0]); 
+        printf("Usage: %s <DatasetFolderPath> <InputFilePath>\n", argv[0]); 
         return 1;
     }
 
