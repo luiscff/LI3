@@ -61,7 +61,7 @@ bool isValidDate(const char *date) {
     return day <= daysInMonth[month];
 }
 
-bool isValidAccountCreation(const char *dateTime) {
+bool isValidDate_Time(const char *dateTime) {
     int year, month, day, hours, minutes, seconds;
     if (sscanf(dateTime, "%4d/%2d/%2d %2d:%2d:%2d", &year, &month, &day, &hours, &minutes, &seconds) != 6) {
         return false;
@@ -151,7 +151,7 @@ bool isValidPhoneNumber(const char *phoneNumber) {
     return len >= 9 && len <= MAX_PHONE;
 }
 
-bool isValidField(const char *value, int fieldIndex) {
+bool isValidField_user(const char *value, int fieldIndex) {
     switch (fieldIndex) {
         case 1: // ID
             return isValidAddress(value);
@@ -184,14 +184,14 @@ bool isValidField(const char *value, int fieldIndex) {
     return false;
 }
 
-void parseLine(char *line) {
+void parseLine_user(char *line) {
     char *token;
     int fieldIndex = 1;
 
     token = strtok(line, ";");
 
     while (token != NULL) {
-        if (isValidField(token, fieldIndex)) {
+        if (isValidField_user(token, fieldIndex)) {
             printf("%s", token);
         } else {
             printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
@@ -202,11 +202,152 @@ void parseLine(char *line) {
         printf("\n");
 }
 
-void parseCSV(const char *filepath) {
+
+
+bool isValidField_flight(const char *value, int fieldIndex) {
+    switch (fieldIndex) {
+        case 1: // ID
+            return isValidAddress(value);
+            break;
+        case 2: // Airline
+            return isValidAddress(value);
+            break;
+        case 3: // plain_model
+            return isValidAddress(value);
+        case 4: // total_seats
+            return isValidAddress(value);
+        case 5: // origin
+            return isValidAddress(value);
+        case 6: // destination
+            return isValidAddress(value);
+        case 7: // schedule_departure_date
+            return isValidDate_Time(value);
+        case 8: // schedule_arrival_date
+            return isValidDate_Time(value);
+        case 9: // real_departure_date
+            return isValidDate_Time(value);
+        case 10: // real_arrival_date
+            return isValidDate_Time(value);
+        case 11: // pilot
+            return isValidAddress(value);
+        case 12: // copilot
+            return isValidAddress(value);
+        default:
+            break;
+    }
+
+    return false;
+}
+
+void parseLine_flight(char *line) {
+    char *token;
+    int fieldIndex = 1;
+
+    token = strtok(line, ";");
+
+    while (token != NULL) {
+        if (isValidField_flight(token, fieldIndex)) {
+            printf("%s", token);
+        } else {
+            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
+        }
+        token = strtok(NULL, ";");
+        fieldIndex++;
+    }
+    printf("\n");
+}
+
+
+
+bool isValidField_passenger(const char *value, int fieldIndex) {
+    switch (fieldIndex) {
+        case 1: // user_id
+            return isValidAddress(value);
+
+        case 2: // flight_id
+            return isValidAddress(value);
+
+        default:
+            break;
+    }
+    return false;
+}
+
+void parseLine_passenger(char *line) {
+    char *token;
+    int fieldIndex = 1;
+
+    token = strtok(line, ";");
+
+    while (token != NULL) {
+        if (isValidField_passenger(token, fieldIndex)) { // <- possivel mudança para melhorar codigo
+            printf("%s", token);
+        } else {
+            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
+        }
+        token = strtok(NULL, ";");
+        fieldIndex++;
+    }
+    printf("\n");
+}
+
+bool isValidField_reservation(const char *value, int fieldIndex) {
+    switch (fieldIndex) {
+        case 1: // ID
+            return isValidAddress(value);
+        case 2: // user_id
+            return isValidAddress(value);
+        case 3: // hotel_id
+            return isValidAddress(value);
+        case 4: // hotel_name
+            return isValidAddress(value);
+        case 5: // hotel_stars
+            return isValidAddress(value);
+        case 6: // city_tax
+            return isValidAddress(value);
+        case 7: // address
+            return isValidAddress(value);
+        case 8: // begin date
+            return isValidDate_Time(value);
+        case 9: // end_date
+            return isValidDate_Time(value);
+        case 10: // price_per_night
+            return isValidAddress(value);
+        case 11: // room_details
+            return isValidAddress(value);
+        case 12: // rating
+            return isValidAddress(value);
+        case 13: // comment
+            return isValidAddress(value); //?
+        default:
+            break;
+    }
+    return false;
+}
+
+void parseLine_reservation(char *line) {
+    char *token;
+    int fieldIndex = 1;
+
+    token = strtok(line, ";");
+
+    while (token != NULL) {
+        if (isValidField_reservation(token, fieldIndex)) { // <- possivel mudança para melhorar codigo
+            printf("%s", token);
+        } else {
+            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
+        }
+        token = strtok(NULL, ";");
+        fieldIndex++;
+    }
+    printf("\n");
+}
+
+
+
+void parseCSV(const char *filepath,int token) {
     FILE *file = fopen(filepath, "r");
-
-
-
+    int opt = token;
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
         return;
@@ -216,16 +357,35 @@ void parseCSV(const char *filepath) {
     size_t len = 0;
     size_t read;
 
-    //gets rid of first line 
+    //gets rid of first line
     if ((read = getline(&line, &len, file)) != -1) {
         line = NULL;
         len = 0;
     }
 
-    while ((read = getline(&line, &len, file)) != -1) {
-        parseLine(line);
-    }
+    if (token == 1)
+        while ((read = getline(&line, &len, file)) != -1) {
+            parseLine_user(line);
+        }
+
+    if (token == 2)
+        while ((read = getline(&line, &len, file)) != -1) {
+            parseLine_flight(line);
+        }
+
+    if (token == 3)
+        while ((read = getline(&line, &len, file)) != -1) {
+            parseLine_passenger(line);
+        }
+
+    if (token == 4)
+        while ((read = getline(&line, &len, file)) != -1) {
+            parseLine_reservation(line);
+        }
 
     free(line);
     fclose(file);
 }
+
+
+

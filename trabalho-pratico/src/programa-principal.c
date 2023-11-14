@@ -29,22 +29,22 @@ int main(int argc, char const *argv[]) {
     // for users.csv
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "users.csv");
-    parseCSV(filePath);
+    parseCSV(filePath,1);
 
     // for flights.csv
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "flights.csv");
-    parseCSV(filePath);
+    parseCSV(filePath,2);
 
     // for passengers.csv
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "passengers.csv");
-    parseCSV(filePath);
+    parseCSV(filePath,3);
 
     // for reservations.csv
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "reservations.csv");
-    parseCSV(filePath);
+    parseCSV(filePath,4);
 
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
