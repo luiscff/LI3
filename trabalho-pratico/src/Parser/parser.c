@@ -41,6 +41,7 @@ bool isValidDate(const char *date) {
     if (sscanf(date, "%4d/%2d/%2d", &year, &month, &day) != 3) {
         return false;
     }
+    if ((!isdigit(date[0])||!isdigit(date[1]))||!isdigit(date[2])||!isdigit(date[3])) return false;
 
     if (year < 0 || month < 1 || month > 12 || day < 1 || day > 31) {
         return false;
@@ -208,22 +209,36 @@ bool isValidField_user(const char *value, int fieldIndex) {
 void parseLine_user(char *line) {
     char *token;
     int fieldIndex = 1;
+    int f = 1;
+    char *lineCopy = strdup(line);
 
-    token = strtok(line, ";");
-
-    while (token != NULL) {
-        if (isValidField_user(token, fieldIndex)) {
-            printf("%s", token);
-        } else {
-            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
-        }
+    FILE *errorFile = fopen("Resultados/users_errors.csv", "a");
+    token = strtok(lineCopy, ";");
+    while (token != NULL&&isValidField_user(token,fieldIndex)) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-        printf("\n");
+    token = strtok(line,";");
+    if (fieldIndex==13)
+        {
+            while(token!=NULL)
+            {
+            printf("%s", token);
+            token = strtok(NULL, ";");
+            }
+        }
+        else{
+    while (f<13) {
+        if(token!=NULL)
+        fprintf(errorFile, ";%s", token);
+        else fprintf(errorFile, " ;");
+        token = strtok(NULL, ";");
+        f++;}
+    }
+    fclose(errorFile);
+    free(lineCopy);
+    printf("\n");
 }
-
-
 
 bool isValidField_flight(const char *value, int fieldIndex) {
     switch (fieldIndex) {
@@ -301,16 +316,23 @@ void parseLine_passenger(char *line) {
     token = strtok(line, ";");
 
     while (token != NULL) {
-        if (isValidField_passenger(token, fieldIndex)) { // <- possivel mudança para melhorar codigo
+        if (isValidField_passenger(token, fieldIndex)) {
             printf("%s", token);
         } else {
-            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
+            FILE *errorFile = fopen("Resultados/passenger_errors.csv", "a");
+            if (errorFile != NULL) {
+                fprintf(errorFile, "%s", line);
+                fclose(errorFile);
+            } else {
+                fprintf(stderr, "Erro ao abrir o arquivo passenger_errors.csv\n");
+            }
         }
         token = strtok(NULL, ";");
         fieldIndex++;
     }
     printf("\n");
 }
+
 
 
 bool isValidField_reservation(const char *value, int fieldIndex) {
@@ -359,7 +381,13 @@ void parseLine_reservation(char *line) {
         if (isValidField_reservation(token, fieldIndex)) { // <- possivel mudança para melhorar codigo
             printf("%s", token);
         } else {
-            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
+            FILE *errorFile = fopen("/../../Resultados/reservation_errors.csv", "a");
+            if (errorFile != NULL) {
+                fprintf(errorFile, "%s", line);
+                fclose(errorFile);
+            } else {
+                fprintf(stderr, "Erro ao abrir o arquivo reservation_errors.csv\n");
+            }
         }
         token = strtok(NULL, ";");
         fieldIndex++;
