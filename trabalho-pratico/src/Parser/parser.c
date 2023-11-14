@@ -107,8 +107,15 @@ bool isValidCountryCode(const char *str) {
     return true;
 }
 
-bool isValidAccountStatus(const char *str) { //strcasecmp is case insensitive
-    return (strcasecmp(str, "active") == 0 || strcasecmp(str, "inactive") == 0);
+void toUpperCase(char *str) {
+    while (*str) {
+        *str = toupper((unsigned char)*str);
+        str++;
+    }
+}
+
+bool isValidAccountStatus(const char *str) {
+    return (strcasecmp(str, "active\n") == 0 || strcasecmp(str, "inactive\n") == 0);
 }
 
 bool isValidPaymentMethod(const char *str) {
@@ -195,7 +202,6 @@ bool isValidField_user(const char *value, int fieldIndex) {
         default:
             break;
     }
-
     return false;
 }
 

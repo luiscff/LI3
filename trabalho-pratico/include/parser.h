@@ -7,6 +7,7 @@
 #define MAX_PASSPORT 8
 #define MAX_COUNTRY_CODE 2
 
+void toUpperCase(char *str);
 bool isValidAddress(const char *str);
 bool isValidTime(const char *time);
 bool isValidDate(const char *date);
