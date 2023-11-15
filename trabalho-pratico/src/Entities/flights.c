@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 typedef struct flight {
-    int id;                   // identificador do voo (se for 0 é inválido) || futura key
+    gpointer flight_id;                   // identificador do voo (se for 0 é inválido) || futura key
     char *airline;
     char *plain_model;
     int total_seats;            
@@ -29,7 +29,10 @@ void free_flight(FLIGHT *flight) {
 }
 
 // Getters
-int get_id(const FLIGHT *f) { return f->id; }
+int get_driver_id(FLIGHT *flight) {
+    int id = GPOINTER_TO_INT(flight->flight_id);
+    return id;
+}
 const char *get_airline(const FLIGHT *f) { return f->airline; }
 const char *get_plain_model(const FLIGHT *f) { return f->plain_model; }
 int get_total_seats(const FLIGHT *f) { return f->total_seats; }
@@ -46,8 +49,11 @@ const char *get_copilot(const FLIGHT *f) { return f->copilot; }
 const char *get_notes(const FLIGHT *f) { return f->notes; }
 
 // Setters
-void set_id(FLIGHT *f, int id) {
-    f->id = id;
+
+void set_flight_id(FLIGHT *flight, char *flight_id_string) {
+    int flight_id_int = string_to_int(flight_id_int);
+    gpointer flight_id_int = GINT_TO_POINTER(flight_id_int);
+    flight->flight_id = id_int_pointer;
 }
 
 void set_airline(FLIGHT *f, const char *airline) {
