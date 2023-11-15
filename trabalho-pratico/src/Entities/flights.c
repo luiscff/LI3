@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "Entities/flights.h"
+
 typedef struct flight {
     gpointer flight_id;                   // identificador do voo (se for 0 é inválido) || futura key
     char *airline;
@@ -20,7 +22,7 @@ typedef struct flight {
 
 FLIGHT *create_flight() {
     FLIGHT *new_flight = malloc(sizeof(struct flight));
-    new_flight->id = 0;  // id 0 significa que é inválido
+    new_flight->flight_id = 0;  // id 0 significa que é inválido
     return new_flight;
 }
 
@@ -29,7 +31,7 @@ void free_flight(FLIGHT *flight) {
 }
 
 // Getters
-int get_driver_id(FLIGHT *flight) {
+int get_flight_id(const FLIGHT *flight) {
     int id = GPOINTER_TO_INT(flight->flight_id);
     return id;
 }
@@ -50,10 +52,10 @@ const char *get_notes(const FLIGHT *f) { return f->notes; }
 
 // Setters
 
-void set_flight_id(FLIGHT *flight, char *flight_id_string) {
-    int flight_id_int = string_to_int(flight_id_int);
-    gpointer flight_id_int = GINT_TO_POINTER(flight_id_int);
-    flight->flight_id = id_int_pointer;
+void set_flight_id(FLIGHT *flight, const char *flight_id_string) {
+    int flight_id_int = atoi(flight_id_string);
+    gpointer flight_id_int_pointer = GINT_TO_POINTER(flight_id_int);
+    flight->flight_id = flight_id_int_pointer;
 }
 
 void set_airline(FLIGHT *f, const char *airline) {

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "parser.h"
+#include "Catalog/flights_catalog.h"
 
 
 #define MAX_PATH_SIZE 256
@@ -21,25 +22,47 @@ int main(int argc, char const *argv[]) {
 
     char filePath[MAX_PATH_SIZE];
 
-    // for users.csv
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "users.csv");
-    parseCSV(filePath,1);
+    // // for users.csv
+    // strcpy(filePath, folderPathDataset);
+    // strcat(filePath, "users.csv");
+    // parseCSV(filePath,1);
 
-    // for flights.csv
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "flights.csv");
-    parseCSV(filePath,2);
+    // // for flights.csv
+    // strcpy(filePath, folderPathDataset);
+    // strcat(filePath, "flights.csv");
+    // parseCSV(filePath,2);
 
-    // for passengers.csv
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "passengers.csv");
-    parseCSV(filePath,3);
+    // // for passengers.csv
+    // strcpy(filePath, folderPathDataset);
+    // strcat(filePath, "passengers.csv");
+    // parseCSV(filePath,3);
 
-    // for reservations.csv
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "reservations.csv");
-    parseCSV(filePath,4);
+    // // for reservations.csv
+    // strcpy(filePath, folderPathDataset);
+    // strcat(filePath, "reservations.csv");
+    // parseCSV(filePath,4);
+
+// Cria o catálogo de voos
+    FLIGHTS_CATALOG* catalog = create_flights_catalog();
+
+    // Cria um novo voo
+    FLIGHT* flight1 = create_flight();
+    set_flight_id(flight1, "123");
+    set_airline(flight1, "Airline1");
+    // Adicione mais detalhes ao voo conforme necessário...
+
+    // Insere o voo no catálogo
+    insert_flight(catalog, flight1, GINT_TO_POINTER(get_flight_id(flight1)));
+
+    // Recupera o voo do catálogo
+    FLIGHT *retrieved_flight = get_flight_by_id(catalog, 123);
+
+    // Imprime alguns detalhes do voo
+    printf("Flight ID: %d\n", get_flight_id(retrieved_flight));
+    printf("Airline: %s\n", get_airline(retrieved_flight));
+
+    // Limpa
+    free_flights_catalog(catalog);
 
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;

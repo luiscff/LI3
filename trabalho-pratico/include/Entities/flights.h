@@ -1,13 +1,15 @@
 #ifndef DRIVERS_CATALOG_H
 #define DRIVERS_CATALOG_H
 
+#include <glib.h>
+
 typedef struct flight FLIGHT;
 
 FLIGHT *create_flight();
 void free_flight(FLIGHT *flight);
 
 // Getters
-int get_id(const FLIGHT *f);
+int get_flight_id(const FLIGHT *f);
 const char *get_airline(const FLIGHT *f);
 const char *get_plain_model(const FLIGHT *f);
 int get_total_seats(const FLIGHT *f);
@@ -22,7 +24,7 @@ const char *get_copilot(const FLIGHT *f);
 const char *get_notes(const FLIGHT *f);
 
 // Setters
-void set_id(FLIGHT *f, int id);
+void set_flight_id(FLIGHT *f, const char *id);
 void set_airline(FLIGHT *f, const char *airline);
 void set_plain_model(FLIGHT *f, const char *plain_model);
 void set_total_seats(FLIGHT *f, int total_seats);
