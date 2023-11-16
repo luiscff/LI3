@@ -22,8 +22,11 @@ enum PaymentMethod
 
 typedef struct user USER;
 
+USER * create_user();
+void free_user(USER *user);
+
 // Setters
-void set_id(USER *user, int id);
+void set_id(USER *user, const char *id);
 void set_name(USER *user, const char *name);
 void set_email(USER *user, const char *email);
 void set_birth_date(USER *user, const char *birth_date);
@@ -37,7 +40,7 @@ void set_payment_method(USER *user, enum PaymentMethod payment_method);
 void set_active_status(USER *user, enum Account_status active_status);
 
 // Getters
-int get_id(const USER *user);
+const char* get_id(const USER *user);
 const char *get_name(const USER *user);
 const char *get_email(const USER *user);
 const char *get_birth_date(const USER *user);
