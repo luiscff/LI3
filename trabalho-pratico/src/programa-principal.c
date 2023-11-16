@@ -48,24 +48,48 @@ int main(int argc, char const *argv[]) {
     // Cria o catálogo de voos
     FLIGHTS_CATALOG* catalog = create_flights_catalog();
 
-    // Cria um novo voo
+    // Cria novos voos
     FLIGHT* flight1 = create_flight();
     set_flight_id(flight1, "000123");
     set_airline(flight1, "Airline1");
+    FLIGHT* flight2 = create_flight();
+    set_flight_id(flight2, "000124");
+    set_airline(flight2, "Airline2");
+    FLIGHT* flight3 = create_flight();
+    set_flight_id(flight3, "000125");
+    set_airline(flight3, "Airline3");
+    FLIGHT* flight4 = create_flight();
+    set_flight_id(flight4, "000126");
+    set_airline(flight4, "Airline4");
+
     // Adicione mais detalhes ao voo conforme necessário...
 
-    // Insere o voo no catálogo
+    // Insere os voos no catálogo
     insert_flight(catalog, flight1, GINT_TO_POINTER(get_flight_id(flight1)));
+    insert_flight(catalog, flight2, GINT_TO_POINTER(get_flight_id(flight2)));
+    insert_flight(catalog, flight3, GINT_TO_POINTER(get_flight_id(flight3)));
+    insert_flight(catalog, flight4, GINT_TO_POINTER(get_flight_id(flight4)));
 
-    // Recupera o voo do catálogo
-    FLIGHT *retrieved_flight = get_flight_by_id(catalog, 123);
 
-    // Imprime alguns detalhes do voo
-    printf("Flight ID: %d\n", get_flight_id(retrieved_flight));
-    printf("Airline: %s\n", get_airline(retrieved_flight));
+    // Recupera os voos do catálogo
+    FLIGHT *retrieved_flight1 = get_flight_by_id(catalog, 123);
+    FLIGHT *retrieved_flight2 = get_flight_by_id(catalog, 124);
+    FLIGHT *retrieved_flight3 = get_flight_by_id(catalog, 125);
+    FLIGHT *retrieved_flight4 = get_flight_by_id(catalog, 126);
+
+
+
+    // Imprime alguns detalhes dos voos
+    printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight1),get_airline(retrieved_flight1));
+    printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight2),get_airline(retrieved_flight2));
+    printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight3),get_airline(retrieved_flight3));
+    printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight4),get_airline(retrieved_flight4));
+
+
 
     // Limpa
     free_flights_catalog(catalog);
+    
 
     // // TESTE DE PASSENGERS_CATALOG
     // // Cria o catálogo de passageiros

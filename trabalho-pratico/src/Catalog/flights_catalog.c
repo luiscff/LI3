@@ -30,5 +30,6 @@ FLIGHT* get_flight_by_code(FLIGHTS_CATALOG *catalog, gpointer flight_code) {
 
 void free_flights_catalog(FLIGHTS_CATALOG *catalog) {
     g_hash_table_destroy(catalog->flights);
+    free(catalog->flights);
     free(catalog);
 }

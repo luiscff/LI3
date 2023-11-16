@@ -28,6 +28,17 @@ FLIGHT *create_flight() {
 }
 
 void free_flight(FLIGHT *flight) {
+    free(flight->airline);
+    free(flight->plain_model);
+    free(flight->origin);
+    free(flight->destination);
+    free(flight->schedule_departure_date);
+    free(flight->schedule_arrival_date);
+    free(flight->real_departure_date);
+    free(flight->real_arrival_date);
+    free(flight->pilot);
+    free(flight->copilot);
+    free(flight->notes);
     free(flight);
 }
 
