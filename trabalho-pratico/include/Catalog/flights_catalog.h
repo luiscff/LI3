@@ -1,8 +1,9 @@
 #ifndef FLIGHT_CATALOG_H
 #define FLIGHT_CATALOG_H
 
-
 #include "Entities/flights.h"
+
+#include <glib.h>
 
 typedef struct flights_catalog FLIGHTS_CATALOG;
 

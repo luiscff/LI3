@@ -1,8 +1,9 @@
+#include "Entities/flights.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-#include "Entities/flights.h"
+#include <glib.h>
 
 typedef struct flight {
     gpointer flight_id;                   // identificador do voo (se for 0 é inválido) || futura key

@@ -1,5 +1,6 @@
 #include "Catalog/flights_catalog.h"
 
+
 typedef struct flights_catalog {
     GHashTable *flights;
 }FLIGHTS_CATALOG;

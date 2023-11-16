@@ -1,7 +1,10 @@
+#include "Entities/user.h"
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
+#include <glib.h>
 
 enum Account_status
 {

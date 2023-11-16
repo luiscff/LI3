@@ -1,10 +1,13 @@
+#include "Entities/reservation.h"
+
+#include <glib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct reservation {
-    int id;                   // identificador da reserva (se for 0 é inválido)
+    gpointer reservation_id;  // identificador da reserva (se for 0 é inválido)
     int user_id;              // identificador do utilizador (se for 0 é inválido)
     int hotel_id;             // identificador do hotel (se for 0 é inválido)
     char *hotel_name;         // nome do hotel
@@ -22,7 +25,7 @@ typedef struct reservation {
 
 RESERVATION *create_reservation(void) {
     RESERVATION *new_reservation = malloc(sizeof(struct reservation));
-    new_reservation->id = 0;  // id 0 significa que é inválido
+    new_reservation->reservation_id = 0;  // reservation_id 0 significa que é inválido
     return new_reservation;
 }
 
@@ -31,7 +34,7 @@ void free_reservation(RESERVATION *reservation) {
 }
 
 // Getters
-int get_id(const RESERVATION *r) { return r->id; }
+int get_reservation_id(const RESERVATION *r) { return r->reservation_id; }
 int get_user_id(const RESERVATION *r) { return r->user_id; }
 int get_hotel_id(const RESERVATION *r) { return r->hotel_id; }
 const char *get_hotel_name(const RESERVATION *r) { return r->hotel_name; }
@@ -47,7 +50,11 @@ int get_rating(const RESERVATION *r) { return r->rating; }
 const char *get_comment(const RESERVATION *r) { return r->comment; }
 
 // Setters
-void set_id(RESERVATION *r, int id) { r->id = id; }
+void set_reservation_id(RESERVATION *r, const char *reservation_id_string) {
+    int reservation_id_int = atoi(reservation_id_string);
+    gpointer reservation_id_int_pointer = GINT_TO_POINTER(reservation_id_int);
+    r->reservation_id = reservation_id_int_pointer;
+}
 void set_user_id(RESERVATION *r, int user_id) { r->user_id = user_id; }
 void set_hotel_id(RESERVATION *r, int hotel_id) { r->hotel_id = hotel_id; }
 void set_hotel_name(RESERVATION *r, const char *hotel_name) {
@@ -85,7 +92,7 @@ int main() {
     set_includes_breakfast(r, true);
     set_room_details(r, "King bed, ocean view");
 
-    printf("Reservation ID: %d\n", get_id(r));
+    printf("Reservation reservation_id: %d\n", get_id(r));
     printf("Hotel name: %s\n", get_hotel_name(r));
     printf("Address: %s\n", get_address(r));
     printf("Check-in date: %s\n", get_begin_date(r));

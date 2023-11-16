@@ -1,7 +1,6 @@
 #ifndef DRIVERS_CATALOG_H
 #define DRIVERS_CATALOG_H
 
-#include <glib.h>
 
 typedef struct flight FLIGHT;
 

@@ -1,7 +1,6 @@
 #ifndef RESERVATION_H
 #define RESERVATION_H
 
-#include <stdbool.h>
 
 typedef struct reservation RESERVATION;
 
