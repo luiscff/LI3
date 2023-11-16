@@ -206,38 +206,53 @@ bool isValidField_user(const char *value, int fieldIndex) {
     return false;
 }
 
+void writeToFile(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "id;name;email;phone_number;birth_date;sex;passport;country_code;address;account_creation;pay_method;account_status;\n");
+    } else {
+    }
+
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
+
 void parseLine_user(char *line) {
     char *token;
     int fieldIndex = 1;
-    int f = 1;
     char *lineCopy = strdup(line);
 
-    FILE *errorFile = fopen("Resultados/users_errors.csv", "a");
     token = strtok(lineCopy, ";");
-    while (token != NULL&&isValidField_user(token,fieldIndex)) {
+    while (token != NULL && isValidField_user(token, fieldIndex)) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-    token = strtok(line,";");
-    if (fieldIndex==13)
-        {
-            while(token!=NULL)
-            {
-            printf("%s", token);
+
+    if (fieldIndex == 13) {
+        // Imprimir cada token em uma nova linha
+        while (token != NULL) {
+            printf("%s\n", token);
             token = strtok(NULL, ";");
-            }
         }
-        else{
-    while (f<13) {
-        if(token!=NULL)
-        fprintf(errorFile, ";%s", token);
-        else fprintf(errorFile, " ;");
-        token = strtok(NULL, ";");
-        f++;}
+    } else {
+        // Escrever no arquivo mantendo a formatação
+        writeToFile(line, "Resultados/users_errors.csv");
     }
-    fclose(errorFile);
     free(lineCopy);
-    printf("\n");
 }
 
 bool isValidField_flight(const char *value, int fieldIndex) {
