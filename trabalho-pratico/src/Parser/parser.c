@@ -80,11 +80,17 @@ bool isValidDate_Time(const char *dateTime) {
 
 bool compareDates(const char* date1,const char* date2){
     // Convertendo strings de datas para inteiros
+    char* end= malloc(20);
+    char* begin= malloc(20);
+
+    end = strdup(date1);
+    begin = strdup(date2);
+
     int year1, month1, day1;
     int year2, month2, day2;
 
-    sscanf(date1, "%4d/%2d/%2d", &year1, &month1, &day1);
-    sscanf(date2, "%4d/%2d/%2d", &year2, &month2, &day2);
+    sscanf(end, "%4d/%2d/%2d", &year1, &month1, &day1);
+    sscanf(begin, "%4d/%2d/%2d", &year2, &month2, &day2);
 
     // Comparando anos
     if (year1 < year2) {
@@ -120,7 +126,7 @@ bool isValidDate_Compare(const char *first_date, const char *second_date) { // v
     char date[11];
     sscanf(second_date, "%10s", date);
 
-    return isValidDate(date) && compareDates(first_date,second_date);
+    return isValidDate(first_date) && compareDates(first_date,second_date);
 }
 
 // users
@@ -538,7 +544,7 @@ void parseLine_passenger(char *line) {
 }
 
 bool isValidField_reservation(const char *value, int fieldIndex) {
-    char* begin_date = NULL;
+    char* begin_date = malloc(20);
     switch (fieldIndex) {
         case 1:  // ID
             return isValidNotNull(value);
@@ -557,9 +563,9 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 8:  // begin date
             begin_date = strdup(value);
             return isValidDate(value);
-        case 9:                         // end_date
+        case 9:  // end_date
             return isValidDate_Compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
-        case 10:                        // price_per_night
+        case 10: // price_per_night
             return isValidPricePerNight(value);
         case 11:  // include_breakfast
             return isValidInclude_Breakfast(value);
@@ -571,6 +577,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
             return true;
         default:
             break;
+        free(begin_date);
     }
     return false;
 }

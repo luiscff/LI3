@@ -23,7 +23,7 @@ typedef struct reservation {
     char *comment;            // comentário sobre a reserva
 } RESERVATION;
 
-RESERVATION *create_reservation(void) {
+RESERVATION *create_reservation() {
     RESERVATION *new_reservation = malloc(sizeof(struct reservation));
     if (new_reservation) {
         new_reservation->reservation_id = NULL;
