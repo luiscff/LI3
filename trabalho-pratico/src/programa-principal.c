@@ -22,66 +22,19 @@ int main(int argc, char const *argv[]) {
 
     char filePath[MAX_PATH_SIZE];
 
-    // // for users.csv
-    // strcpy(filePath, folderPathDataset);
-    // strcat(filePath, "users.csv");
-    // parseCSV(filePath,1);
+    // Cria o catálogo de voos
+    FLIGHTS_CATALOG* catalog = create_flights_catalog();
 
-    // // for flights.csv
-    // strcpy(filePath, folderPathDataset);
-    // strcat(filePath, "flights.csv");
-    // parseCSV(filePath,2);
+    //faz o parse do ficheiro de voos
+    
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "flights.csv");
+    
+    //abre o ficheiro de voos
 
-    // // for passengers.csv
-    // strcpy(filePath, folderPathDataset);
-    // strcat(filePath, "passengers.csv");
-    // parseCSV(filePath,3);
+    parseCSV(filePath, 2 , catalog);
 
-    // // for reservations.csv
-    // strcpy(filePath, folderPathDataset);
-    // strcat(filePath, "reservations.csv");
-    // parseCSV(filePath,4);
 
-    // // TESTE DE FLIGHTS_CATALOG
-    // // Cria o catálogo de voos
-    // FLIGHTS_CATALOG* catalog = create_flights_catalog();
-
-    // // Cria novos voos
-    // FLIGHT* flight1 = create_flight();
-    // set_flight_id(flight1, "000123");
-    // set_airline(flight1, "Airline1");
-    // FLIGHT* flight2 = create_flight();
-    // set_flight_id(flight2, "000124");
-    // set_airline(flight2, "Airline2");
-    // FLIGHT* flight3 = create_flight();
-    // set_flight_id(flight3, "000125");
-    // set_airline(flight3, "Airline3");
-    // FLIGHT* flight4 = create_flight();
-    // set_flight_id(flight4, "000126");
-    // set_airline(flight4, "Airline4");
-
-    // // Adicione mais detalhes ao voo conforme necessário...
-
-    // // Insere os voos no catálogo
-    // insert_flight(catalog, flight1, GINT_TO_POINTER(get_flight_id(flight1)));
-    // insert_flight(catalog, flight2, GINT_TO_POINTER(get_flight_id(flight2)));
-    // insert_flight(catalog, flight3, GINT_TO_POINTER(get_flight_id(flight3)));
-    // insert_flight(catalog, flight4, GINT_TO_POINTER(get_flight_id(flight4)));
-
-    // // Recupera os voos do catálogo
-    // FLIGHT *retrieved_flight1 = get_flight_by_id(catalog, 123);
-    // FLIGHT *retrieved_flight2 = get_flight_by_id(catalog, 124);
-    // FLIGHT *retrieved_flight3 = get_flight_by_id(catalog, 125);
-    // FLIGHT *retrieved_flight4 = get_flight_by_id(catalog, 126);
-
-    // // Imprime alguns detalhes dos voos
-    // printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight1),get_airline(retrieved_flight1));
-    // printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight2),get_airline(retrieved_flight2));
-    // printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight3),get_airline(retrieved_flight3));
-    // printf("Flight ID: %d, Airline: %s\n", get_flight_id(retrieved_flight4),get_airline(retrieved_flight4));
-
-    // // Limpa
-    // free_flights_catalog(catalog);
 
     // // TESTE DE PASSENGERS_CATALOG
     // // Cria o catálogo de passageiros

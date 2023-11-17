@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include "Catalog/flights_catalog.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -311,27 +313,74 @@ void writeToFileFlight(char *line, const char *filename) {
     fclose(file);
 }
 
-void parseLine_flight(char *line) {
+void parseLine_flight(char *line, void *catalog) {
+    FLIGHTS_CATALOG *flightsCatalog = (FLIGHTS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
     char *lineCopy = strdup(line);
 
+    // Cria um novo voo
+    FLIGHT *flight = create_flight();
+
     token = strtok(lineCopy, ";");
-    while (token != NULL && isValidField_flight(token, fieldIndex)) {
+    while (token != NULL) {
+        if (isValidField_flight(token, fieldIndex)) {
+            switch (fieldIndex) {
+                case 1:
+                    set_flight_id(flight, strdup(token));
+                    break;
+                case 2:
+                    set_airline(flight, strdup(token));
+                    break;
+                case 3:
+                    set_plain_model(flight, strdup(token));
+                    break;
+                case 4:
+                    set_total_seats(flight, atoi(token));
+                    break;
+                case 5:
+                    set_origin(flight, strdup(token));
+                    break;
+                case 6:
+                    set_destination(flight, strdup(token));
+                    break;
+                case 7:
+                    set_schedule_departure_date(flight, strdup(token));
+                    break;
+                case 8:
+                    set_schedule_arrival_date(flight, strdup(token));
+                    break;
+                case 9: 
+                    set_real_departure_date(flight, strdup(token));
+                    break;
+                case 10:
+                    set_real_arrival_date(flight, strdup(token));
+                    break;
+                case 11:
+                    set_pilot(flight, strdup(token));
+                    break;
+                case 12:
+                    set_copilot(flight, strdup(token));
+                    break;
+                case 13:
+                    set_notes(flight, strdup(token));
+            }
+        } else {
+            writeToFileFlight(line, "Resultados/flights_errors.csv");
+            free(lineCopy);
+            return;
+        }
         token = strtok(NULL, ";");
         fieldIndex++;
     }
 
     if (fieldIndex == 14) {
-        while (token != NULL) {
-            printf("%s\n", token);
-            token = strtok(NULL, ";");
-    }
-    }
-    else
-    {
+        printf("Inserindo voo %d no catalogo\n", get_flight_id(flight));
+        insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
+    } else {
         writeToFileFlight(line, "Resultados/flights_errors.csv");
     }
+
     free(lineCopy);
 }
 
@@ -488,7 +537,7 @@ void parseLine_reservation(char *line) {
 
 
 
-void parseCSV(const char *filepath,int token) {
+void parseCSV(const char *filepath, int token, void *catalog) {
     FILE *file = fopen(filepath, "r");
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
@@ -512,7 +561,7 @@ void parseCSV(const char *filepath,int token) {
 
     if (token == 2)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_flight(line);
+            parseLine_flight(line, catalog);
         }
 
     if (token == 3)
