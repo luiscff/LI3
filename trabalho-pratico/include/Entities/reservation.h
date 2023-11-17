@@ -41,7 +41,7 @@ void set_rating(RESERVATION *r, int rating);
 void set_comment(RESERVATION *r, const char *comment);
 
 // Func
-double calcula_total_price(RESERVATION *r);
-int calcula_nights(char *begin ,char *end);
+double calc_total_price(RESERVATION *r);
+int calc_nights(const char *begin ,const char *end);
 
 #endif // RESERVATION_H

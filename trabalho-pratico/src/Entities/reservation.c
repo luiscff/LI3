@@ -116,20 +116,20 @@ void set_comment(RESERVATION *r, const char *comment) {
     r->comment = strdup(comment);
 }
 
-double calcula_total_price(RESERVATION *r){
+double calc_total_price(RESERVATION *r){
     int tax = get_city_tax(r);
     int ppn = get_price_per_night(r);
     double total_price = 0;
-    char* begin = get_begin_date(r);
-    char* end = get_end_date(r);
-    int num_nights = calcula_nights(begin,end);
+    const char* begin = get_begin_date(r);
+    const char* end = get_end_date(r);
+    int num_nights = calc_nights(begin,end);
     
     total_price = ppn * num_nights * ((ppn * num_nights) /100) * tax;
 
     return total_price;
 }
 
-int calcula_nights(char *begin ,char *end){
+int calc_nights(const char *begin ,const char *end){
     int year1, month1, day1;
     int year2, month2, day2;
     sscanf(begin, "%4d/%2d/%2d", &year1, &month1, &day1);
