@@ -244,48 +244,49 @@ void parseLine_user(char *line, void *catalog) {
         if (isValidField_user(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
-                    set_id(user, strdup(token));
+                    set_id(user, token);
                     break;
                 case 2:
-                    set_name(user, strdup(token));
+                    set_name(user, token);
                     break;
                 case 3:
-                    set_email(user, strdup(token));
+                    set_email(user, token);
                     break;
                 case 4:
-                    set_phone_number(user, strdup(token));
+                    set_phone_number(user, token);
                     break;
                 case 5:
-                    set_birth_date(user, strdup(token));
+                    set_birth_date(user, token);
                     break;
                 case 6:
-                    set_phone_number(user, strdup(token));
+                    set_phone_number(user, token);
                     break;
                 case 7:
-                    set_gender(user, strdup(token));
+                    set_gender(user, token);
                     break;
                 case 8:
-                    set_passport(user, strdup(token));
+                    set_passport(user, token);
                     break;
                 case 9:
-                    set_country_code(user, strdup(token));
+                    set_country_code(user, token);
                     break;
                 case 10:
-                    set_address(user, strdup(token));
+                    set_address(user, token);
                     break;
                 case 11:
-                    set_account_creation(user, strdup(token));
+                    set_account_creation(user, token);
                     break;
                 case 12:
-                    set_payment_method(user, strdup(token));
+                    set_payment_method(user, token);
                     break;
                 case 13:
-                    set_active_status(user, strdup(token));
+                    set_active_status(user, token);
                     break;
             }
         } else {
             writeToFileUser(line, "Resultados/users_errors.csv");
             free(lineCopy);
+            free_user(user);  // Adicione esta linha
             return;
         }
         token = strtok(NULL, ";");
@@ -374,47 +375,49 @@ void parseLine_flight(char *line, void *catalog) {
         if (isValidField_flight(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
-                    set_flight_id(flight, strdup(token));
+                    set_flight_id(flight, token);
                     break;
                 case 2:
-                    set_airline(flight, strdup(token));
+                    set_airline(flight, token);
                     break;
                 case 3:
-                    set_plain_model(flight, strdup(token));
+                    set_plain_model(flight, token);
                     break;
                 case 4:
                     set_total_seats(flight, atoi(token));
                     break;
                 case 5:
-                    set_origin(flight, strdup(token));
+                    set_origin(flight, token);
                     break;
                 case 6:
-                    set_destination(flight, strdup(token));
+                    set_destination(flight, token);
                     break;
                 case 7:
-                    set_schedule_departure_date(flight, strdup(token));
+                    set_schedule_departure_date(flight, token);
                     break;
                 case 8:
-                    set_schedule_arrival_date(flight, strdup(token));
+                    set_schedule_arrival_date(flight, token);
                     break;
                 case 9:
-                    set_real_departure_date(flight, strdup(token));
+                    set_real_departure_date(flight, token);
                     break;
                 case 10:
-                    set_real_arrival_date(flight, strdup(token));
+                    set_real_arrival_date(flight, token);
                     break;
                 case 11:
-                    set_pilot(flight, strdup(token));
+                    set_pilot(flight, token);
                     break;
                 case 12:
-                    set_copilot(flight, strdup(token));
+                    set_copilot(flight, token);
                     break;
                 case 13:
-                    set_notes(flight, strdup(token));
+                    set_notes(flight, token);
+                    break;
             }
         } else {
             writeToFileFlight(line, "Resultados/flights_errors.csv");
             free(lineCopy);
+            free_flight(flight);  // Adicione esta linha
             return;
         }
         token = strtok(NULL, ";");
@@ -562,16 +565,16 @@ void parseLine_reservation(char *line, void *catalog) {
         if (isValidField_reservation(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
-                    set_reservation_id(reservation, strdup(token));
+                    set_reservation_id(reservation, token);
                     break;
                 case 2:
-                    set_user_id(reservation, strdup(token));
+                    set_user_id(reservation, token);
                     break;
                 case 3:
-                    set_hotel_id(reservation, strdup(token));
+                    set_hotel_id(reservation, token);
                     break;
                 case 4:
-                    set_hotel_name(reservation, strdup(token));
+                    set_hotel_name(reservation, token);
                     break;
                 case 5:
                     set_hotel_stars(reservation, atoi(token));
@@ -580,13 +583,13 @@ void parseLine_reservation(char *line, void *catalog) {
                     set_city_tax(reservation, atoi(token));
                     break;
                 case 7:
-                    set_reservation_address(reservation, strdup(token));
+                    set_reservation_address(reservation, token);
                     break;
                 case 8:
-                    set_begin_date(reservation, strdup(token));
+                    set_begin_date(reservation, token);
                     break;
                 case 9:
-                    set_end_date(reservation, strdup(token));
+                    set_end_date(reservation, token);
                     break;
                 case 10:
                     set_price_per_night(reservation, atoi(token));
@@ -595,18 +598,19 @@ void parseLine_reservation(char *line, void *catalog) {
                     set_includes_breakfast(reservation, isValidInclude_Breakfast(token));
                     break;
                 case 12:
-                    set_room_details(reservation, strdup(token));
+                    set_room_details(reservation, token);
                     break;
                 case 13:
                     set_rating(reservation, atoi(token));
                     break;
                 case 14:
-                    set_comment(reservation, strdup(token));
+                    set_comment(reservation, token);
                     break;
             }
         } else {
             writeToFileReservation(line, "Resultados/reservations_errors.csv");
             free(lineCopy);
+            free_reservation(reservation);  // Adicione esta linha
             return;
         }
         token = strtok(NULL, ";");
@@ -636,6 +640,7 @@ void parseCSV(const char *filepath, int token, void *catalog) {
 
     // gets rid of first line
     if ((read = getline(&line, &len, file)) != -1) {
+        free(line);
         line = NULL;
         len = 0;
     }

@@ -2,7 +2,7 @@ CFLAGS=-Wall -Iinclude `pkg-config --cflags glib-2.0`
 LDFLAGS=`pkg-config --libs glib-2.0`
 
 programa-principal: src/programa-principal.o src/Parser/parser.o src/Catalog/flights_catalog.o src/Catalog/passengers_catalog.o src/Catalog/users_catalog.o src/Catalog/reservations_catalog.o src/Entities/flights.o src/Entities/passengers.o src/Entities/user.o src/Entities/reservation.o
-	gcc $^ -lglib-2.0 -o $@
+	gcc -g $^ -lglib-2.0 -o $@
 
 src/programa-principal.o: src/programa-principal.c
 src/Parser/parser.o: src/Parser/parser.c
