@@ -110,8 +110,9 @@ bool compareDates(const char* date1,const char* date2){
 }
 
 
-bool isValidDate_Compare(const char *first_date, const char *second_date) {
-    int year, month, day, hours, minutes, seconds;
+bool isValidDate_Compare(const char *first_date, const char *second_date) { // verifica se a  isValidDate_Compare funciona direto
+
+    int year, month, day;
     if (sscanf(second_date, "%4d/%2d/%2d ", &year, &month, &day) != 3) {
         return false;
     }
@@ -119,7 +120,7 @@ bool isValidDate_Compare(const char *first_date, const char *second_date) {
     char date[11];
     sscanf(second_date, "%10s", date);
 
-    return isValidDate(date) && compareDates(time);
+    return isValidDate(date) && compareDates(first_date,second_date);
 }
 
 // users
@@ -557,7 +558,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
             begin_date = strdup(value);
             return isValidDate(value);
         case 9:                         // end_date
-            return isValidDate_compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+            return isValidDate_Compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
         case 10:                        // price_per_night
             return isValidPricePerNight(value);
         case 11:  // include_breakfast
