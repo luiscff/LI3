@@ -40,4 +40,8 @@ void set_room_details(RESERVATION *r, const char *room_details);
 void set_rating(RESERVATION *r, int rating);
 void set_comment(RESERVATION *r, const char *comment);
 
+// Func
+double calcula_total_price(RESERVATION *r);
+int calcula_nights(char *begin ,char *end);
+
 #endif // RESERVATION_H
