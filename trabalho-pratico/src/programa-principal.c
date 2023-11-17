@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <sys/stat.h> // Adicionado para mkdir
 #include <time.h>
 
 #include "Catalog/flights_catalog.h"
@@ -9,16 +11,37 @@
 
 #define MAX_PATH_SIZE 256
 
+void create_result_file(const char *folderPath, int lineNumber, const char *content) {
+    char resultsFolderPath[MAX_PATH_SIZE];
+    sprintf(resultsFolderPath, "%s/outputs", folderPath);
+    struct stat st = {0};
+    if (stat(resultsFolderPath, &st) == -1) {
+        mkdir(resultsFolderPath, 0777);
+    }
+    char filePath[MAX_PATH_SIZE];
+    sprintf(filePath, "%s/command%d.txt", resultsFolderPath, lineNumber);
+
+    FILE *resultFile = fopen(filePath, "w");
+    if (resultFile == NULL) {
+        printf("Error creating result file for line %d\n", lineNumber);
+        return;
+    }
+
+    fprintf(resultFile, "%s", content);
+
+    fclose(resultFile);
+}
+
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
+
     if (argc != 3) {
-        // parser só funciona se receber um folderPathDataset e inputPath ao executar programa
         printf("Usage: %s <DatasetFolderPath> <InputFilePath>\n", argv[0]);
         return 1;
     }
 
     const char *folderPathDataset = argv[1];
-    const char *folderPathInput = argv[2];  // Ainda n é usado o ficheiro de input
+    const char *folderPathInput = argv[2];
 
     char filePath[MAX_PATH_SIZE];
 
@@ -35,7 +58,6 @@ int main(int argc, char const *argv[]) {
     FLIGHTS_CATALOG *flights_catalog = create_flights_catalog();
 
     // faz o parse do ficheiro de voos
-
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "flights.csv");
 
@@ -60,31 +82,77 @@ int main(int argc, char const *argv[]) {
     RESERVATION *retrieved_reservation = get_reservation_by_id(reservations_catalog, "Book0000000001");
     printf("Reservation ID: %s\n", get_reservation_id(retrieved_reservation));
 
+    char filePathI[MAX_PATH_SIZE];
+    strcpy(filePathI, folderPathInput);
+    strcat(filePathI, "input.txt");
+    char buffer[256];
+    FILE *file = fopen(filePathI, "r");
+    int lineNumber = 1;
 
-    // // TESTE DE PASSENGERS_CATALOG
-    // // Cria o catálogo de passageiros
-    // PASSENGERS_CATALOG* catalog = create_passengers_catalog();
+    if (file == NULL) {
+        printf("Error opening file\n");
 
-    // // Cria um novo passageiro
-    // PASSENGER* passenger1 = create_passenger();
-    // set_user_id2(passenger1, "000123");
-    // set_flight_id2(passenger1, "000123");
-    // // Adicione mais detalhes ao passageiro conforme necessário...
+        // Libera a memória antes de retornar
+        free_users_catalog(users_catalog);
+        free_flights_catalog(flights_catalog);
+        free_reservations_catalog(reservations_catalog);
 
-    // // Insere o passageiro no catálogo
-    // insert_passenger(catalog, passenger1, GINT_TO_POINTER(get_user_id2(passenger1)));
+        return 1;
+    }
 
-    // // Recupera o passageiro do catálogo
-    // PASSENGER *retrieved_passenger = get_passenger_by_id(catalog, 123);
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        buffer[strcspn(buffer, "\n")] = '\0';
 
-    // // Imprime alguns detalhes do passageiro
-    // printf("Passenger ID: %d\n", get_user_id2(retrieved_passenger));
-    // printf("Flight ID: %d\n", get_flight_id2(retrieved_passenger));
+        char *token = strtok(buffer, " ");
 
-    // // Limpa
-    // free_passengers_catalog(catalog);
+        if (strcmp(token, "1") == 0) {
+            create_result_file("Resultados", lineNumber, "Computador\n");
+        } else if (strcmp(token, "2") == 0) {
+            create_result_file("Resultados", lineNumber, "Livro\n");
+        } else if (strcmp(token, "3") == 0) {
+            create_result_file("Resultados", lineNumber, "pirata\n");
+        } else if (strcmp(token, "4") == 0) {
+            create_result_file("Resultados", lineNumber, "Animal\n");
+        } else if (strcmp(token, "5") == 0) {
+            create_result_file("Resultados", lineNumber, "Cão\n");
+        } else if (strcmp(token, "6") == 0) {
+            create_result_file("Resultados", lineNumber, "Gato\n");
+        } else if (strcmp(token, "7") == 0) {
+            create_result_file("Resultados", lineNumber, "Golfinho\n");
+        } else if (strcmp(token, "8") == 0) {
+            create_result_file("Resultados", lineNumber, "Tubarão\n");
+        } else if (strcmp(token, "9") == 0) {
+            create_result_file("Resultados", lineNumber, "Leão\n");
+        } else if (strcmp(token, "10") == 0) {
+            create_result_file("Resultados", lineNumber, "Luís\n");
+        } else if (strcmp(token, "1F") == 0) {
+            create_result_file("Resultados", lineNumber, "Luísa\n");
+        } else if (strcmp(token, "2F") == 0) {
+            create_result_file("Resultados", lineNumber, "Baleia\n");
+        } else if (strcmp(token, "3F") == 0) {
+            create_result_file("Resultados", lineNumber, "Livro\n");
+        } else if (strcmp(token, "4F") == 0) {
+            create_result_file("Resultados", lineNumber, "Biblio\n");
+        } else if (strcmp(token, "5F") == 0) {
+            create_result_file("Resultados", lineNumber, "Jesus\n");
+        } else if (strcmp(token, "6F") == 0) {
+            create_result_file("Resultados", lineNumber, "Teste\n");
+        } else if (strcmp(token, "7F") == 0) {
+            create_result_file("Resultados", lineNumber, "Exame\n");
+        } else if (strcmp(token, "8F") == 0) {
+            create_result_file("Resultados", lineNumber, "Frequência\n");
+        } else if (strcmp(token, "9F") == 0) {
+            create_result_file("Resultados", lineNumber, "Música\n");
+        } else if (strcmp(token, "10F") == 0) {
+            create_result_file("Resultados", lineNumber, "Nota\n");
+        }
 
-    //frees
+        lineNumber++;
+    }
+
+    fclose(file);
+
+    // Libera a memória no final do programa
     free_users_catalog(users_catalog);
     free_flights_catalog(flights_catalog);
     free_reservations_catalog(reservations_catalog);
