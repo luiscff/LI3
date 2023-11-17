@@ -78,6 +78,50 @@ bool isValidDate_Time(const char *dateTime) {
     return isValidDate(date) && isValidTime(time);
 }
 
+bool compareDates(const char* date1,const char* date2){
+    // Convertendo strings de datas para inteiros
+    int year1, month1, day1;
+    int year2, month2, day2;
+
+    sscanf(date1, "%4d/%2d/%2d", &year1, &month1, &day1);
+    sscanf(date2, "%4d/%2d/%2d", &year2, &month2, &day2);
+
+    // Comparando anos
+    if (year1 < year2) {
+        return -1;
+    } else if (year1 > year2) {
+        return 1;
+    }
+
+    // 
+    if (month1 < month2) {
+        return -1;
+    } else if (month1 > month2) {
+        return 1;
+    }
+
+    // Comparando dias
+    if (day1 < day2) {
+        return -1;
+    } else if (day1 > day2) {
+        return 1;
+    } // As datas são iguais
+    return 0;
+}
+
+
+bool isValidDate_Compare(const char *first_date, const char *second_date) {
+    int year, month, day, hours, minutes, seconds;
+    if (sscanf(second_date, "%4d/%2d/%2d ", &year, &month, &day) != 3) {
+        return false;
+    }
+
+    char date[11];
+    sscanf(second_date, "%10s", date);
+
+    return isValidDate(date) && compareDates(time);
+}
+
 // users
 bool isValidEmail(const char *email) {
     const char *atSymbol = strchr(email, '@');
@@ -493,6 +537,7 @@ void parseLine_passenger(char *line) {
 }
 
 bool isValidField_reservation(const char *value, int fieldIndex) {
+    char* begin_date = NULL;
     switch (fieldIndex) {
         case 1:  // ID
             return isValidNotNull(value);
@@ -509,9 +554,10 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 7:  // address
             return isValidNotNull(value);
         case 8:  // begin date
+            begin_date = strdup(value);
             return isValidDate(value);
         case 9:                         // end_date
-            return isValidDate(value);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+            return isValidDate_compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
         case 10:                        // price_per_night
             return isValidPricePerNight(value);
         case 11:  // include_breakfast

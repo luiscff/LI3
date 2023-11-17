@@ -12,6 +12,8 @@ bool isValidAddress(const char *str);
 bool isValidTime(const char *time);
 bool isValidDate(const char *date);
 bool isValidDate_Time(const char *dateTime); // isValidAccountCreation
+bool compareDates(const char* date1,const char* date2);
+bool isValidDate_Compare(const char *first_date, const char *second_date);
 bool isValidAccountStatus(const char *str);
 bool isValidPaymentMethod(const char *str);
 bool isValidCountryCode(const char *str);
