@@ -5,7 +5,7 @@
 
 
 
-
+#define current_date "2023/10/01"
 
 // aux query 1
 
@@ -37,6 +37,22 @@ int key_count(GHashTable *hash_table, char *searching_value) {
     }
     return counter;
 }
+}
+
+int calc_idade(char* birth_date){
+    int ano_nascimento, mes_nascimento, dia_nascimento;
+    int ano_atual, mes_atual, dia_atual;
+
+    sscanf(birth_date, "%d/%d/%d", &ano_nascimento, &mes_nascimento, &dia_nascimento);
+    sscanf(current_date, "%d/%d/%d", &ano_atual, &mes_atual, &dia_atual);
+
+    int idade = ano_atual - ano_nascimento;
+
+    if (mes_atual < mes_nascimento || (mes_atual == mes_nascimento && dia_atual < dia_nascimento)) {
+        idade--;
+    }   // Ajustar a idade caso ainda nao tenha feito anos nesse mesmo ano
+    return idade;
+
 }
 
 
@@ -75,28 +91,33 @@ void query1(USERS_CATALOG *ucatalog, FLIGHTS_CATALOG *fcatalog, RESERVATIONS_CAT
         int num_passengers = 0; //necessario percorrer o ficheiro dos flights e ver quantos passageiros
         double delay = 0;
 
-        num_passengers = key_count(pcatalog,id);//TODO: fix nisto
+        
 
-        time_t scheduled_arrival_time = mktime(&schedule_arrival);
-        time_t schedule_departure_time = mktime(&schedule_departure);
-        time_t real_arrival_time = mktime(&real_arrival);
-        time_t real_departure_time = mktime(&real_departure);
-
-        delay = difftime(real_departure_time, schedule_departure_time) + difftime(real_arrival_time, scheduled_arrival_time);;
+        delay = calc_delay(schedule_arrival,schedule_departure,real_arrival,real_departure);
         printf("%s;%s;%s;%s;%s;%s;%s,%s,%d,%f\n", airline,plain_model,origin,destination,schedule_departure,schedule_arrival,num_passengers,delay);
 
 
 
     }
 
-    /*if (id ==3){//aceder ao user catalog
+    if (id ==3){
+        USER *user = g_hash_table_lookup(ucatalog, id);
+        char* name = strdup(get_name(user));
+        char* gender = strdup(get_gender(user));
+        char* birth_date = strdup(get_birth_date(user));
+        int age = 0;
+        char* country_code = strdup(get_country_code(user));
+        char* passport = strdup(get_passport(user));
+        int num_flight = 0;
+        int num_reservations = 0;
+        int total_gasto = 0;
+
+        age = calc_idade(birth_date);
+
+        //TODO: calc num_flight,num_reservations, total_gasto;
+
+        printf("%s;%s;%s;%s;%s;%s;%s,%s,%d,%f\n", name,gender,age,country_code,passport,num_flight,num_reservations,total_gasto);
 
 
--
-
-
-    }*/
-*/
-
-
+    }
 }

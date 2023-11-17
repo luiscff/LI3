@@ -137,3 +137,22 @@ void set_notes(FLIGHT *f, const char *notes) {
     if (f->notes) free(f->notes);
     f->notes = strdup(notes);
 }
+
+double calc_delay(char* schedule_arrival, char* schedule_departure, char* real_arrival, char* real_departure){
+
+        struct tm schedule_arrival_tm,schedule_departure_tm, real_arrival_tm, real_departure_tm;
+
+        strptime(schedule_departure, "%Y/%m/%d %H:%M:%S", &schedule_departure_tm);
+        strptime(schedule_arrival, "%Y/%m/%d %H:%M:%S", &schedule_arrival_tm);
+        strptime(real_departure, "%Y/%m/%d %H:%M:%S", &real_departure_tm);
+        strptime(real_arrival, "%Y/%m/%d %H:%M:%S", &real_arrival_tm);
+
+        time_t scheduled_arrival_time = mktime(&schedule_arrival_tm);
+        time_t schedule_departure_time = mktime(&schedule_departure_tm);
+        time_t real_arrival_time = mktime(&real_arrival_tm);
+        time_t real_departure_time = mktime(&real_departure_tm);
+
+        double delay = difftime(real_departure_time, schedule_departure_time) + difftime(real_arrival_time, scheduled_arrival_time);;
+
+    return delay;
+}
