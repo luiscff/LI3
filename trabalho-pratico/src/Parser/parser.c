@@ -206,13 +206,14 @@ bool isValidField_user(const char *value, int fieldIndex) {
     return false;
 }
 
-void writeToFile(char *line, const char *filename) {
+void writeToFileUser(char *line, const char *filename) {
     char *token = strtok(line, ",");
     FILE *file = fopen(filename, "a");
 
     if (file == NULL) {
         fprintf(stderr, "Erro ao abrir o arquivo.\n");
         return;
+
     }
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
@@ -241,16 +242,13 @@ void parseLine_user(char *line) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-
     if (fieldIndex == 13) {
-        // Imprimir cada token em uma nova linha
         while (token != NULL) {
             printf("%s\n", token);
             token = strtok(NULL, ";");
         }
     } else {
-        // Escrever no arquivo mantendo a formatação
-        writeToFile(line, "Resultados/users_errors.csv");
+        writeToFileUser(line, "Resultados/users_errors.csv");
     }
     free(lineCopy);
 }
@@ -290,23 +288,53 @@ bool isValidField_flight(const char *value, int fieldIndex) {
     return false;
 }
 
+void writeToFileFlight(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "id;airline;plane_model;total_seats;origin;destination;schedule_departure_date;schedule_arrival_date;real_departure_date;real_arrival_date;pilot;copilot;notes;\n");
+    }
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
+
 void parseLine_flight(char *line) {
     char *token;
     int fieldIndex = 1;
+    char *lineCopy = strdup(line);
 
-    token = strtok(line, ";");
-
-    while (token != NULL) {
-        if (isValidField_flight(token, fieldIndex)) {
-            printf("%s", token);
-        } else {
-            printf("Erro no Campo %d", fieldIndex);// depois meter num ficheiro de erros em vez do printf
-        }
+    token = strtok(lineCopy, ";");
+    while (token != NULL && isValidField_flight(token, fieldIndex)) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-    printf("\n");
+
+    if (fieldIndex == 14) {
+        while (token != NULL) {
+            printf("%s\n", token);
+            token = strtok(NULL, ";");
+    }
+    }
+    else
+    {
+        writeToFileFlight(line, "Resultados/flights_errors.csv");
+    }
+    free(lineCopy);
 }
+
 
 
 
@@ -323,29 +351,52 @@ bool isValidField_passenger(const char *value, int fieldIndex) {
     }
     return false;
 }
+void writeToFilePassenger(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "flight_id;user_id;\n");
+    }
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
 
 void parseLine_passenger(char *line) {
     char *token;
     int fieldIndex = 1;
+    char *lineCopy = strdup(line);
 
-    token = strtok(line, ";");
-
-    while (token != NULL) {
-        if (isValidField_passenger(token, fieldIndex)) {
-            printf("%s", token);
-        } else {
-            FILE *errorFile = fopen("Resultados/passenger_errors.csv", "a");
-            if (errorFile != NULL) {
-                fprintf(errorFile, "%s", line);
-                fclose(errorFile);
-            } else {
-                fprintf(stderr, "Erro ao abrir o arquivo passenger_errors.csv\n");
-            }
-        }
+    token = strtok(lineCopy, ";");
+    while (token != NULL && isValidField_passenger(token, fieldIndex)) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-    printf("\n");
+    if (fieldIndex == 3) 
+    {
+        while (token != NULL) {
+            printf("%s\n", token);
+            token = strtok(NULL, ";");
+    }
+    }
+    else
+    {
+        writeToFilePassenger(line, "Resultados/passengers_errors.csv");
+    }
+
+    free(lineCopy);
 }
 
 
@@ -386,29 +437,54 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
     return false;
 }
 
+void writeToFileReservation(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "id;user_id;hotel_id;hotel_name;hotel_stars;city_tax;address;begin_date;end_date;price_per_night;includes_breakfast;room_details;rating;comment;\n");
+    }
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
+
 void parseLine_reservation(char *line) {
     char *token;
     int fieldIndex = 1;
+    char *lineCopy = strdup(line);
 
-    token = strtok(line, ";");
-
-    while (token != NULL) {
-        if (isValidField_reservation(token, fieldIndex)) { // <- possivel mudança para melhorar codigo
-            printf("%s", token);
-        } else {
-            FILE *errorFile = fopen("/../../Resultados/reservation_errors.csv", "a");
-            if (errorFile != NULL) {
-                fprintf(errorFile, "%s", line);
-                fclose(errorFile);
-            } else {
-                fprintf(stderr, "Erro ao abrir o arquivo reservation_errors.csv\n");
-            }
-        }
+    token = strtok(lineCopy, ";");
+    while (token != NULL && isValidField_reservation(token, fieldIndex)) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-    printf("\n");
+
+    if (fieldIndex == 15) {
+        while (token != NULL) {
+            printf("%s\n", token);
+            token = strtok(NULL, ";");
+    }
+    }
+    else
+    {
+        writeToFileReservation(line, "Resultados/reservations_errors.csv");
+
+    }
+    free(lineCopy);
 }
+
 
 
 

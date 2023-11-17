@@ -29,7 +29,11 @@ void parseLine_passenger(char *line);
 bool isValidField_reservation(const char *value, int fieldIndex);
 void parseLine_reservation(char *line);
 void parseCSV(const char *filepath,int token);
-void writeToFile(char *line, const char *filename);
+void writeToFileUser(char *line, const char *filename);
+void writeToFilePassenger(char *line, const char *filename);
+void writeToFileFlight(char *line, const char *filename);
+void writeToFileReservation(char *line, const char *filename);
 
 
 #endif
+
