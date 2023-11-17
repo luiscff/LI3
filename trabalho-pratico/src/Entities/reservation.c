@@ -25,6 +25,22 @@ typedef struct reservation {
 
 RESERVATION *create_reservation(void) {
     RESERVATION *new_reservation = malloc(sizeof(struct reservation));
+    if (new_reservation) {
+        new_reservation->reservation_id = NULL;
+        new_reservation->user_id = NULL;
+        new_reservation->hotel_id = NULL;
+        new_reservation->hotel_name = NULL;
+        new_reservation->address = NULL;
+        new_reservation->begin_date = NULL;
+        new_reservation->end_date = NULL;
+        new_reservation->room_details = NULL;
+        new_reservation->comment = NULL;
+        new_reservation->hotel_stars = 0;
+        new_reservation->city_tax = 0;
+        new_reservation->price_per_night = 0;
+        new_reservation->includes_breakfast = false;
+        new_reservation->rating = 0;
+    }
     return new_reservation;
 }
 
@@ -59,34 +75,43 @@ const char *get_comment(const RESERVATION *r) { return r->comment; }
 
 // Setters
 void set_reservation_id(RESERVATION *r, const char *reservation_id_string) {
+    if (r->reservation_id) free(r->reservation_id);
     r->reservation_id = strdup(reservation_id_string);
 }
 void set_user_id(RESERVATION *r, const char* user_id) { 
+    if (r->user_id) free(r->user_id);
     r->user_id = strdup(user_id);
  }
 void set_hotel_id(RESERVATION *r, const char* hotel_id) { 
+    if (r->hotel_id) free(r->hotel_id);
     r->hotel_id = strdup(hotel_id);
  }
 void set_hotel_name(RESERVATION *r, const char *hotel_name) {
+    if (r->hotel_name) free(r->hotel_name);
     r->hotel_name = strdup(hotel_name);
 }
 void set_hotel_stars(RESERVATION *r, int hotel_stars) { r->hotel_stars = hotel_stars; }
 void set_city_tax(RESERVATION *r, int city_tax) { r->city_tax = city_tax; }
 void set_reservation_address(RESERVATION *r, const char *address) {
+    if (r->address) free(r->address);
     r->address = strdup(address);
 }
 void set_begin_date(RESERVATION *r, const char *begin_date) {
+    if (r->begin_date) free(r->begin_date);
     r->begin_date = strdup(begin_date);
 }
 void set_end_date(RESERVATION *r, const char *end_date) {
+    if (r->end_date) free(r->end_date);
     r->end_date = strdup(end_date);
 }
 void set_price_per_night(RESERVATION *r, int price_per_night) { r->price_per_night = price_per_night; }
 void set_includes_breakfast(RESERVATION *r, bool includes_breakfast) { r->includes_breakfast = includes_breakfast; }
 void set_room_details(RESERVATION *r, const char *room_details) {
+    if (r->room_details) free(r->room_details);
     r->room_details = strdup(room_details);
 }
 void set_rating(RESERVATION *r, int rating) { r->rating = rating; }
 void set_comment(RESERVATION *r, const char *comment) {
+    if (r->comment) free(r->comment);
     r->comment = strdup(comment);
 }

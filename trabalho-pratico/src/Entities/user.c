@@ -27,6 +27,20 @@ typedef struct user
 
 USER * create_user() {
     USER *new_user = malloc(sizeof(struct user));
+    if (new_user) {
+        new_user->id = NULL;
+        new_user->name = NULL;
+        new_user->email = NULL;
+        new_user->birth_date = NULL;
+        new_user->phone_number = NULL;
+        new_user->gender = NULL;
+        new_user->passport = NULL;
+        new_user->country_code = NULL;
+        new_user->address = NULL;
+        new_user->account_creation = NULL;
+        new_user->payment_method = NULL;
+        new_user->active_status = NULL;
+    }
     return new_user;
 }
 
@@ -49,51 +63,63 @@ void free_user(USER *user) {
 
 
 void set_id(USER *user, const char *id) {
+    if (user->id) free(user->id);
     user->id = strdup(id);
 }
 
 void set_name(USER *user, const char *name) {
+    if (user->name) free(user->name);
      user->name = strdup(name);
 }
 
 void set_email(USER *user, const char *email) {
+    if (user->email) free(user->email);
      user->email = strdup(email);
 }
 
 
 void set_birth_date(USER *user, const char *birth_date) {
+    if (user->birth_date) free(user->birth_date);
     user->birth_date = strdup(birth_date);
 }
 
 void set_phone_number(USER *user, const char *phone_number) {
+    if (user->phone_number) free(user->phone_number);
      user->phone_number = strdup(phone_number);
 }
 
 void set_gender(USER *user, const char * gender) {
+    if (user->gender) free(user->gender);
     user->gender = strdup(gender);
 }
 
 void set_passport(USER *user, const char *passport) {
+    if (user->passport) free(user->passport);
      user->passport = strdup(passport);
 }
 
 void set_country_code(USER *user, const char *country_code) {
+    if (user->country_code) free(user->country_code);
      user->country_code = strdup(country_code);
 }
 
 void set_address(USER *user, const char *address) {
+    if (user->address) free(user->address);
      user->address = strdup(address);
 }
 
 void set_account_creation(USER *user, const char *account_creation) {
+    if (user->account_creation) free(user->account_creation);
      user->account_creation = strdup(account_creation);
 }
 
 void set_payment_method(USER *user, const char *payment_method) {
+    if  (user->payment_method) free(user->payment_method);
     user->payment_method = strdup(payment_method);
 }
 
 void set_active_status(USER *user, const char *active_status) {
+    if (user->active_status) free(user->active_status);
     user->active_status = strdup(active_status);
 }
 

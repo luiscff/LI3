@@ -1,29 +1,40 @@
 #include "Entities/flights.h"
 
+#include <glib.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <glib.h>
 
 typedef struct flight {
-    gpointer flight_id;                   // identificador do voo (se for 0 é inválido) || futura key
+    gpointer flight_id;  // identificador do voo (se for 0 é inválido) || futura key
     char *airline;
     char *plain_model;
-    int total_seats;            
+    int total_seats;
     char *origin;
     char *destination;
     char *schedule_departure_date;
     char *schedule_arrival_date;
     char *real_departure_date;
     char *real_arrival_date;
-    char *pilot;           
+    char *pilot;
     char *copilot;
-    char *notes;            
+    char *notes;
 } FLIGHT;
 
 FLIGHT *create_flight() {
     FLIGHT *new_flight = malloc(sizeof(struct flight));
     new_flight->flight_id = 0;  // id 0 significa que é inválido
+    new_flight->airline = NULL;
+    new_flight->plain_model = NULL;
+    new_flight->origin = NULL;
+    new_flight->destination = NULL;
+    new_flight->schedule_departure_date = NULL;
+    new_flight->schedule_arrival_date = NULL;
+    new_flight->real_departure_date = NULL;
+    new_flight->real_arrival_date = NULL;
+    new_flight->pilot = NULL;
+    new_flight->copilot = NULL;
+    new_flight->notes = NULL;
     return new_flight;
 }
 
@@ -71,10 +82,12 @@ void set_flight_id(FLIGHT *flight, const char *flight_id_string) {
 }
 
 void set_airline(FLIGHT *f, const char *airline) {
+    if (f->airline) free(f->airline);
     f->airline = strdup(airline);
 }
 
 void set_plain_model(FLIGHT *f, const char *plain_model) {
+    if (f->plain_model) free(f->plain_model);
     f->plain_model = strdup(plain_model);
 }
 
@@ -83,38 +96,44 @@ void set_total_seats(FLIGHT *f, int total_seats) {
 }
 
 void set_origin(FLIGHT *f, const char *origin) {
+    if (f->origin) free(f->origin);
     f->origin = strdup(origin);
 }
 void set_destination(FLIGHT *f, const char *destination) {
+    if (f->destination) free(f->destination);
     f->destination = strdup(destination);
 }
 
 void set_schedule_departure_date(FLIGHT *f, const char *schedule_departure_date) {
+    if (f->schedule_departure_date) free(f->schedule_departure_date);
     f->schedule_departure_date = strdup(schedule_departure_date);
 }
 
 void set_schedule_arrival_date(FLIGHT *f, const char *schedule_arrival_date) {
+    if (f->schedule_arrival_date) free(f->schedule_arrival_date);
     f->schedule_arrival_date = strdup(schedule_arrival_date);
 }
 
 void set_real_departure_date(FLIGHT *f, const char *real_departure_date) {
+    if (f->real_departure_date) free(f->real_departure_date);
     f->real_departure_date = strdup(real_departure_date);
 }
 
 void set_real_arrival_date(FLIGHT *f, const char *real_arrival_date) {
+    if (f->real_arrival_date) free(f->real_arrival_date);
     f->real_arrival_date = strdup(real_arrival_date);
-            }
+}
 void set_pilot(FLIGHT *f, const char *pilot) {
+    if (f->pilot) free(f->pilot);
     f->pilot = strdup(pilot);
 }
 
 void set_copilot(FLIGHT *f, const char *copilot) {
+    if (f->copilot) free(f->copilot);
     f->copilot = strdup(copilot);
 }
 
 void set_notes(FLIGHT *f, const char *notes) {
+    if (f->notes) free(f->notes);
     f->notes = strdup(notes);
 }
-
-
-

@@ -9,7 +9,7 @@ typedef struct users_catalog {
 USERS_CATALOG* create_users_catalog() {
     USERS_CATALOG *new_catalog = malloc(sizeof(USERS_CATALOG));
 
-    new_catalog->users = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+    new_catalog->users = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_user);
 
     return new_catalog;

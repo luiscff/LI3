@@ -9,7 +9,7 @@ typedef struct reservations_catalog {
 RESERVATIONS_CATALOG* create_reservations_catalog() {
     RESERVATIONS_CATALOG *new_catalog = malloc(sizeof(RESERVATIONS_CATALOG));
 
-    new_catalog->reservations = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
+    new_catalog->reservations = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_reservation);
 
     return new_catalog;
