@@ -7,9 +7,9 @@
 #include <string.h>
 
 typedef struct reservation {
-    gpointer reservation_id;  // identificador da reserva (se for 0 é inválido)
-    int user_id;              // identificador do utilizador (se for 0 é inválido)
-    int hotel_id;             // identificador do hotel (se for 0 é inválido)
+    char *reservation_id;  // identificador da reserva (se for 0 é inválido)
+    char *user_id;              // identificador do utilizador (se for 0 é inválido)
+    char *hotel_id;             // identificador do hotel (se for 0 é inválido)
     char *hotel_name;         // nome do hotel
     int hotel_stars;          // número de estrelas do hotel de 1 a 5
     int city_tax;             // percentagem do imposto da cidade (sobre o valor total)
@@ -25,22 +25,30 @@ typedef struct reservation {
 
 RESERVATION *create_reservation(void) {
     RESERVATION *new_reservation = malloc(sizeof(struct reservation));
-    new_reservation->reservation_id = 0;  // reservation_id 0 significa que é inválido
     return new_reservation;
 }
 
 void free_reservation(RESERVATION *reservation) {
-    free(reservation);
+    if (reservation->reservation_id) free(reservation->reservation_id);
+    if (reservation->user_id) free(reservation->user_id);
+    if (reservation->hotel_id) free(reservation->hotel_id);
+    if (reservation->hotel_name) free(reservation->hotel_name);
+    if (reservation->address) free(reservation->address);
+    if (reservation->begin_date) free(reservation->begin_date);
+    if (reservation->end_date) free(reservation->end_date);
+    if (reservation->room_details) free(reservation->room_details);
+    if (reservation->comment) free(reservation->comment);
+    if (reservation) free(reservation);
 }
 
 // Getters
-int get_reservation_id(const RESERVATION *r) { return r->reservation_id; }
-int get_user_id(const RESERVATION *r) { return r->user_id; }
-int get_hotel_id(const RESERVATION *r) { return r->hotel_id; }
+const char* get_reservation_id(const RESERVATION *r) { return r->reservation_id; }
+const char* get_user_id(const RESERVATION *r) { return r->user_id; }
+const char* get_hotel_id(const RESERVATION *r) { return r->hotel_id; }
 const char *get_hotel_name(const RESERVATION *r) { return r->hotel_name; }
 int get_hotel_stars(const RESERVATION *r) { return r->hotel_stars; }
 int get_city_tax(const RESERVATION *r) { return r->city_tax; }
-const char *get_address(const RESERVATION *r) { return r->address; }
+const char *get_reservation_address(const RESERVATION *r) { return r->address; }
 const char *get_begin_date(const RESERVATION *r) { return r->begin_date; }
 const char *get_end_date(const RESERVATION *r) { return r->end_date; }
 int get_price_per_night(const RESERVATION *r) { return r->price_per_night; }
@@ -51,18 +59,20 @@ const char *get_comment(const RESERVATION *r) { return r->comment; }
 
 // Setters
 void set_reservation_id(RESERVATION *r, const char *reservation_id_string) {
-    int reservation_id_int = atoi(reservation_id_string);
-    gpointer reservation_id_int_pointer = GINT_TO_POINTER(reservation_id_int);
-    r->reservation_id = reservation_id_int_pointer;
+    r->reservation_id = strdup(reservation_id_string);
 }
-void set_user_id(RESERVATION *r, int user_id) { r->user_id = user_id; }
-void set_hotel_id(RESERVATION *r, int hotel_id) { r->hotel_id = hotel_id; }
+void set_user_id(RESERVATION *r, const char* user_id) { 
+    r->user_id = strdup(user_id);
+ }
+void set_hotel_id(RESERVATION *r, const char* hotel_id) { 
+    r->hotel_id = strdup(hotel_id);
+ }
 void set_hotel_name(RESERVATION *r, const char *hotel_name) {
     r->hotel_name = strdup(hotel_name);
 }
 void set_hotel_stars(RESERVATION *r, int hotel_stars) { r->hotel_stars = hotel_stars; }
 void set_city_tax(RESERVATION *r, int city_tax) { r->city_tax = city_tax; }
-void set_address(RESERVATION *r, const char *address) {
+void set_reservation_address(RESERVATION *r, const char *address) {
     r->address = strdup(address);
 }
 void set_begin_date(RESERVATION *r, const char *begin_date) {
@@ -79,28 +89,4 @@ void set_room_details(RESERVATION *r, const char *room_details) {
 void set_rating(RESERVATION *r, int rating) { r->rating = rating; }
 void set_comment(RESERVATION *r, const char *comment) {
     r->comment = strdup(comment);
-}
-
-int main() {
-    RESERVATION *r = create_reservation();
-    set_id(r, 1);
-    set_hotel_name(r, "Hotel California");
-    set_address(r, "123 Main St");
-    set_begin_date(r, "2022/01/01");
-    set_end_date(r, "2022/01/05");
-    set_price_per_night(r, 100);
-    set_includes_breakfast(r, true);
-    set_room_details(r, "King bed, ocean view");
-
-    printf("Reservation reservation_id: %d\n", get_id(r));
-    printf("Hotel name: %s\n", get_hotel_name(r));
-    printf("Address: %s\n", get_address(r));
-    printf("Check-in date: %s\n", get_begin_date(r));
-    printf("Check-out date: %s\n", get_end_date(r));
-    printf("Price per night: %d\n", get_price_per_night(r));
-    printf("Includes breakfast: %s\n", get_includes_breakfast(r) ? "yes" : "no");
-    printf("Room details: %s\n", get_room_details(r));
-
-    free_reservation(r);
-    return 0;
 }

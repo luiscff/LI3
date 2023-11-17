@@ -27,7 +27,7 @@ void parseLine_flight(char *line, void *catalog);
 bool isValidField_passenger(const char *value, int fieldIndex);
 void parseLine_passenger(char *line);
 bool isValidField_reservation(const char *value, int fieldIndex);
-void parseLine_reservation(char *line);
+void parseLine_reservation(char *line, void *catalog);
 void parseCSV(const char *filepath, int token, void *catalog);
 void writeToFileUser(char *line, const char *filename);
 void writeToFilePassenger(char *line, const char *filename);

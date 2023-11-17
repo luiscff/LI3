@@ -1,14 +1,14 @@
 #include "parser.h"
 
-#include "Catalog/flights_catalog.h"
-#include "Catalog/users_catalog.h"
-
 #include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
+
+#include "Catalog/flights_catalog.h"
+#include "Catalog/reservations_catalog.h"
+#include "Catalog/users_catalog.h"
 
 // #define MAX_NAME 256
 // #define MAX_EMAIL 256
@@ -19,9 +19,8 @@
 #define MAX_COUNTRY_CODE 2
 // #define MAX_DATE_TIME 20
 
-
 //=========== VALIDATION =============
-//geral
+// geral
 bool isValidNotNull(const char *str) {
     return (str != NULL);
 }
@@ -44,7 +43,7 @@ bool isValidDate(const char *date) {
     if (sscanf(date, "%4d/%2d/%2d", &year, &month, &day) != 3) {
         return false;
     }
-    if ((!isdigit(date[0])||!isdigit(date[1]))||!isdigit(date[2])||!isdigit(date[3])) return false;
+    if ((!isdigit(date[0]) || !isdigit(date[1])) || !isdigit(date[2]) || !isdigit(date[3])) return false;
 
     if (year < 0 || month < 1 || month > 12 || day < 1 || day > 31) {
         return false;
@@ -79,7 +78,7 @@ bool isValidDate_Time(const char *dateTime) {
     return isValidDate(date) && isValidTime(time);
 }
 
-//users
+// users
 bool isValidEmail(const char *email) {
     const char *atSymbol = strchr(email, '@');
 
@@ -95,11 +94,9 @@ bool isValidEmail(const char *email) {
     return true;
 }
 
-
 bool isGenderValid(const char *gender) {
     return (gender[0] == 'M' || gender[0] == 'F') && strlen(gender) == 1;
 }
-
 
 bool isValidCountryCode(const char *str) {
     if (strlen(str) != MAX_COUNTRY_CODE) {
@@ -126,13 +123,13 @@ bool isValidPaymentMethod(const char *str) {
     return (strcmp(str, "cash") == 0 || strcmp(str, "debit_card") == 0 || strcmp(str, "credit_card") == 0);
 }
 
-//flights
-bool isValidOriginAndDestination (const char *str) {
+// flights
+bool isValidOriginAndDestination(const char *str) {
     return (strlen(str) == 3 && isalpha(str[0]) && isalpha(str[1]) && isalpha(str[2]));
 };
 
-//reservations
-bool isValidHotelStars (const char *str) {
+// reservations
+bool isValidHotelStars(const char *str) {
     int stars = atoi(str);
     return (stars >= 1 && stars <= 5);
 }
@@ -157,12 +154,12 @@ bool isValidPricePerNight(const char *str) {
     return (price > 0);
 }
 
-bool isValidInclude_Breakfast(const char *str) { //strcasecmp is case insensitive
-   return (strcasecmp(str,"f") == 0 || strcasecmp(str,"false") == 0 || strcasecmp(str,"0") == 0 || strcasecmp(str,"") == 0 || strcasecmp(str,"t") == 0 || strcasecmp(str,"true") == 0 || strcasecmp(str,"1") == 0);
+bool isValidInclude_Breakfast(const char *str) {  // strcasecmp is case insensitive
+    return (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
 }
 
 bool isValidRating(const char *str) {
-    if (str[0] == '\0') { // Allow empty strings
+    if (str[0] == '\0') {  // Allow empty strings
         return true;
     }
     for (int i = 0; str[i] != '\0'; i++) {
@@ -174,34 +171,33 @@ bool isValidRating(const char *str) {
     return (rating >= 1 && rating <= 5);
 }
 
-
 bool isValidField_user(const char *value, int fieldIndex) {
     switch (fieldIndex) {
-        case 1: // ID
+        case 1:  // ID
             return isValidNotNull(value);
             break;
-        case 2: // Nome
+        case 2:  // Nome
             return isValidNotNull(value);
             break;
-        case 3: // Email
+        case 3:  // Email
             return isValidEmail(value);
-        case 4: // Número de telefone
+        case 4:  // Número de telefone
             return isValidNotNull(value);
-        case 5: // Data de nascimento
+        case 5:  // Data de nascimento
             return isValidDate(value);
-        case 6: // Sexo
+        case 6:  // Sexo
             return isGenderValid(value);
-        case 7: // Passaporte
+        case 7:  // Passaporte
             return isValidNotNull(value);
-        case 8: // Country Code
+        case 8:  // Country Code
             return isValidCountryCode(value);
-        case 9: // Morada
+        case 9:  // Morada
             return isValidNotNull(value);
-        case 10: //Account creation
+        case 10:  // Account creation
             return isValidDate_Time(value);
-        case 11: // Método de pagamento
+        case 11:  // Método de pagamento
             return isValidNotNull(value);
-        case 12: // Estado da conta
+        case 12:  // Estado da conta
             return isValidAccountStatus(value);
         default:
             break;
@@ -216,7 +212,6 @@ void writeToFileUser(char *line, const char *filename) {
     if (file == NULL) {
         fprintf(stderr, "Erro ao abrir o arquivo.\n");
         return;
-
     }
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
@@ -247,47 +242,46 @@ void parseLine_user(char *line, void *catalog) {
     token = strtok(lineCopy, ";");
     while (token != NULL) {
         if (isValidField_user(token, fieldIndex)) {
-            switch (fieldIndex)
-            {
-            case 1:
-                set_id(user, strdup(token));
-                break;
-            case 2:
-                set_name(user, strdup(token));
-                break;
-            case 3:
-                set_email(user, strdup(token));
-                break;
-            case 4:
-                set_phone_number(user, strdup(token));
-                break;
-            case 5:
-                set_birth_date(user, strdup(token));
-                break;
-            case 6:
-                set_phone_number(user, strdup(token));
-                break;
-            case 7:
-                set_gender(user, strdup(token));
-                break;
-            case 8:
-                set_passport(user, strdup(token));
-                break;  
-            case 9:
-                set_country_code(user, strdup(token));
-                break;
-            case 10:
-                set_address(user, strdup(token));
-                break;
-            case 11:
-                set_account_creation(user, strdup(token));
-                break;
-            case 12:
-                set_payment_method(user, strdup(token));
-                break;
-            case 13:
-                set_active_status(user, strdup(token));
-                break;
+            switch (fieldIndex) {
+                case 1:
+                    set_id(user, strdup(token));
+                    break;
+                case 2:
+                    set_name(user, strdup(token));
+                    break;
+                case 3:
+                    set_email(user, strdup(token));
+                    break;
+                case 4:
+                    set_phone_number(user, strdup(token));
+                    break;
+                case 5:
+                    set_birth_date(user, strdup(token));
+                    break;
+                case 6:
+                    set_phone_number(user, strdup(token));
+                    break;
+                case 7:
+                    set_gender(user, strdup(token));
+                    break;
+                case 8:
+                    set_passport(user, strdup(token));
+                    break;
+                case 9:
+                    set_country_code(user, strdup(token));
+                    break;
+                case 10:
+                    set_address(user, strdup(token));
+                    break;
+                case 11:
+                    set_account_creation(user, strdup(token));
+                    break;
+                case 12:
+                    set_payment_method(user, strdup(token));
+                    break;
+                case 13:
+                    set_active_status(user, strdup(token));
+                    break;
             }
         } else {
             writeToFileUser(line, "Resultados/users_errors.csv");
@@ -296,44 +290,43 @@ void parseLine_user(char *line, void *catalog) {
         }
         token = strtok(NULL, ";");
         fieldIndex++;
-    } 
+    }
 
     if (fieldIndex == 13) {
-        //adiciona o user ao catálogo
+        // adiciona o user ao catálogo
         insert_user(usersCatalog, user, get_id(user));
-        printf("Inserted user with ID: %s\n", get_id(user));
     } else {
         writeToFileUser(line, "Resultados/users_errors.csv");
     }
-    
+
     free(lineCopy);
 }
 
 bool isValidField_flight(const char *value, int fieldIndex) {
     switch (fieldIndex) {
-        case 1: // ID
+        case 1:  // ID
             return isValidNotNull(value);
-        case 2: // Airline
+        case 2:  // Airline
             return isValidNotNull(value);
-        case 3: // plain_model
+        case 3:  // plain_model
             return isValidNotNull(value);
-        case 4: // total_seats
-            return true; //TODO O número de lugares de um voo (total_seats) não poderá ser inferior ao número de passageiros nesse voo;
-        case 5: // origin
+        case 4:           // total_seats
+            return true;  // TODO O número de lugares de um voo (total_seats) não poderá ser inferior ao número de passageiros nesse voo;
+        case 5:           // origin
             return isValidOriginAndDestination(value);
-        case 6: // destination
+        case 6:  // destination
             return isValidOriginAndDestination(value);
-        case 7: // schedule_departure_date
-            return isValidDate_Time(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
-        case 8: // schedule_arrival_date
+        case 7:                              // schedule_departure_date
+            return isValidDate_Time(value);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+        case 8:                              // schedule_arrival_date
             return isValidDate_Time(value);
-        case 9: // real_departure_date
-            return isValidDate_Time(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
-        case 10: // real_arrival_date
+        case 9:                              // real_departure_date
+            return isValidDate_Time(value);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+        case 10:                             // real_arrival_date
             return isValidDate_Time(value);
-        case 11: // pilot
+        case 11:  // pilot
             return isValidNotNull(value);
-        case 12: // copilot
+        case 12:  // copilot
             return isValidNotNull(value);
         case 13:
             return true;
@@ -404,7 +397,7 @@ void parseLine_flight(char *line, void *catalog) {
                 case 8:
                     set_schedule_arrival_date(flight, strdup(token));
                     break;
-                case 9: 
+                case 9:
                     set_real_departure_date(flight, strdup(token));
                     break;
                 case 10:
@@ -429,7 +422,7 @@ void parseLine_flight(char *line, void *catalog) {
     }
 
     if (fieldIndex == 14) {
-        //adiciona o voo ao catálogo
+        // adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
     } else {
         writeToFileFlight(line, "Resultados/flights_errors.csv");
@@ -438,15 +431,12 @@ void parseLine_flight(char *line, void *catalog) {
     free(lineCopy);
 }
 
-
-
-
 bool isValidField_passenger(const char *value, int fieldIndex) {
     switch (fieldIndex) {
-        case 1: // user_id
+        case 1:  // user_id
             return isValidNotNull(value);
 
-        case 2: // flight_id
+        case 2:  // flight_id
             return isValidNotNull(value);
 
         default:
@@ -487,52 +477,47 @@ void parseLine_passenger(char *line) {
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-    if (fieldIndex == 3) 
-    {
+    if (fieldIndex == 3) {
         while (token != NULL) {
             printf("%s\n", token);
             token = strtok(NULL, ";");
-    }
-    }
-    else
-    {
+        }
+    } else {
         writeToFilePassenger(line, "Resultados/passengers_errors.csv");
     }
 
     free(lineCopy);
 }
 
-
-
 bool isValidField_reservation(const char *value, int fieldIndex) {
     switch (fieldIndex) {
-        case 1: // ID
+        case 1:  // ID
             return isValidNotNull(value);
-        case 2: // user_id
+        case 2:  // user_id
             return isValidNotNull(value);
-        case 3: // hotel_id
+        case 3:  // hotel_id
             return isValidNotNull(value);
-        case 4: // hotel_name
+        case 4:  // hotel_name
             return isValidNotNull(value);
-        case 5: // hotel_stars
+        case 5:  // hotel_stars
             return isValidHotelStars(value);
-        case 6: // city_tax
+        case 6:  // city_tax
             return isValidCityTax(value);
-        case 7: // address
+        case 7:  // address
             return isValidNotNull(value);
-        case 8: // begin date
+        case 8:  // begin date
             return isValidDate(value);
-        case 9: // end_date
-            return isValidDate(value); //TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
-        case 10: // price_per_night
+        case 9:                         // end_date
+            return isValidDate(value);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+        case 10:                        // price_per_night
             return isValidPricePerNight(value);
-        case 11: //include_breakfast
+        case 11:  // include_breakfast
             return isValidInclude_Breakfast(value);
-        case 12: // room_details
+        case 12:  // room_details
             return true;
-        case 13: // rating
+        case 13:  // rating
             return isValidRating(value);
-        case 14: // comment
+        case 14:  // comment
             return true;
         default:
             break;
@@ -563,33 +548,80 @@ void writeToFileReservation(char *line, const char *filename) {
     fclose(file);
 }
 
-void parseLine_reservation(char *line) {
+void parseLine_reservation(char *line, void *catalog) {
+    RESERVATIONS_CATALOG *reservationsCatalog = (RESERVATIONS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
     char *lineCopy = strdup(line);
 
+    // Cria uma nova reserva
+    RESERVATION *reservation = create_reservation();
+
     token = strtok(lineCopy, ";");
-    while (token != NULL && isValidField_reservation(token, fieldIndex)) {
+    while (token != NULL) {
+        if (isValidField_reservation(token, fieldIndex)) {
+            switch (fieldIndex) {
+                case 1:
+                    set_reservation_id(reservation, strdup(token));
+                    break;
+                case 2:
+                    set_user_id(reservation, strdup(token));
+                    break;
+                case 3:
+                    set_hotel_id(reservation, strdup(token));
+                    break;
+                case 4:
+                    set_hotel_name(reservation, strdup(token));
+                    break;
+                case 5:
+                    set_hotel_stars(reservation, atoi(token));
+                    break;
+                case 6:
+                    set_city_tax(reservation, atoi(token));
+                    break;
+                case 7:
+                    set_reservation_address(reservation, strdup(token));
+                    break;
+                case 8:
+                    set_begin_date(reservation, strdup(token));
+                    break;
+                case 9:
+                    set_end_date(reservation, strdup(token));
+                    break;
+                case 10:
+                    set_price_per_night(reservation, atoi(token));
+                    break;
+                case 11:
+                    set_includes_breakfast(reservation, isValidInclude_Breakfast(token));
+                    break;
+                case 12:
+                    set_room_details(reservation, strdup(token));
+                    break;
+                case 13:
+                    set_rating(reservation, atoi(token));
+                    break;
+                case 14:
+                    set_comment(reservation, strdup(token));
+                    break;
+            }
+        } else {
+            writeToFileReservation(line, "Resultados/reservations_errors.csv");
+            free(lineCopy);
+            return;
+        }
         token = strtok(NULL, ";");
         fieldIndex++;
     }
 
     if (fieldIndex == 15) {
-        while (token != NULL) {
-            printf("%s\n", token);
-            token = strtok(NULL, ";");
-    }
-    }
-    else
-    {
+        // adiciona a reserva ao catálogo
+        insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
+    } else {
         writeToFileReservation(line, "Resultados/reservations_errors.csv");
-
     }
+
     free(lineCopy);
 }
-
-
-
 
 void parseCSV(const char *filepath, int token, void *catalog) {
     FILE *file = fopen(filepath, "r");
@@ -602,7 +634,7 @@ void parseCSV(const char *filepath, int token, void *catalog) {
     size_t len = 0;
     size_t read;
 
-    //gets rid of first line
+    // gets rid of first line
     if ((read = getline(&line, &len, file)) != -1) {
         line = NULL;
         len = 0;
@@ -625,11 +657,9 @@ void parseCSV(const char *filepath, int token, void *catalog) {
 
     if (token == 4)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_reservation(line);
+            parseLine_reservation(line, catalog);
         }
 
     free(line);
     fclose(file);
 }
-
-

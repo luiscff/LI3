@@ -3,7 +3,7 @@
 #include <time.h>
 
 #include "Catalog/flights_catalog.h"
-#include "Catalog/passengers_catalog.h"
+#include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
 #include "parser.h"
 
@@ -31,16 +31,35 @@ int main(int argc, char const *argv[]) {
 
     parseCSV(filePath, 1, users_catalog);
 
-
     // Cria o catálogo de voos
-    FLIGHTS_CATALOG *catalog = create_flights_catalog();
+    FLIGHTS_CATALOG *flights_catalog = create_flights_catalog();
 
     // faz o parse do ficheiro de voos
 
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "flights.csv");
 
-    parseCSV(filePath, 2, catalog);
+    parseCSV(filePath, 2, flights_catalog);
+
+    // Cria o catálogo de reservas
+    RESERVATIONS_CATALOG *reservations_catalog = create_reservations_catalog();
+
+    // faz o parse do ficheiro de reservas
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "reservations.csv");
+
+    parseCSV(filePath, 4, reservations_catalog);
+
+    // print de um user, um flight e uma reservation
+    USER *retrieved_user = get_user_by_id(users_catalog, "GusFreitas677");
+    printf("User ID: %s\n", get_id(retrieved_user));
+
+    FLIGHT *retrieved_flight = get_flight_by_id(flights_catalog, 1);
+    printf("Flight ID: %d\n", get_flight_id(retrieved_flight));
+
+    RESERVATION *retrieved_reservation = get_reservation_by_id(reservations_catalog, "Book0000000001");
+    printf("Reservation ID: %s\n", get_reservation_id(retrieved_reservation));
+
 
     // // TESTE DE PASSENGERS_CATALOG
     // // Cria o catálogo de passageiros
@@ -65,38 +84,10 @@ int main(int argc, char const *argv[]) {
     // // Limpa
     // free_passengers_catalog(catalog);
 
-    // // TESTE DE USERS_CATALOG
-    // // cria catalogo
-    // USERS_CATALOG *catalog = create_users_catalog();
-
-    // // cria user
-    // USER *user = create_user();
-
-    // // dá fields ao user
-    // set_id(user, strdup("1"));
-    // set_name(user, strdup("João"));
-    // set_email(user, strdup("joao@example.com"));
-    // set_birth_date(user, strdup("1990-01-01"));
-    // set_phone_number(user, strdup("123456789"));
-    // set_passport(user, strdup("AB123456"));
-    // set_country_code(user, strdup("PT"));
-    // set_address(user, strdup("Rua Exemplo, 123"));
-    // set_account_creation(user, strdup("2020-01-01"));
-
-    // // insere user no catalogo
-    // insert_user(catalog, user, "1");
-
-    // // recupera user do catalogo
-    // USER *retrieved_user = get_user_by_id(catalog, "1");
-
-    // // imprime alguns detalhes do user
-    // printf("User ID: %s\n", get_id(retrieved_user));
-    // printf("Adress: %s\n", get_address(retrieved_user));
-
-    // // limpa
-    // free_users_catalog(catalog);
-
-    return 0;
+    //frees
+    free_users_catalog(users_catalog);
+    free_flights_catalog(flights_catalog);
+    free_reservations_catalog(reservations_catalog);
 
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;

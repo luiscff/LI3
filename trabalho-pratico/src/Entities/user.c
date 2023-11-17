@@ -31,19 +31,19 @@ USER * create_user() {
 }
 
 void free_user(USER *user) {
-    free(user->id);
-    free(user->name);
-    free(user->email);
-    free(user->birth_date);
-    free(user->phone_number);
-    free(user->gender);
-    free(user->passport);
-    free(user->country_code);
-    free(user->address);
-    free(user->account_creation);
-    free(user->payment_method);
-    free(user->active_status);
-    free(user);
+    if (user->id) free(user->id);
+    if (user->name) free(user->name);
+    if (user->email) free(user->email);
+    if (user->birth_date) free(user->birth_date);
+    if (user->phone_number) free(user->phone_number);
+    if (user->gender) free(user->gender);
+    if (user->passport) free(user->passport);
+    if (user->country_code) free(user->country_code);
+    if (user->address) free(user->address);
+    if (user->account_creation) free(user->account_creation);
+    if (user->payment_method) free(user->payment_method);
+    if (user->active_status) free(user->active_status);
+    if (user) free(user);
 }
 
 

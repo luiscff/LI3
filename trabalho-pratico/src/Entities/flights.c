@@ -28,18 +28,18 @@ FLIGHT *create_flight() {
 }
 
 void free_flight(FLIGHT *flight) {
-    free(flight->airline);
-    free(flight->plain_model);
-    free(flight->origin);
-    free(flight->destination);
-    free(flight->schedule_departure_date);
-    free(flight->schedule_arrival_date);
-    free(flight->real_departure_date);
-    free(flight->real_arrival_date);
-    free(flight->pilot);
-    free(flight->copilot);
-    free(flight->notes);
-    free(flight);
+    if (flight->airline) free(flight->airline);
+    if (flight->plain_model) free(flight->plain_model);
+    if (flight->origin) free(flight->origin);
+    if (flight->destination) free(flight->destination);
+    if (flight->schedule_departure_date) free(flight->schedule_departure_date);
+    if (flight->schedule_arrival_date) free(flight->schedule_arrival_date);
+    if (flight->real_departure_date) free(flight->real_departure_date);
+    if (flight->real_arrival_date) free(flight->real_arrival_date);
+    if (flight->pilot) free(flight->pilot);
+    if (flight->copilot) free(flight->copilot);
+    if (flight->notes) free(flight->notes);
+    if (flight) free(flight);
 }
 
 // Getters

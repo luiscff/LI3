@@ -1,6 +1,7 @@
 #ifndef RESERVATION_H
 #define RESERVATION_H
 
+#include <stdbool.h>
 
 typedef struct reservation RESERVATION;
 
@@ -8,13 +9,13 @@ RESERVATION *create_reservation(void);
 void free_reservation(RESERVATION *reservation);
 
 // Getters
-int get_id(const RESERVATION *r);
-int get_user_id(const RESERVATION *r);
-int get_hotel_id(const RESERVATION *r);
+const char* get_reservation_id(const RESERVATION *r);
+const char* get_user_id(const RESERVATION *r);
+const char* get_hotel_id(const RESERVATION *r) ;
 const char *get_hotel_name(const RESERVATION *r);
 int get_hotel_stars(const RESERVATION *r);
 int get_city_tax(const RESERVATION *r);
-const char *get_address(const RESERVATION *r);
+const char *get_reservation_address(const RESERVATION *r);
 const char *get_begin_date(const RESERVATION *r);
 const char *get_end_date(const RESERVATION *r);
 int get_price_per_night(const RESERVATION *r);
@@ -24,13 +25,13 @@ int get_rating(const RESERVATION *r);
 const char *get_comment(const RESERVATION *r);
 
 // Setters
-void set_id(RESERVATION *r, int id);
-void set_user_id(RESERVATION *r, int user_id);
-void set_hotel_id(RESERVATION *r, int hotel_id);
+void set_reservation_id(RESERVATION *r, const char *id);
+void set_user_id(RESERVATION *r, const char* user_id);
+void set_hotel_id(RESERVATION *r, const char* hotel_id);
 void set_hotel_name(RESERVATION *r, const char *hotel_name);
 void set_hotel_stars(RESERVATION *r, int hotel_stars);
 void set_city_tax(RESERVATION *r, int city_tax);
-void set_address(RESERVATION *r, const char *address);
+void set_reservation_address(RESERVATION *r, const char *address);
 void set_begin_date(RESERVATION *r, const char *begin_date);
 void set_end_date(RESERVATION *r, const char *end_date);
 void set_price_per_night(RESERVATION *r, int price_per_night);
