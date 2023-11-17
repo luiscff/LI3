@@ -15,13 +15,13 @@ typedef struct user
     char *email;
     char *birth_date; // formato é aaaa/mm/dd
     char *phone_number;
-    enum Gender gender;
+    char *gender;
     char *passport;
     char *country_code;
     char *address;
     char *account_creation;
-    enum PaymentMethod payment_method;
-    enum Account_status active_status;
+    char *payment_method;
+    char *active_status;
 } USER;
 
 
@@ -36,10 +36,13 @@ void free_user(USER *user) {
     free(user->email);
     free(user->birth_date);
     free(user->phone_number);
+    free(user->gender);
     free(user->passport);
     free(user->country_code);
     free(user->address);
     free(user->account_creation);
+    free(user->payment_method);
+    free(user->active_status);
     free(user);
 }
 
@@ -66,8 +69,8 @@ void set_phone_number(USER *user, const char *phone_number) {
      user->phone_number = strdup(phone_number);
 }
 
-void set_gender(USER *user, enum Gender gender) {
-    user->gender = gender;
+void set_gender(USER *user, const char * gender) {
+    user->gender = strdup(gender);
 }
 
 void set_passport(USER *user, const char *passport) {
@@ -86,12 +89,12 @@ void set_account_creation(USER *user, const char *account_creation) {
      user->account_creation = strdup(account_creation);
 }
 
-void set_payment_method(USER *user, enum PaymentMethod payment_method) {
-    user->payment_method = payment_method;
+void set_payment_method(USER *user, const char *payment_method) {
+    user->payment_method = strdup(payment_method);
 }
 
-void set_active_status(USER *user, enum Account_status active_status) {
-    user->active_status = active_status;
+void set_active_status(USER *user, const char *active_status) {
+    user->active_status = strdup(active_status);
 }
 
 const char *get_birth_date(const USER *user) {
@@ -102,7 +105,7 @@ const char *get_phone_number(const USER *user) {
     return user->phone_number;
 }
 
-enum Gender get_gender(const USER *user) {
+const char *get_gender(const USER *user) {
     return user->gender;
 }
 
@@ -122,11 +125,11 @@ const char *get_account_creation(const USER *user) {
     return user->account_creation;
 }
 
-enum PaymentMethod get_payment_method(const USER *user) {
+const char *get_payment_method(const USER *user) {
     return user->payment_method;
 }
 
-enum Account_status get_active_status(const USER *user) {
+const char *get_active_status(const USER *user) {
     return user->active_status;
 }
 

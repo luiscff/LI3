@@ -22,19 +22,25 @@ int main(int argc, char const *argv[]) {
 
     char filePath[MAX_PATH_SIZE];
 
-    // Cria o catálogo de voos
-    FLIGHTS_CATALOG* catalog = create_flights_catalog();
+    // Cria o catálogo de utilizadores
+    USERS_CATALOG *users_catalog = create_users_catalog();
 
-    //faz o parse do ficheiro de voos
-    
+    // faz o parse do ficheiro de utilizadores
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "users.csv");
+
+    parseCSV(filePath, 1, users_catalog);
+
+
+    // Cria o catálogo de voos
+    FLIGHTS_CATALOG *catalog = create_flights_catalog();
+
+    // faz o parse do ficheiro de voos
+
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "flights.csv");
-    
-    //abre o ficheiro de voos
 
-    parseCSV(filePath, 2 , catalog);
-
-
+    parseCSV(filePath, 2, catalog);
 
     // // TESTE DE PASSENGERS_CATALOG
     // // Cria o catálogo de passageiros
@@ -58,8 +64,6 @@ int main(int argc, char const *argv[]) {
 
     // // Limpa
     // free_passengers_catalog(catalog);
-
-
 
     // // TESTE DE USERS_CATALOG
     // // cria catalogo

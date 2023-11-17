@@ -21,7 +21,7 @@ bool isValidEmail(const char *email);
 void removeNonNumericChars(char *str);
 bool isValidPhoneNumber(const char *phoneNumber);
 bool isValidField_user(const char *value, int fieldIndex);
-void parseLine_user(char *line);
+void parseLine_user(char *line, void *catalog);
 bool isValidField_flight(const char *value, int fieldIndex);
 void parseLine_flight(char *line, void *catalog);
 bool isValidField_passenger(const char *value, int fieldIndex);

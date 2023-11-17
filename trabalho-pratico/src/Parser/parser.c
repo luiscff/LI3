@@ -1,6 +1,7 @@
 #include "parser.h"
 
 #include "Catalog/flights_catalog.h"
+#include "Catalog/users_catalog.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -234,24 +235,77 @@ void writeToFileUser(char *line, const char *filename) {
     fclose(file);
 }
 
-void parseLine_user(char *line) {
+void parseLine_user(char *line, void *catalog) {
+    USERS_CATALOG *usersCatalog = (USERS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
     char *lineCopy = strdup(line);
 
+    // Cria um novo user
+    USER *user = create_user();
+
     token = strtok(lineCopy, ";");
-    while (token != NULL && isValidField_user(token, fieldIndex)) {
+    while (token != NULL) {
+        if (isValidField_user(token, fieldIndex)) {
+            switch (fieldIndex)
+            {
+            case 1:
+                set_id(user, strdup(token));
+                break;
+            case 2:
+                set_name(user, strdup(token));
+                break;
+            case 3:
+                set_email(user, strdup(token));
+                break;
+            case 4:
+                set_phone_number(user, strdup(token));
+                break;
+            case 5:
+                set_birth_date(user, strdup(token));
+                break;
+            case 6:
+                set_phone_number(user, strdup(token));
+                break;
+            case 7:
+                set_gender(user, strdup(token));
+                break;
+            case 8:
+                set_passport(user, strdup(token));
+                break;  
+            case 9:
+                set_country_code(user, strdup(token));
+                break;
+            case 10:
+                set_address(user, strdup(token));
+                break;
+            case 11:
+                set_account_creation(user, strdup(token));
+                break;
+            case 12:
+                set_payment_method(user, strdup(token));
+                break;
+            case 13:
+                set_active_status(user, strdup(token));
+                break;
+            }
+        } else {
+            writeToFileUser(line, "Resultados/users_errors.csv");
+            free(lineCopy);
+            return;
+        }
         token = strtok(NULL, ";");
         fieldIndex++;
-    }
+    } 
+
     if (fieldIndex == 13) {
-        while (token != NULL) {
-            printf("%s\n", token);
-            token = strtok(NULL, ";");
-        }
+        //adiciona o user ao catálogo
+        insert_user(usersCatalog, user, get_id(user));
+        printf("Inserted user with ID: %s\n", get_id(user));
     } else {
         writeToFileUser(line, "Resultados/users_errors.csv");
     }
+    
     free(lineCopy);
 }
 
@@ -375,7 +429,7 @@ void parseLine_flight(char *line, void *catalog) {
     }
 
     if (fieldIndex == 14) {
-        printf("Inserindo voo %d no catalogo\n", get_flight_id(flight));
+        //adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
     } else {
         writeToFileFlight(line, "Resultados/flights_errors.csv");
@@ -556,7 +610,7 @@ void parseCSV(const char *filepath, int token, void *catalog) {
 
     if (token == 1)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_user(line);
+            parseLine_user(line, catalog);
         }
 
     if (token == 2)
