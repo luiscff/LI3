@@ -5,7 +5,7 @@
 
 typedef struct reservation RESERVATION;
 
-RESERVATION *create_reservation(void);
+RESERVATION *create_reservation();
 void free_reservation(RESERVATION *reservation);
 
 // Getters

@@ -544,7 +544,7 @@ void parseLine_passenger(char *line) {
 }
 
 bool isValidField_reservation(const char *value, int fieldIndex) {
-    char* begin_date = malloc(20);
+    // const char* begin_date = malloc(20);
     switch (fieldIndex) {
         case 1:  // ID
             return isValidNotNull(value);
@@ -561,10 +561,11 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 7:  // address
             return isValidNotNull(value);
         case 8:  // begin date
-            begin_date = strdup(value);
+            //begin_date = strdup(value);
             return isValidDate(value);
         case 9:  // end_date
-            return isValidDate_Compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+            return true;
+            // isValidDate_Compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)(fix)
         case 10: // price_per_night
             return isValidPricePerNight(value);
         case 11:  // include_breakfast
@@ -577,7 +578,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
             return true;
         default:
             break;
-        free(begin_date);
+        
     }
     return false;
 }

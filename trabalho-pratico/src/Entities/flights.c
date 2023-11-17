@@ -64,10 +64,10 @@ int get_total_seats(const FLIGHT *f) { return f->total_seats; }
 const char *get_origin(const FLIGHT *f) { return f->origin; }
 const char *get_destination(const FLIGHT *f) { return f->destination; }
 
-const char *schedule_departure_date(const FLIGHT *f) { return f->schedule_departure_date; }
-const char *schedule_arrival_date(const FLIGHT *f) { return f->schedule_arrival_date; }
-const char *real_departure_date(const FLIGHT *f) { return f->real_departure_date; }
-const char *real_arrival_date(const FLIGHT *f) { return f->real_arrival_date; }
+const char *get_schedule_departure_date(const FLIGHT *f) { return f->schedule_departure_date; }
+const char *get_schedule_arrival_date(const FLIGHT *f) { return f->schedule_arrival_date; }
+const char *get_real_departure_date(const FLIGHT *f) { return f->real_departure_date; }
+const char *get_real_arrival_date(const FLIGHT *f) { return f->real_arrival_date; }
 
 const char *get_pilot(const FLIGHT *f) { return f->pilot; }
 const char *get_copilot(const FLIGHT *f) { return f->copilot; }
