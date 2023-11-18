@@ -28,3 +28,19 @@ void free_reservations_catalog(RESERVATIONS_CATALOG *catalog) {
     free(catalog);
 }
 
+int calc_total_spent_by_user_id(RESERVATIONS_CATALOG *catalog, char* user_id){
+    int total =0;
+    gpointer key, value;
+    GHashTableIter iter;
+    g_hash_table_iter_init(&iter, catalog); 
+
+    while(g_hash_table_iter_next(&iter, &key, &value)){
+    
+        RESERVATION *reservation = value;
+        if((strcmp(user_id,get_user_id(reservation))== 0) ){
+        total += calc_total_price(reservation);
+     }
+    }
+    return total;
+}
+

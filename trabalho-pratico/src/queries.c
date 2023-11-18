@@ -9,6 +9,23 @@
 
 // aux query 1
 
+int calc_num_reservations(RESERVATIONS_CATALOG *rcatalog, char* user_id){
+    int res = 0;
+    gpointer key, value;
+    GHashTableIter iter;
+    g_hash_table_iter_init(&iter, rcatalog); 
+
+    while(g_hash_table_iter_next(&iter, &key, &value)){
+    
+        RESERVATION *reservation = value;
+        if(strcmp(user_id,get_user_id(reservation))== 0) {
+        res++;
+     }
+    }
+
+    return res;
+}
+
 int choose_entity (char* id){
     char * id_aux = NULL;
     strncpy(id_aux,id,4);
@@ -22,21 +39,6 @@ int choose_entity (char* id){
 char* bool_to_string(bool boolean){
     if (boolean == true) return "true";
     else return "false";
-}
-
-
-int key_count(GHashTable *hash_table, char *searching_value) {
-    GHashTableIter iter;
-    char* current_key, *current_value;
-    int counter = 0;
-
-    g_hash_table_iter_init(&iter, hash_table);
-   while (g_hash_table_iter_next(&iter, &current_key, &current_value)) { // percorre a hash a tentar encontrar o mesmo voo (searching value)
-        if (g_strcmp0(current_value, searching_value) == 0) {
-            counter++;
-    }
-    return counter;
-}
 }
 
 int calc_idade(char* birth_date){
@@ -59,10 +61,10 @@ int calc_idade(char* birth_date){
 //
 
 void query1(USERS_CATALOG *ucatalog, FLIGHTS_CATALOG *fcatalog, RESERVATIONS_CATALOG *rcatalog,PASSENGERS_CATALOG *pcatalog, char *id){
-
-    int entity = choose_entity(id);
+    char* aux = strdup(id);
+    int entity = choose_entity(aux);
     if (entity == 1){ //
-        RESERVATION *reservation = g_hash_table_lookup(rcatalog, id);
+        RESERVATION *reservation = g_hash_table_lookup(rcatalog, aux);
         char* output = malloc(144);
         char* hotel_id = strdup (get_hotel_id(reservation));
         char* hotel_name = strdup (get_hotel_name(reservation));
@@ -74,12 +76,12 @@ void query1(USERS_CATALOG *ucatalog, FLIGHTS_CATALOG *fcatalog, RESERVATIONS_CAT
 
         double total_price = calc_total_price(reservation);
 
-        printf("%s;%s;%i;%s;%s;%s;%.2f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, total_price);
+        printf("%s;%s;%d;%s;%s;%s;%.3f \n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, total_price);
 
     }
 
     if (entity == 2){
-        FLIGHT *flight = g_hash_table_lookup(fcatalog, id);
+        FLIGHT *flight = g_hash_table_lookup(fcatalog, aux);
         char* airline = strdup (get_airline(flight));
         char* plain_model = strdup (get_plain_model(flight));
         char* origin = strdup (get_origin(flight));
@@ -91,17 +93,14 @@ void query1(USERS_CATALOG *ucatalog, FLIGHTS_CATALOG *fcatalog, RESERVATIONS_CAT
         int num_passengers = 0; //necessario percorrer o ficheiro dos flights e ver quantos passageiros
         double delay = 0;
 
-        
+        num_passengers = g_list_length(find_users_by_flight(pcatalog,aux)); // se find_users_by_flight retornar a lista com todos os users com este flight_id associado
 
         delay = calc_delay(schedule_arrival,schedule_departure,real_arrival,real_departure);
-        printf("%s;%s;%s;%s;%s;%s;%s,%s,%d,%f\n", airline,plain_model,origin,destination,schedule_departure,schedule_arrival,num_passengers,delay);
-
-
-
+        printf("%s;%s;%s;%s;%s;%s;%s,%s,%d,%.2f\n", airline,plain_model,origin,destination,schedule_departure,schedule_arrival,num_passengers,delay);
     }
 
-    if (id ==3){
-        USER *user = g_hash_table_lookup(ucatalog, id);
+    if (entity ==3){
+        USER *user = g_hash_table_lookup(ucatalog, aux);
         char* name = strdup(get_name(user));
         char* gender = strdup(get_gender(user));
         char* birth_date = strdup(get_birth_date(user));
@@ -113,11 +112,18 @@ void query1(USERS_CATALOG *ucatalog, FLIGHTS_CATALOG *fcatalog, RESERVATIONS_CAT
         int total_gasto = 0;
 
         age = calc_idade(birth_date);
+        num_flight = g_list_length(find_flights_by_user(pcatalog,aux)); // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
+        num_reservations = calc_num_reservations(rcatalog,aux);
+        total_gasto = calc_total_spent_by_user_id(rcatalog,aux);
 
-        //TODO: calc num_flight,num_reservations, total_gasto;
 
-        printf("%s;%s;%s;%s;%s;%s;%s,%s,%d,%f\n", name,gender,age,country_code,passport,num_flight,num_reservations,total_gasto);
+
+        // testar
+
+        printf("%s;%s;%s;%s;%s;%s;%s,%s,%d,%d\n", name,gender,age,country_code,passport,num_flight,num_reservations,total_gasto);
 
 
     }
+
+    
 }
