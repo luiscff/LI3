@@ -19,6 +19,10 @@ void insert_user(USERS_CATALOG *catalog, USER *user, const char *key) {
     g_hash_table_insert(catalog->users, strdup(key), user);
 }
 
+GHashTable *get_users_hash (USERS_CATALOG *catalog) {
+    return catalog->users; 
+}
+
 USER* get_user_by_id(USERS_CATALOG *catalog, char *id) {
     return g_hash_table_lookup(catalog->users, id);
 }

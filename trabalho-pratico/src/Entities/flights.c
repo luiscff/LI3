@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 typedef struct flight {
     gpointer flight_id;  // identificador do voo (se for 0 é inválido) || futura key
     char *airline;

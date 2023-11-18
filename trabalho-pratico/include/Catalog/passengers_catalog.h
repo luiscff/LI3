@@ -8,7 +8,9 @@
 typedef struct passengers_catalog PASSENGERS_CATALOG;
 
 PASSENGERS_CATALOG* create_passengers_catalog();
+
 void insert_passenger(PASSENGERS_CATALOG *catalog, PASSENGER *passenger);
+
 GList *get_list(PASSENGERS_CATALOG *catalog);
 
 GList *find_flights_by_user(PASSENGERS_CATALOG *catalog, const char *user_id2);

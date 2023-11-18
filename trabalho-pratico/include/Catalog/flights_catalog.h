@@ -11,6 +11,8 @@ FLIGHTS_CATALOG* create_flights_catalog();
 
 void insert_flight(FLIGHTS_CATALOG *catalog, FLIGHT *flight, gpointer key);
 
+GHashTable *get_flights_hash (FLIGHTS_CATALOG *catalog);
+
 FLIGHT* get_flight_by_id(FLIGHTS_CATALOG *catalog, int id);
 
 FLIGHT* get_flight_by_code(FLIGHTS_CATALOG *catalog, gpointer flight_code);

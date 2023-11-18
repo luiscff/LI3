@@ -21,4 +21,4 @@ leaks: programa-principal
 	valgrind --leak-check=full ./programa-principal ~/Desktop/smallDataset/ palha
 
 clean:
-	rm -f programa-principal programa-testes src/*.o src/Parser/*.o src/Catalog/*.o src/Entities/*.o flights_catalog
+	rm -f programa-principal programa-testes src/*.o  src/Catalog/*.o src/Entities/*.o

@@ -20,7 +20,7 @@ GList *get_list(PASSENGERS_CATALOG *catalog) {
     return catalog->passengers;
 }
 
-// TODO testar
+
 GList *find_flights_by_user(PASSENGERS_CATALOG *catalog, const char *user_id2) {
     GList *flights = NULL;
     // Percorrer a lista de passageiros
@@ -34,7 +34,7 @@ GList *find_flights_by_user(PASSENGERS_CATALOG *catalog, const char *user_id2) {
     return flights;
 }
 
-// TODO testar
+
 GList *find_users_by_flight(PASSENGERS_CATALOG *catalog, int flight_id2) {
     GList *users = NULL;
     // Percorrer a lista de passageiros
