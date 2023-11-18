@@ -7,6 +7,7 @@
 #include "Catalog/flights_catalog.h"
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
+#include "Catalog/passengers_catalog.h"
 #include "parser.h"
 
 #define MAX_PATH_SIZE 256
@@ -82,6 +83,39 @@ int main(int argc, char const *argv[]) {
     RESERVATION *retrieved_reservation = get_reservation_by_id(reservations_catalog, "Book0000000001");
     printf("Reservation ID: %s\n", get_reservation_id(retrieved_reservation));
 
+    
+    printf("\n");
+    //Cria o catálogo de passageiros
+    PASSENGERS_CATALOG *passengers_catalog = create_passengers_catalog();
+
+    // faz o parse do ficheiro de passageiros
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "passengers.csv");
+
+    parseCSV(filePath, 3, passengers_catalog);
+
+    // pesquisa de utilizadores por voo
+    printf("Users on flight 1:\n");
+    GList *users = find_users_by_flight(passengers_catalog, 1);
+    for (GList *node = users; node != NULL; node = node->next) {
+        printf("%s\n", (char *)node->data);
+    }
+    g_list_free(users);
+    printf("\n");
+
+    // pesquisa de voos por utilizador
+    printf("Flights of user Tbranco:\n");
+    GList *flights = find_flights_by_user(passengers_catalog, "TBranco");
+    for (GList *node = flights; node != NULL; node = node->next) {
+        printf("%d\n", GPOINTER_TO_INT(node->data));
+    }
+    g_list_free(flights);
+    printf("\n");
+
+
+
+
+
     char filePathI[MAX_PATH_SIZE];
     strcpy(filePathI, folderPathInput);
     strcat(filePathI, "input.txt");
@@ -96,6 +130,7 @@ int main(int argc, char const *argv[]) {
         free_users_catalog(users_catalog);
         free_flights_catalog(flights_catalog);
         free_reservations_catalog(reservations_catalog);
+        free_passengers_catalog(passengers_catalog);
 
         return 1;
     }
@@ -153,9 +188,15 @@ int main(int argc, char const *argv[]) {
     fclose(file);
 
     // Libera a memória no final do programa
+    printf("Freeing memory...\n");
+    printf("Users");
     free_users_catalog(users_catalog);
+    printf("Flights");
     free_flights_catalog(flights_catalog);
+    printf("Reservations");
     free_reservations_catalog(reservations_catalog);
+    printf("Passengers");
+    free_passengers_catalog(passengers_catalog);
 
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;

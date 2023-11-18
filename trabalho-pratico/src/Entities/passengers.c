@@ -1,12 +1,10 @@
 #include "Entities/passengers.h"
 
-#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct passenger {
-    gpointer key;
     int flight_id2;
     char *user_id2;
 } PASSENGER;
@@ -19,29 +17,29 @@ PASSENGER *create_passenger() {
 }
 
 void free_passenger(PASSENGER *p) {
-    free(p);
+    if (p->user_id2) free(p->user_id2);
+    if (p) free(p);
 }
-
-//setters
-
-//TODO implementar set_key()
 
 void set_flight_id2(PASSENGER *p, int flight_id2) {
     p->flight_id2 = flight_id2;
 }
 
 void set_user_id2(PASSENGER *p, const char *user_id2) {
+    if (p->user_id2) {  // Se user_id2 já foi definido, libertar memória para definir denovo
+        free(p->user_id2);
+    }
     p->user_id2 = strdup(user_id2);
 }
 
-//getters
-
-//TODO implementar get_key()
-
- int get_flight_id2(const PASSENGER *p) {
+int get_flight_id2(const PASSENGER *p) {
     return p->flight_id2;
 }
 
-const char* get_user_id2(const PASSENGER *p) {
+const char *get_user_id2(const PASSENGER *p) {
+    // retira o \n no final da string
+    if (p->user_id2[strlen(p->user_id2) - 1] == '\n') {
+        p->user_id2[strlen(p->user_id2) - 1] = '\0';
+    }
     return p->user_id2;
 }

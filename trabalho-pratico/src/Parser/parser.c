@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "Catalog/flights_catalog.h"
+#include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
 
@@ -78,10 +79,10 @@ bool isValidDate_Time(const char *dateTime) {
     return isValidDate(date) && isValidTime(time);
 }
 
-bool compareDates(const char* date1,const char* date2){
+bool compareDates(const char *date1, const char *date2) {
     // Convertendo strings de datas para inteiros
-    char* end= malloc(20);
-    char* begin= malloc(20);
+    char *end = malloc(20);
+    char *begin = malloc(20);
 
     end = strdup(date1);
     begin = strdup(date2);
@@ -99,7 +100,7 @@ bool compareDates(const char* date1,const char* date2){
         return 1;
     }
 
-    // 
+    //
     if (month1 < month2) {
         return -1;
     } else if (month1 > month2) {
@@ -111,12 +112,11 @@ bool compareDates(const char* date1,const char* date2){
         return -1;
     } else if (day1 > day2) {
         return 1;
-    } // As datas são iguais
+    }  // As datas são iguais
     return 0;
 }
 
-
-bool isValidDate_Compare(const char *first_date, const char *second_date) { // verifica se a  isValidDate_Compare funciona direto
+bool isValidDate_Compare(const char *first_date, const char *second_date) {  // verifica se a  isValidDate_Compare funciona direto
 
     int year, month, day;
     if (sscanf(second_date, "%4d/%2d/%2d ", &year, &month, &day) != 3) {
@@ -126,7 +126,7 @@ bool isValidDate_Compare(const char *first_date, const char *second_date) { // v
     char date[11];
     sscanf(second_date, "%10s", date);
 
-    return isValidDate(first_date) && compareDates(first_date,second_date);
+    return isValidDate(first_date) && compareDates(first_date, second_date);
 }
 
 // users
@@ -521,21 +521,39 @@ void writeToFilePassenger(char *line, const char *filename) {
     fclose(file);
 }
 
-void parseLine_passenger(char *line) {
+void parseLine_passenger(char *line, void *catalog) {
+    PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
     char *lineCopy = strdup(line);
 
+    // Cria um novo passageiro
+    PASSENGER *passenger = create_passenger();
+
     token = strtok(lineCopy, ";");
-    while (token != NULL && isValidField_passenger(token, fieldIndex)) {
+    while (token != NULL) {
+        if (isValidField_passenger(token, fieldIndex)) {
+            switch (fieldIndex) {
+                case 1:
+                    set_flight_id2(passenger, atoi(token));
+                    break;
+                case 2:
+                    set_user_id2(passenger, token);
+                    break;
+            }
+        } else {
+            writeToFilePassenger(line, "Resultados/passengers_errors.csv");
+            free(lineCopy);
+            free_passenger(passenger); 
+            return;
+        }
         token = strtok(NULL, ";");
         fieldIndex++;
     }
+
     if (fieldIndex == 3) {
-        while (token != NULL) {
-            printf("%s\n", token);
-            token = strtok(NULL, ";");
-        }
+        // adiciona o passageiro ao catálogo
+        insert_passenger(passengersCatalog, passenger);
     } else {
         writeToFilePassenger(line, "Resultados/passengers_errors.csv");
     }
@@ -561,12 +579,12 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 7:  // address
             return isValidNotNull(value);
         case 8:  // begin date
-            //begin_date = strdup(value);
+            // begin_date = strdup(value);
             return isValidDate(value);
         case 9:  // end_date
             return true;
             // isValidDate_Compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)(fix)
-        case 10: // price_per_night
+        case 10:  // price_per_night
             return isValidPricePerNight(value);
         case 11:  // include_breakfast
             return isValidInclude_Breakfast(value);
@@ -578,7 +596,6 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
             return true;
         default:
             break;
-        
     }
     return false;
 }
@@ -712,7 +729,7 @@ void parseCSV(const char *filepath, int token, void *catalog) {
 
     if (token == 3)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_passenger(line);
+            parseLine_passenger(line, catalog);
         }
 
     if (token == 4)
