@@ -3,6 +3,7 @@ programa-principal
 programa-testes
 *.csv
 Resultados/*
+*.txt
 
 # Prerequisites
 *.d

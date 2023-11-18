@@ -32,7 +32,8 @@ int calc_total_spent_by_user_id(RESERVATIONS_CATALOG *catalog, char* user_id){
     int total =0;
     gpointer key, value;
     GHashTableIter iter;
-    g_hash_table_iter_init(&iter, catalog); 
+    GHashTable *hash = catalog->reservations;
+    g_hash_table_iter_init(&iter, hash); 
 
     while(g_hash_table_iter_next(&iter, &key, &value)){
     
