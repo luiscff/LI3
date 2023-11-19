@@ -1,8 +1,7 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-#define MAX_PATH_SIZE 256
-
+#include "output.h"
 #include "queries.h"
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
