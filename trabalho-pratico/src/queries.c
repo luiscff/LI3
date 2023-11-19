@@ -54,17 +54,17 @@ int isNumber(char s[]) {
 int choose_entity(char* id) {
     // char* id_aux = malloc((strlen(id) + 1) * sizeof(char)); //aloca memoria para o id_aux do tamanho do id + 1
     // strncpy(id_aux, id, 4);
-    int entity=0;
+    int entity = 0;
     // printf("id_aux: %s\n", id_aux);
     printf("id: %s\n", id);
-    if (strncmp(id, "Book",4) == 0)
-        //Se o ID começar por Book, é uma reserva
+    if (strncmp(id, "Book", 4) == 0)
+        // Se o ID começar por Book, é uma reserva
         entity = 1;
     else if (isNumber(id) == TRUE)
-        //Se o ID for um número, é um voo
+        // Se o ID for um número, é um voo
         entity = 2;
     else
-        //Se não for nenhum dos anteriores, é um utilizador
+        // Se não for nenhum dos anteriores, é um utilizador
         entity = 3;
 
     // free(id_aux);
@@ -95,12 +95,15 @@ int calc_idade(char* birth_date) {
 
 //
 
-void query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id) {
+char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id) {
     char* aux = strdup(id);
     int entity = choose_entity(aux);
-    if (entity == 1) {  //
+    if (entity == 1) {  // se for uma reserva
         RESERVATION* reservation = get_reservation_by_id(rcatalog, aux);
-        char* output = malloc(144);
+        if (reservation == NULL) {
+            printf("Reservation not found\n");
+            return NULL;
+        }
         char* hotel_id = strdup(get_hotel_id(reservation));
         char* hotel_name = strdup(get_hotel_name(reservation));
         int hotel_stars = get_hotel_stars(reservation);
@@ -108,14 +111,32 @@ void query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CAT
         char* end_date = strdup(get_end_date(reservation));
         char* includes_breakfast = strdup(bool_to_string(get_includes_breakfast(reservation)));
 
+
+        int num_nights = calc_nights(begin_date, end_date);
         double total_price = calc_total_price(reservation);
 
-        printf("%s;%s;%d;%s;%s;%s;%.3f \n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, total_price);
+        // guarda os resultados todos numa string separados por ";" e retorna-a
+        char* result = malloc(256 * sizeof(char));
+        sprintf(result, "%s;%s;%d;%s;%s;%s;%d;%.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
+        
+        //frees
+        free(hotel_id);
+        free(hotel_name);
+        free(begin_date);
+        free(end_date);
+        free(includes_breakfast);
+
+        
+        return result;
     }
 
-    if (entity == 2) {
+    if (entity == 2) {  // se for um voo
         int flight_id = atoi(aux);
         FLIGHT* flight = get_flight_by_id(fcatalog, flight_id);
+        if (flight == NULL) {
+            printf("Flight not found\n");
+            return NULL;
+        }
         char* airline = strdup(get_airline(flight));
         char* plain_model = strdup(get_plain_model(flight));
         char* origin = strdup(get_origin(flight));
@@ -130,16 +151,32 @@ void query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CAT
         num_passengers = g_list_length(find_users_by_flight(pcatalog, flight_id));  // se find_users_by_flight retornar a lista com todos os users com este flight_id associado
 
         delay = calc_delay(schedule_arrival, schedule_departure, real_arrival, real_departure);
-        printf("%s;%s;%s;%s;%s;%s;%d,%.2f\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
+
+        // guarda os resultados todos numa string separados por ";" e retorna-a
+        char* result = malloc(256 * sizeof(char));
+        sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%.3f\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
+        
+        //frees
+        free(airline);
+        free(plain_model);
+        free(origin);
+        free(destination);
+        free(real_departure);
+        free(real_arrival);
+        free(schedule_departure);
+        free(schedule_arrival);
+
+        
+        return result;
     }
 
-    if (entity == 3) {
+    if (entity == 3) {  // se for um utilizador
         USER* user = get_user_by_id(ucatalog, aux);
         if (user == NULL) {
             printf("User not found\n");
-            return;
+            return NULL;
         }
-        char* name = strdup(get_name(user)); //TODO está a dar SEGFAULT aqui
+        char* name = strdup(get_name(user));
         char* gender = strdup(get_gender(user));
         char* birth_date = strdup(get_birth_date(user));
         int age = 0;
@@ -154,8 +191,20 @@ void query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CAT
         num_reservations = calc_num_reservations(rcatalog, aux);
         total_gasto = calc_total_spent_by_user_id(rcatalog, aux);
 
-        // testar
+        // guarda os resultados todos numa string separados por ";" e retorna-a
+        char* result = malloc(256 * sizeof(char));
+        sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%d\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto );
+        
+        //frees
+        free(name);
+        free(gender);
+        free(birth_date);
+        free(country_code);
+        free(passport);
+    
 
-        printf("%s;%s;%s;%d;%s;%s;%d,%d,%d\n", name, gender, birth_date, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        return result;
     }
+    printf("Invalid ID on query1\n");
+    return NULL;
 }

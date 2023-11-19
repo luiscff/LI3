@@ -10,6 +10,7 @@
 #include "Catalog/users_catalog.h"
 #include "interpreter.h"
 #include "parser.h"
+#include "output.h"
 
 // cria o ficheiro de resultados //TODO meter no ficheiro certo (algo tipo output.c)
 void create_result_file(const char *folderPath, int lineNumber, const char *content) {
@@ -95,13 +96,13 @@ int main(int argc, char const *argv[]) {
 
     // Libera a memória no final do programa
     printf("Freeing memory...\n");
-    printf("Users");
+    printf("Users\n");
     free_users_catalog(users_catalog);
-    printf("Flights");
+    printf("Flights\n");
     free_flights_catalog(flights_catalog);
-    printf("Reservations");
+    printf("Reservations\n");
     free_reservations_catalog(reservations_catalog);
-    printf("Passengers");
+    printf("Passengers\n");
     free_passengers_catalog(passengers_catalog);
 
     clock_t end = clock();
