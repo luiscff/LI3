@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
 
     // faz o parse do ficheiro de utilizadores
     strcpy(filePath, folderPathDataset);
-    strcat(filePath, "users.csv");
+    strcat(filePath, "/users.csv");
 
     parseCSV(filePath, 1, users_catalog);
 
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[]) {
 
     // faz o parse do ficheiro de voos
     strcpy(filePath, folderPathDataset);
-    strcat(filePath, "flights.csv");
+    strcat(filePath, "/flights.csv");
 
     parseCSV(filePath, 2, flights_catalog);
 
@@ -69,7 +69,7 @@ int main(int argc, char const *argv[]) {
 
     // faz o parse do ficheiro de reservas
     strcpy(filePath, folderPathDataset);
-    strcat(filePath, "reservations.csv");
+    strcat(filePath, "/reservations.csv");
 
     parseCSV(filePath, 4, reservations_catalog);
 
@@ -78,7 +78,7 @@ int main(int argc, char const *argv[]) {
 
     // faz o parse do ficheiro de passageiros
     strcpy(filePath, folderPathDataset);
-    strcat(filePath, "passengers.csv");
+    strcat(filePath, "/passengers.csv");
 
     parseCSV(filePath, 3, passengers_catalog);
 

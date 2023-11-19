@@ -20,6 +20,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             printf("Execuntando query 1 com token: %s\n",nextToken);
             query1(u_catalog, f_catalog, r_catalog, p_catalog, nextToken);
             //TODO fazer a query 1 chamar o futuro ficheiro output.c que vai criar o ficheiro com o resultado da query
+            //ou fazer a query 1 retornar o resultado e chama-se o output.c aqui
         } else if (strcmp(token, "2") == 0) {
             // ignora
 

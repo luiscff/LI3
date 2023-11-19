@@ -52,18 +52,22 @@ int isNumber(char s[]) {
 }
 
 int choose_entity(char* id) {
-    char* id_aux = malloc((strlen(id) + 1) * sizeof(char)); //aloca memoria para o id_aux do tamanho do id + 1
-    strncpy(id_aux, id, 4);
-    int entity;
-
-    if (strcmp(id_aux, "Book") == TRUE)
+    // char* id_aux = malloc((strlen(id) + 1) * sizeof(char)); //aloca memoria para o id_aux do tamanho do id + 1
+    // strncpy(id_aux, id, 4);
+    int entity=0;
+    // printf("id_aux: %s\n", id_aux);
+    printf("id: %s\n", id);
+    if (strncmp(id, "Book",4) == 0)
+        //Se o ID começar por Book, é uma reserva
         entity = 1;
-    else if (isNumber(id_aux) == TRUE)
+    else if (isNumber(id) == TRUE)
+        //Se o ID for um número, é um voo
         entity = 2;
     else
+        //Se não for nenhum dos anteriores, é um utilizador
         entity = 3;
 
-    free(id_aux);
+    // free(id_aux);
     return entity;
 }
 
@@ -131,6 +135,10 @@ void query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CAT
 
     if (entity == 3) {
         USER* user = get_user_by_id(ucatalog, aux);
+        if (user == NULL) {
+            printf("User not found\n");
+            return;
+        }
         char* name = strdup(get_name(user)); //TODO está a dar SEGFAULT aqui
         char* gender = strdup(get_gender(user));
         char* birth_date = strdup(get_birth_date(user));
