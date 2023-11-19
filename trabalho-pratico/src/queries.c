@@ -92,8 +92,12 @@ int calc_idade(char* birth_date) {
     }  // Ajustar a idade caso ainda nao tenha feito anos nesse mesmo ano
     return idade;
 }
+// aux 9
+int sort_function_q8(gconstpointer a, gconstpointer b){
+    return strcmp(a,b);
+}
 
-//
+//--------------
 
 char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id) {
     char* aux = strdup(id);
@@ -208,3 +212,64 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
     printf("Invalid ID on query1\n");
     return NULL;
 }
+
+double query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
+    int res = 0;
+    int total = 0;
+    gpointer key, value;
+    GHashTableIter iter;
+    GHashTable* hash = get_reservations_hash(rcatalog);
+    g_hash_table_iter_init(&iter, hash);
+
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        RESERVATION* reservation = value;
+        if (strcmp(hotel_id, get_hotel_id(reservation)) == 0) {
+            res++;
+            total += get_rating(reservation);
+        }
+    }
+    free(hash);
+    return total/res;
+}
+
+int verificaPrefixo(const char *string, const char *prefixo) {
+    size_t tamanhoPrefixo = strlen(prefixo);
+
+    // Compara os primeiros 'tamanhoPrefixo' caracteres
+    int resultadoComparacao = strncmp(string, prefixo, tamanhoPrefixo);
+
+    // Se resultadoComparacao for 0, significa que o prefixo foi encontrado
+    return (resultadoComparacao == 0);
+}
+
+
+
+
+void query9 (USERS_CATALOG* ucatalog, char* prefix){
+    gpointer key, value;
+    char* current = malloc(30);
+    GList *aux = NULL;
+    GHashTableIter iter;
+    GHashTable* hash = get_users_hash(ucatalog);
+    g_hash_table_iter_init(&iter, hash);
+
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        USER* user = value;
+        current = strdup(get_id(user));
+        if (verificaPrefixo(current,prefix)) g_list_append(aux,current);
+    }
+
+    GList* sorted = g_list_sort(aux,sort_function_q8);
+    int tamanho = g_list_length(sorted);
+    for (size_t i = 0; i < tamanho; i++) {
+        char* curr_id = g_list_nth_data(sorted, i);
+        printf("%s;%s;\n", curr_id,get_name(curr_id));
+    }
+
+    free(hash);
+    free(current);
+    free(aux);
+    free(sorted);
+}
+
+
