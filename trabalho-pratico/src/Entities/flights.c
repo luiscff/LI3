@@ -7,7 +7,7 @@
 
 
 typedef struct flight {
-    gpointer flight_id;  // identificador do voo (se for 0 é inválido) || futura key
+    char* flight_id;  // identificador do voo (se for 0 é inválido) || futura key
     char *airline;
     char *plain_model;
     int total_seats;
@@ -24,7 +24,7 @@ typedef struct flight {
 
 FLIGHT *create_flight() {
     FLIGHT *new_flight = malloc(sizeof(struct flight));
-    new_flight->flight_id = 0;  // id 0 significa que é inválido
+    new_flight->flight_id = NULL;  // id 0 significa que é inválido
     new_flight->airline = NULL;
     new_flight->plain_model = NULL;
     new_flight->origin = NULL;
@@ -55,10 +55,7 @@ void free_flight(FLIGHT *flight) {
 }
 
 // Getters
-int get_flight_id(const FLIGHT *flight) {
-    int id = GPOINTER_TO_INT(flight->flight_id);
-    return id;
-}
+const char *get_flight_id(const FLIGHT *f) { return f->flight_id; }
 const char *get_airline(const FLIGHT *f) { return f->airline; }
 const char *get_plain_model(const FLIGHT *f) { return f->plain_model; }
 int get_total_seats(const FLIGHT *f) { return f->total_seats; }
@@ -76,10 +73,9 @@ const char *get_notes(const FLIGHT *f) { return f->notes; }
 
 // Setters
 
-void set_flight_id(FLIGHT *flight, const char *flight_id_string) {
-    int flight_id_int = atoi(flight_id_string);
-    gpointer flight_id_int_pointer = GINT_TO_POINTER(flight_id_int);
-    flight->flight_id = flight_id_int_pointer;
+void set_flight_id(FLIGHT *flight, const char *id) {
+    if (flight->flight_id) free(flight->flight_id);
+    flight->flight_id = strdup(id);
 }
 
 void set_airline(FLIGHT *f, const char *airline) {

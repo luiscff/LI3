@@ -8,6 +8,7 @@
 
 
 char * query1(USERS_CATALOG *ucatalog, FLIGHTS_CATALOG *fcatalog, RESERVATIONS_CATALOG *rcatalog,PASSENGERS_CATALOG *pcatalog, char *id);
+double query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id);
 
-
+void query9 (USERS_CATALOG* ucatalog, char* prefix);
 #endif
