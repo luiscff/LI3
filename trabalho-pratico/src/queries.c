@@ -259,7 +259,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
     return NULL;
 }
 
-double query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
+char * query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
     int res = 0;
     int total = 0;
     gpointer key, value;
@@ -274,8 +274,16 @@ double query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
             total += get_rating(reservation);
         }
     }
-    free(hash);
-    return total/res;
+
+    if (res == 0) {
+        printf("erro divisão por 0\n");
+        return "";
+    }
+    double resultado = total/res;
+    // guarda os resultados todos numa string separados por ";" e retorna-a
+    char* output = malloc(256*sizeof(char));
+    sprintf(output, "%.3f\n", resultado);
+    return output;
 }
 
 
@@ -337,7 +345,6 @@ char* query9 (USERS_CATALOG* ucatalog, char* token){
         sprintf(output,"%s;%s;\n", get_id(curr_user),get_name(curr_user));
     }
 
-    //free(hash); TODO:ver como dar free a isto
     free(current);
     free(aux);
     free(sorted);

@@ -18,7 +18,7 @@ void create_result_file(const char *folderPath, int lineNumber, const char *cont
         }
     }
     char filePath[MAX_PATH_SIZE];
-    snprintf(filePath, MAX_PATH_SIZE, "%s/command%d.txt", resultsFolderPath, lineNumber);
+    snprintf(filePath, MAX_PATH_SIZE, "%s/command%d_output.txt", resultsFolderPath, lineNumber);
 
     FILE *resultFile = fopen(filePath, "w");
     if (resultFile == NULL) {

@@ -20,20 +20,23 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             printf("Execuntando query 1 com token: %s\n",nextToken);
             char *result = query1(u_catalog, f_catalog, r_catalog, p_catalog, nextToken);
             create_result_file("Resultados", lineNumber, result);
+            free(result);
 
         } else if (strcmp(token, "2") == 0) {
             // ignora
         } else if (strcmp(token, "3") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Execuntando query 3 com token: %s\n",nextToken);
-            char *result = query1(u_catalog,f_catalog,r_catalog,p_catalog,nextToken);
+            char *result = query3(r_catalog,nextToken);
             create_result_file("Resultados", lineNumber, result);
+            free(result);
 
         } else if (strcmp(token, "4") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Execuntando query 4 com token: %s\n",nextToken);
             char *result = query4(r_catalog,nextToken);
             create_result_file("Resultados", lineNumber, result);
+            free(result);
 
         } else if (strcmp(token, "5") == 0) {
             // ignora
