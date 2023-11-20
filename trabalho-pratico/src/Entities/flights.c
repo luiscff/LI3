@@ -1,10 +1,10 @@
 #include "Entities/flights.h"
-#include <time.h>
+
 #include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h> 
+#include <time.h>
 
 typedef struct flight {
     gpointer flight_id;  // identificador do voo (se for 0 é inválido) || futura key
@@ -78,7 +78,7 @@ const char *get_notes(const FLIGHT *f) { return f->notes; }
 
 void set_flight_id(FLIGHT *flight, const char *id) {
     if (flight->flight_id) free(flight->flight_id);
-    //convert to gpointer to store in GHashTable
+    // convert to gpointer to store in GHashTable
     flight->flight_id = GINT_TO_POINTER(atoi(id));
 }
 
@@ -139,18 +139,18 @@ void set_notes(FLIGHT *f, const char *notes) {
     f->notes = strdup(notes);
 }
 
-
-int calc_departure_delay(char* schedule_departure, char* real_departure){
-    int delay = -1;   
-    struct tm schedule_departure_tm, real_departure_tm;
+int calc_departure_delay(char *schedule_departure, char *real_departure) {
+    double delay = -1.0;
+    struct tm schedule_departure_tm = {0};
+    struct tm real_departure_tm = {0};
 
     if (sscanf(schedule_departure, "%4d/%2d/%2d %2d:%2d:%2d",
-           &schedule_departure_tm.tm_year, &schedule_departure_tm.tm_mon, &schedule_departure_tm.tm_mday,
-           &schedule_departure_tm.tm_hour, &schedule_departure_tm.tm_min, &schedule_departure_tm.tm_sec) != 6) return delay;
+               &schedule_departure_tm.tm_year, &schedule_departure_tm.tm_mon, &schedule_departure_tm.tm_mday,
+               &schedule_departure_tm.tm_hour, &schedule_departure_tm.tm_min, &schedule_departure_tm.tm_sec) != 6) return delay;
 
     if (sscanf(real_departure, "%4d/%2d/%2d %2d:%2d:%2d",
-           &real_departure_tm.tm_year, &real_departure_tm.tm_mon, &real_departure_tm.tm_mday,
-           &real_departure_tm.tm_hour, &real_departure_tm.tm_min, &real_departure_tm.tm_sec) != 6) return delay;
+               &real_departure_tm.tm_year, &real_departure_tm.tm_mon, &real_departure_tm.tm_mday,
+               &real_departure_tm.tm_hour, &real_departure_tm.tm_min, &real_departure_tm.tm_sec) != 6) return delay;
 
     // Adjust the year and month fields, because struct tm counts years since 1900 and months from 0
     schedule_departure_tm.tm_year -= 1900;
@@ -163,5 +163,13 @@ int calc_departure_delay(char* schedule_departure, char* real_departure){
 
     delay = difftime(real_departure_time, schedule_departure_time);
 
-    return delay;
+    printf("schedule_departure: %s\n", schedule_departure);
+    printf("real_departure: %s\n", real_departure);
+    printf("schedule_departure_tm: %d/%d/%d %d:%d:%d\n", schedule_departure_tm.tm_year, schedule_departure_tm.tm_mon, schedule_departure_tm.tm_mday, schedule_departure_tm.tm_hour, schedule_departure_tm.tm_min, schedule_departure_tm.tm_sec);
+    printf("real_departure_tm: %d/%d/%d %d:%d:%d\n", real_departure_tm.tm_year, real_departure_tm.tm_mon, real_departure_tm.tm_mday, real_departure_tm.tm_hour, real_departure_tm.tm_min, real_departure_tm.tm_sec);
+    printf("schedule_departure_time: %ld\n", (long)schedule_departure_time);
+    printf("real_departure_time: %ld\n", (long)real_departure_time);
+    printf("delay: %f\n", delay);
+
+    return (int) delay;
 }
