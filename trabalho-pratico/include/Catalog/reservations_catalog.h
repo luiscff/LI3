@@ -16,8 +16,4 @@ RESERVATION* get_reservation_by_id(RESERVATIONS_CATALOG *catalog, char *id);
 
 void free_reservations_catalog(RESERVATIONS_CATALOG *catalog);
 
-int calc_total_spent_by_user_id(RESERVATIONS_CATALOG *catalog, char* user_id);
-
-
-
 #endif// RESERVATIONS_CATALOG_H

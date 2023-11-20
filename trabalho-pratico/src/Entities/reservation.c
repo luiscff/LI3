@@ -124,8 +124,7 @@ double calc_total_price(RESERVATION *r){
     const char* end = get_end_date(r);
     int num_nights = calc_nights(begin,end);
     
-    total_price = ppn * num_nights * ((ppn * num_nights) /100) * tax;
-
+    total_price = ppn * num_nights + (((ppn * num_nights) / ((double)100)) * ((double)tax));
     return total_price;
 }
 

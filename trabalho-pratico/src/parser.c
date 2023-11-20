@@ -313,10 +313,10 @@ void parseLine_user(char *line, void *catalog) {
                     set_email(user, token);
                     break;
                 case 4:
-                    set_birth_date(user, token);
+                    set_phone_number(user, token);
                     break;
                 case 5:
-                    set_phone_number(user, token);
+                    set_birth_date(user, token);
                     break;
                 case 6:
                     set_gender(user, token);

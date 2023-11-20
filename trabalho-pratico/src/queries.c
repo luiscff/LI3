@@ -10,8 +10,8 @@
 
 // aux query 1
 
-int calc_total_spent_by_user_id(RESERVATIONS_CATALOG* catalog, char* user_id) {
-    int total = 0;
+double calc_total_spent_by_user_id(RESERVATIONS_CATALOG* catalog, char* user_id) {
+    double total = 0;
     gpointer key, value;
     GHashTableIter iter;
     GHashTable* hash = get_reservations_hash(catalog);
@@ -56,7 +56,6 @@ int choose_entity(char* id) {
     // strncpy(id_aux, id, 4);
     int entity = 0;
     // printf("id_aux: %s\n", id_aux);
-    printf("id: %s\n", id);
     if (strncmp(id, "Book", 4) == 0)
         // Se o ID começar por Book, é uma reserva
         entity = 1;
@@ -230,7 +229,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         char* passport = strdup(get_passport(user));
         int num_flight = 0;
         int num_reservations = 0;
-        int total_gasto = 0;
+        double total_gasto = 0;
 
         age = calc_idade(birth_date);
         num_flight = g_list_length(find_flights_by_user(pcatalog, aux));  // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
@@ -239,9 +238,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
-        sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%d\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
-        printf("birth_date: %s\n", birth_date);
-        printf("%s\n", result);
+        sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
 
         // frees
         free(name);
