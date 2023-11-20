@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <time.h> 
 
 typedef struct flight {
-    char* flight_id;  // identificador do voo (se for 0 é inválido) || futura key
+    gpointer flight_id;  // identificador do voo (se for 0 é inválido) || futura key
     char *airline;
     char *plain_model;
     int total_seats;
@@ -24,7 +24,7 @@ typedef struct flight {
 
 FLIGHT *create_flight() {
     FLIGHT *new_flight = malloc(sizeof(struct flight));
-    new_flight->flight_id = NULL;  // id 0 significa que é inválido
+    new_flight->flight_id = 0;  // id 0 significa que é inválido
     new_flight->airline = NULL;
     new_flight->plain_model = NULL;
     new_flight->origin = NULL;
@@ -55,7 +55,10 @@ void free_flight(FLIGHT *flight) {
 }
 
 // Getters
-const char *get_flight_id(const FLIGHT *f) { return f->flight_id; }
+int get_flight_id(const FLIGHT *flight) {
+    int id = GPOINTER_TO_INT(flight->flight_id);
+    return id;
+}
 const char *get_airline(const FLIGHT *f) { return f->airline; }
 const char *get_plain_model(const FLIGHT *f) { return f->plain_model; }
 int get_total_seats(const FLIGHT *f) { return f->total_seats; }
@@ -135,14 +138,27 @@ void set_notes(FLIGHT *f, const char *notes) {
     f->notes = strdup(notes);
 }
 
+
 double calc_delay(char* schedule_arrival, char* schedule_departure, char* real_arrival, char* real_departure){
     double delay = -1;   
         struct tm schedule_arrival_tm,schedule_departure_tm, real_arrival_tm, real_departure_tm;
 
-        if (strptime(schedule_departure, "%Y/%m/%d %H:%M:%S", &schedule_departure_tm) == NULL) return delay;
-        if (strptime(schedule_arrival, "%Y/%m/%d %H:%M:%S", &schedule_arrival_tm)==0) return delay;
-        if (strptime(real_departure, "%Y/%m/%d %H:%M:%S", &real_departure_tm)==0) return delay;
-        if (strptime(real_arrival, "%Y/%m/%d %H:%M:%S", &real_arrival_tm)==0) return delay;
+        if (sscanf(schedule_departure, "%d/%d/%d %d:%d:%d",
+               &schedule_departure_tm.tm_year, &schedule_departure_tm.tm_mon, &schedule_departure_tm.tm_mday,
+               &schedule_departure_tm.tm_hour, &schedule_departure_tm.tm_min, &schedule_departure_tm.tm_sec) != 6) return delay;
+
+        if (sscanf(schedule_arrival, "%d/%d/%d %d:%d:%d",
+               &schedule_arrival_tm.tm_year, &schedule_arrival_tm.tm_mon, &schedule_arrival_tm.tm_mday,
+               &schedule_arrival_tm.tm_hour, &schedule_arrival_tm.tm_min, &schedule_arrival_tm.tm_sec) != 6) return delay;
+
+        if (sscanf(real_departure, "%d/%d/%d %d:%d:%d",
+               &real_departure_tm.tm_year, &real_departure_tm.tm_mon, &real_departure_tm.tm_mday,
+               &real_departure_tm.tm_hour, &real_departure_tm.tm_min, &real_departure_tm.tm_sec) != 6) return delay;
+
+        if (sscanf(real_arrival, "%d/%d/%d %d:%d:%d",
+               &real_arrival_tm.tm_year, &real_arrival_tm.tm_mon, &real_arrival_tm.tm_mday,
+               &real_arrival_tm.tm_hour, &real_arrival_tm.tm_min, &real_arrival_tm.tm_sec) != 6) return delay;
+
 
         time_t scheduled_arrival_time = mktime(&schedule_arrival_tm);
         time_t schedule_departure_time = mktime(&schedule_departure_tm);

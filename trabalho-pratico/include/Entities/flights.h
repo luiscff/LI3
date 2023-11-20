@@ -8,7 +8,7 @@ FLIGHT *create_flight();
 void free_flight(FLIGHT *flight);
 
 // Getters
-const char *get_flight_id(const FLIGHT *f);
+int get_flight_id(const FLIGHT *f);
 const char *get_airline(const FLIGHT *f);
 const char *get_plain_model(const FLIGHT *f);
 int get_total_seats(const FLIGHT *f);

@@ -279,9 +279,8 @@ double query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
 }
 
 
-void query4 (RESERVATIONS_CATALOG* rcatalog, char *hotel_id){
+char* query4 (RESERVATIONS_CATALOG* rcatalog, char *hotel_id){
     gpointer key, value;
-    char* current = malloc(30);
     GList *aux = NULL;
     GHashTableIter iter;
     GHashTable* hash = get_reservations_hash(rcatalog);
@@ -297,12 +296,16 @@ void query4 (RESERVATIONS_CATALOG* rcatalog, char *hotel_id){
 
     GList* sorted = g_list_sort(aux,sort_function_q4);//TODO: sort_function_q4
     int tamanho = g_list_length(sorted);
+    char* output;
     for (size_t i = 0; i < tamanho; i++) {
         int total_price = 0;
+        output = malloc(sizeof(char[30]));
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
         calc_total_price(curr_res);
-        printf(" %s; %s; %s, %s, %d, %d\n", get_reservation_id(curr_res), get_begin_date(curr_res),get_end_date(curr_res),get_user_id(curr_res), get_rating(curr_res),total_price);
+        sprintf(output," %s; %s; %s, %s, %d, %d\n", get_reservation_id(curr_res), get_begin_date(curr_res),get_end_date(curr_res),get_user_id(curr_res), get_rating(curr_res),total_price);
     }
+
+    return output;
 
 
 
@@ -310,11 +313,13 @@ void query4 (RESERVATIONS_CATALOG* rcatalog, char *hotel_id){
 
 }
 
-void query9 (USERS_CATALOG* ucatalog, char* prefix){
+char* query9 (USERS_CATALOG* ucatalog, char* token){
+    char* prefix = strdup(token);
     gpointer key, value;
     char* current = malloc(30);
     GList *aux = NULL;
     GHashTableIter iter;
+    char* output;
     GHashTable* hash = get_users_hash(ucatalog);
     g_hash_table_iter_init(&iter, hash);
 
@@ -328,13 +333,16 @@ void query9 (USERS_CATALOG* ucatalog, char* prefix){
     int tamanho = g_list_length(sorted);
     for (size_t i = 0; i < tamanho; i++) {
         USER* curr_user = g_list_nth_data(sorted, i);
-        printf("%s;%s;\n", get_id(curr_user),get_name(curr_user));
+        output = malloc(sizeof(char[30]));
+        sprintf(output,"%s;%s;\n", get_id(curr_user),get_name(curr_user));
     }
 
-    free(hash);
+    //free(hash); TODO:ver como dar free a isto
     free(current);
     free(aux);
     free(sorted);
+
+    return output;
 }
 
 
