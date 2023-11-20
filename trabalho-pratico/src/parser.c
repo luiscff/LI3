@@ -209,6 +209,13 @@ bool isValidInclude_Breakfast(const char *str) {  // strcasecmp is case insensit
     return (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
 }
 
+bool isTrueOrFalse (const char *str) {
+    if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0) return false;
+    else if (strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0) return true;
+    printf ("Invalid input on parser.c\n");
+    return false;
+}
+
 bool isValidRating(const char *str) {
     if (str[0] == '\0') {  // Allow empty strings
         return true;
@@ -667,7 +674,7 @@ void parseLine_reservation(char *line, void *catalog) {
                     set_price_per_night(reservation, atoi(token));
                     break;
                 case 11:
-                    set_includes_breakfast(reservation, isValidInclude_Breakfast(token));
+                    set_includes_breakfast(reservation, isTrueOrFalse(token));
                     break;
                 case 12:
                     set_room_details(reservation, token);

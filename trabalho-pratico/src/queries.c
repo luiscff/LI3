@@ -73,9 +73,9 @@ int choose_entity(char* id) {
 
 char* bool_to_string(bool boolean) {
     if (boolean == true)
-        return "true";
+        return "True";
     else
-        return "false";
+        return "False";
 }
 
 int calc_idade(char* birth_date) {
@@ -277,7 +277,7 @@ char * query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
 
     if (res == 0) {
         printf("erro divisão por 0\n");
-        return "";
+        return NULL;
     }
     double resultado = total/res;
     // guarda os resultados todos numa string separados por ";" e retorna-a
