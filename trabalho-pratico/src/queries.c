@@ -192,15 +192,15 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         char* schedule_departure = strdup(get_schedule_departure_date(flight));
         char* schedule_arrival = strdup(get_schedule_arrival_date(flight));
         int num_passengers = 0;  // necessario percorrer o ficheiro dos flights e ver quantos passageiros
-        double delay = 0;
+        int delay = 0;
 
         num_passengers = g_list_length(find_users_by_flight(pcatalog, flight_id));  // se find_users_by_flight retornar a lista com todos os users com este flight_id associado
 
-        delay = calc_delay(schedule_arrival, schedule_departure, real_arrival, real_departure);
+        delay = calc_departure_delay (schedule_departure, real_departure);
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
-        sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%.3f\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
+        sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%d\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
 
         // frees
         free(airline);
@@ -298,11 +298,14 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     int tamanho = g_list_length(sorted);
     char* output;
     for (size_t i = 0; i < tamanho; i++) {
-        int total_price = 0;
+        double total_price = 0;
         output = malloc(sizeof(char[30]));
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
-        calc_total_price(curr_res);
-        sprintf(output, " %s;%s;%s;%s;%d;%d\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        total_price = calc_total_price(curr_res);
+        
+        sprintf(output, " %s;%s;%s;%s;%d;%f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        printf("%s",output);
+        
     }
 
     return output;
@@ -330,11 +333,13 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
         USER* curr_user = g_list_nth_data(sorted, i);
         output = malloc(sizeof(char[30]));
         sprintf(output, "%s;%s;\n", get_id(curr_user), get_name(curr_user));
+        
     }
 
     free(current);
-    free(aux);
-    free(sorted);
+    free(prefix);
+    
+   
 
     return output;
 }

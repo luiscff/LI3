@@ -36,6 +36,6 @@ void set_real_arrival_date(FLIGHT *f, const char *real_arrival_date);
 void set_pilot(FLIGHT *f, const char *pilot);
 void set_copilot(FLIGHT *f, const char *copilot);
 void set_notes(FLIGHT *f, const char *notes);
-double calc_delay(char* schedule_arrival, char* schedule_departure, char* real_arrival, char* real_departure);
+int calc_departure_delay(char* schedule_departure, char* real_departure);
 
 #endif

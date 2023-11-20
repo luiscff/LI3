@@ -139,33 +139,28 @@ void set_notes(FLIGHT *f, const char *notes) {
 }
 
 
-double calc_delay(char* schedule_arrival, char* schedule_departure, char* real_arrival, char* real_departure){
-    double delay = -1;   
-        struct tm schedule_arrival_tm,schedule_departure_tm, real_arrival_tm, real_departure_tm;
+int calc_departure_delay(char* schedule_departure, char* real_departure){
+    int delay = -1;   
+    struct tm schedule_departure_tm, real_departure_tm;
 
-        if (sscanf(schedule_departure, "%d/%d/%d %d:%d:%d",
-               &schedule_departure_tm.tm_year, &schedule_departure_tm.tm_mon, &schedule_departure_tm.tm_mday,
-               &schedule_departure_tm.tm_hour, &schedule_departure_tm.tm_min, &schedule_departure_tm.tm_sec) != 6) return delay;
+    if (sscanf(schedule_departure, "%4d/%2d/%2d %2d:%2d:%2d",
+           &schedule_departure_tm.tm_year, &schedule_departure_tm.tm_mon, &schedule_departure_tm.tm_mday,
+           &schedule_departure_tm.tm_hour, &schedule_departure_tm.tm_min, &schedule_departure_tm.tm_sec) != 6) return delay;
 
-        if (sscanf(schedule_arrival, "%d/%d/%d %d:%d:%d",
-               &schedule_arrival_tm.tm_year, &schedule_arrival_tm.tm_mon, &schedule_arrival_tm.tm_mday,
-               &schedule_arrival_tm.tm_hour, &schedule_arrival_tm.tm_min, &schedule_arrival_tm.tm_sec) != 6) return delay;
+    if (sscanf(real_departure, "%4d/%2d/%2d %2d:%2d:%2d",
+           &real_departure_tm.tm_year, &real_departure_tm.tm_mon, &real_departure_tm.tm_mday,
+           &real_departure_tm.tm_hour, &real_departure_tm.tm_min, &real_departure_tm.tm_sec) != 6) return delay;
 
-        if (sscanf(real_departure, "%d/%d/%d %d:%d:%d",
-               &real_departure_tm.tm_year, &real_departure_tm.tm_mon, &real_departure_tm.tm_mday,
-               &real_departure_tm.tm_hour, &real_departure_tm.tm_min, &real_departure_tm.tm_sec) != 6) return delay;
+    // Adjust the year and month fields, because struct tm counts years since 1900 and months from 0
+    schedule_departure_tm.tm_year -= 1900;
+    schedule_departure_tm.tm_mon -= 1;
+    real_departure_tm.tm_year -= 1900;
+    real_departure_tm.tm_mon -= 1;
 
-        if (sscanf(real_arrival, "%d/%d/%d %d:%d:%d",
-               &real_arrival_tm.tm_year, &real_arrival_tm.tm_mon, &real_arrival_tm.tm_mday,
-               &real_arrival_tm.tm_hour, &real_arrival_tm.tm_min, &real_arrival_tm.tm_sec) != 6) return delay;
+    time_t schedule_departure_time = mktime(&schedule_departure_tm);
+    time_t real_departure_time = mktime(&real_departure_tm);
 
-
-        time_t scheduled_arrival_time = mktime(&schedule_arrival_tm);
-        time_t schedule_departure_time = mktime(&schedule_departure_tm);
-        time_t real_arrival_time = mktime(&real_arrival_tm);
-        time_t real_departure_time = mktime(&real_departure_tm);
-
-        delay = difftime(real_departure_time, schedule_departure_time) + difftime(real_arrival_time, scheduled_arrival_time);;
+    delay = difftime(real_departure_time, schedule_departure_time);
 
     return delay;
 }
