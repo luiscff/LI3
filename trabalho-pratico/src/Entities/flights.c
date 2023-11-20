@@ -78,7 +78,8 @@ const char *get_notes(const FLIGHT *f) { return f->notes; }
 
 void set_flight_id(FLIGHT *flight, const char *id) {
     if (flight->flight_id) free(flight->flight_id);
-    flight->flight_id = atoi(id);
+    //convert to gpointer to store in GHashTable
+    flight->flight_id = GINT_TO_POINTER(atoi(id));
 }
 
 void set_airline(FLIGHT *f, const char *airline) {
