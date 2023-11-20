@@ -30,3 +30,97 @@ void create_result_file(const char *folderPath, int lineNumber, const char *cont
     else fprintf(resultFile, "%s", content); // Escreve o conteúdo no ficheiro
     fclose(resultFile);
 }
+
+void writeToErrorFileFlight(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "id;airline;plane_model;total_seats;origin;destination;schedule_departure_date;schedule_arrival_date;real_departure_date;real_arrival_date;pilot;copilot;notes\n");
+    }
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
+
+void writeToErrorFilePassenger(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "flight_id;user_id\n");
+    }
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
+
+void writeToErrorFileReservation(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "id;user_id;hotel_id;hotel_name;hotel_stars;city_tax;address;begin_date;end_date;price_per_night;includes_breakfast;room_details;rating;comment;\n");
+    }
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}
+
+void writeToErrorFileUser(char *line, const char *filename) {
+    char *token = strtok(line, ",");
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo.\n");
+        return;
+    }
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    if (file_size == 0) {
+        fprintf(file, "id;name;email;phone_number;birth_date;sex;passport;country_code;address;account_creation;pay_method;account_status\n");
+    } else {
+    }
+
+    while (token != NULL) {
+        fprintf(file, "%s", token);
+        token = strtok(NULL, ",");
+        if (token != NULL) {
+            fprintf(file, ";");
+        }
+    }
+    fclose(file);
+}

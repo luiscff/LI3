@@ -10,6 +10,7 @@
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
+#include "output.h"
 
 // #define MAX_NAME 256
 // #define MAX_EMAIL 256
@@ -265,30 +266,7 @@ bool isValidField_user(const char *value, int fieldIndex) {
     return false;
 }
 
-void writeToFileUser(char *line, const char *filename) {
-    char *token = strtok(line, ",");
-    FILE *file = fopen(filename, "a");
 
-    if (file == NULL) {
-        fprintf(stderr, "Erro ao abrir o arquivo.\n");
-        return;
-    }
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    if (file_size == 0) {
-        fprintf(file, "id;name;email;phone_number;birth_date;sex;passport;country_code;address;account_creation;pay_method;account_status;\n");
-    } else {
-    }
-
-    while (token != NULL) {
-        fprintf(file, "%s", token);
-        token = strtok(NULL, ",");
-        if (token != NULL) {
-            fprintf(file, ";");
-        }
-    }
-    fclose(file);
-}
 
 void parseLine_user(char *line, void *catalog) {
     USERS_CATALOG *usersCatalog = (USERS_CATALOG *)catalog;
@@ -341,7 +319,7 @@ void parseLine_user(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToFileUser(line, "Resultados/users_errors.csv");
+            writeToErrorFileUser(line, "Resultados/users_errors.csv");
             free(lineCopy);
             free_user(user);  // Adicione esta linha
             return;
@@ -354,7 +332,7 @@ void parseLine_user(char *line, void *catalog) {
         // adiciona o user ao catálogo
         insert_user(usersCatalog, user, get_id(user));
     } else {
-        writeToFileUser(line, "Resultados/users_errors.csv");
+        writeToErrorFileUser(line, "Resultados/users_errors.csv");
     }
 
     free(lineCopy);
@@ -395,28 +373,7 @@ bool isValidField_flight(const char *value, int fieldIndex) {
     return false;
 }
 
-void writeToFileFlight(char *line, const char *filename) {
-    char *token = strtok(line, ",");
-    FILE *file = fopen(filename, "a");
 
-    if (file == NULL) {
-        fprintf(stderr, "Erro ao abrir o arquivo.\n");
-        return;
-    }
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    if (file_size == 0) {
-        fprintf(file, "id;airline;plane_model;total_seats;origin;destination;schedule_departure_date;schedule_arrival_date;real_departure_date;real_arrival_date;pilot;copilot;notes;\n");
-    }
-    while (token != NULL) {
-        fprintf(file, "%s", token);
-        token = strtok(NULL, ",");
-        if (token != NULL) {
-            fprintf(file, ";");
-        }
-    }
-    fclose(file);
-}
 
 void parseLine_flight(char *line, void *catalog) {
     FLIGHTS_CATALOG *flightsCatalog = (FLIGHTS_CATALOG *)catalog;
@@ -472,7 +429,7 @@ void parseLine_flight(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToFileFlight(line, "Resultados/flights_errors.csv");
+            writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
             free(lineCopy);
             free_flight(flight);  // Adicione esta linha
             return;
@@ -485,7 +442,7 @@ void parseLine_flight(char *line, void *catalog) {
         // adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
     } else {
-        writeToFileFlight(line, "Resultados/flights_errors.csv");
+        writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
     }
 
     free(lineCopy);
@@ -504,28 +461,7 @@ bool isValidField_passenger(const char *value, int fieldIndex) {
     }
     return false;
 }
-void writeToFilePassenger(char *line, const char *filename) {
-    char *token = strtok(line, ",");
-    FILE *file = fopen(filename, "a");
 
-    if (file == NULL) {
-        fprintf(stderr, "Erro ao abrir o arquivo.\n");
-        return;
-    }
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    if (file_size == 0) {
-        fprintf(file, "flight_id;user_id;\n");
-    }
-    while (token != NULL) {
-        fprintf(file, "%s", token);
-        token = strtok(NULL, ",");
-        if (token != NULL) {
-            fprintf(file, ";");
-        }
-    }
-    fclose(file);
-}
 
 void parseLine_passenger(char *line, void *catalog) {
     PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
@@ -548,7 +484,7 @@ void parseLine_passenger(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToFilePassenger(line, "Resultados/passengers_errors.csv");
+            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
             free(lineCopy);
             free_passenger(passenger);
             return;
@@ -561,7 +497,7 @@ void parseLine_passenger(char *line, void *catalog) {
         // adiciona o passageiro ao catálogo
         insert_passenger(passengersCatalog, passenger);
     } else {
-        writeToFilePassenger(line, "Resultados/passengers_errors.csv");
+        writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
     }
 
     free(lineCopy);
@@ -606,28 +542,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
     return false;
 }
 
-void writeToFileReservation(char *line, const char *filename) {
-    char *token = strtok(line, ",");
-    FILE *file = fopen(filename, "a");
 
-    if (file == NULL) {
-        fprintf(stderr, "Erro ao abrir o arquivo.\n");
-        return;
-    }
-    fseek(file, 0, SEEK_END);
-    long file_size = ftell(file);
-    if (file_size == 0) {
-        fprintf(file, "id;user_id;hotel_id;hotel_name;hotel_stars;city_tax;address;begin_date;end_date;price_per_night;includes_breakfast;room_details;rating;comment;\n");
-    }
-    while (token != NULL) {
-        fprintf(file, "%s", token);
-        token = strtok(NULL, ",");
-        if (token != NULL) {
-            fprintf(file, ";");
-        }
-    }
-    fclose(file);
-}
 
 void parseLine_reservation(char *line, void *catalog) {
     RESERVATIONS_CATALOG *reservationsCatalog = (RESERVATIONS_CATALOG *)catalog;
@@ -686,7 +601,7 @@ void parseLine_reservation(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToFileReservation(line, "Resultados/reservations_errors.csv");
+            writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
             free(lineCopy);
             free_reservation(reservation);  // Adicione esta linha
             return;
@@ -699,7 +614,7 @@ void parseLine_reservation(char *line, void *catalog) {
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
     } else {
-        writeToFileReservation(line, "Resultados/reservations_errors.csv");
+        writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
     }
 
     free(lineCopy);
