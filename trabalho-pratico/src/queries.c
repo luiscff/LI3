@@ -261,7 +261,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
 char * query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
     int res = 0;
-    int total = 0;
+    double total = 0;
     gpointer key, value;
     GHashTableIter iter;
     GHashTable* hash = get_reservations_hash(rcatalog);
