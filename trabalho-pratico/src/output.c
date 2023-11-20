@@ -26,7 +26,7 @@ void create_result_file(const char *folderPath, int lineNumber, const char *cont
         return;
     }
 
-    if (content == NULL) fprintf(resultFile, ""); // Se o conteúdo for NULL, escreve uma linha vazia para não dar SEGFAULT
+    if (content == NULL) fprintf(resultFile, "\n"); // Se o conteúdo for NULL, escreve uma linha vazia para não dar SEGFAULT
     else fprintf(resultFile, "%s", content); // Escreve o conteúdo no ficheiro
     fclose(resultFile);
 }
