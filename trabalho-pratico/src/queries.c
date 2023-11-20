@@ -95,7 +95,7 @@ int calc_idade(char* birth_date) {
 
 // aux 3
 
-int verificaPrefixo(const char *string, const char *prefixo) {
+int verificaPrefixo(const char* string, const char* prefixo) {
     size_t tamanhoPrefixo = strlen(prefixo);
 
     // Compara os primeiros 'tamanhoPrefixo' caracteres
@@ -105,23 +105,22 @@ int verificaPrefixo(const char *string, const char *prefixo) {
     return (resultadoComparacao == 0);
 }
 
-//aux 4
-int sort_function_q4(gconstpointer a, gconstpointer b){
-    
+// aux 4
+int sort_function_q4(gconstpointer a, gconstpointer b) {
     int ano1, mes1, dia1;
     sscanf(a, "%d/%d/%d", &ano1, &mes1, &dia1);
 
     int ano2, mes2, dia2;
     sscanf(b, "%d/%d/%d", &ano2, &mes2, &dia2);
 
-    //compara anos
+    // compara anos
     if (ano1 < ano2) {
         return -1;
     } else if (ano1 > ano2) {
         return 1;
     }
 
-    //compara meses
+    // compara meses
     if (mes1 < mes2) {
         return -1;
     } else if (mes1 > mes2) {
@@ -135,12 +134,12 @@ int sort_function_q4(gconstpointer a, gconstpointer b){
         return 1;
     }
 
-    return 0;//iguais
+    return 0;  // iguais
 }
 
 // aux 9
-int sort_function_q8(gconstpointer a, gconstpointer b){
-    return strcmp(a,b);
+int sort_function_q8(gconstpointer a, gconstpointer b) {
+    return strcmp(a, b);
 }
 
 //--------------
@@ -161,22 +160,20 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         char* end_date = strdup(get_end_date(reservation));
         char* includes_breakfast = strdup(bool_to_string(get_includes_breakfast(reservation)));
 
-
         int num_nights = calc_nights(begin_date, end_date);
         double total_price = calc_total_price(reservation);
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
         sprintf(result, "%s;%s;%d;%s;%s;%s;%d;%.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
-        
-        //frees
+
+        // frees
         free(hotel_id);
         free(hotel_name);
         free(begin_date);
         free(end_date);
         free(includes_breakfast);
 
-        
         return result;
     }
 
@@ -205,8 +202,8 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
         sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%.3f\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
-        
-        //frees
+
+        // frees
         free(airline);
         free(plain_model);
         free(origin);
@@ -216,7 +213,6 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         free(schedule_departure);
         free(schedule_arrival);
 
-        
         return result;
     }
 
@@ -243,15 +239,16 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
-        sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%d\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto );
-        
-        //frees
+        sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%d\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        printf("birth_date: %s\n", birth_date);
+        printf("%s\n", result);
+
+        // frees
         free(name);
         free(gender);
         free(birth_date);
         free(country_code);
         free(passport);
-    
 
         return result;
     }
@@ -259,7 +256,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
     return NULL;
 }
 
-char * query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
+char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {  // TODO: testar
     int res = 0;
     double total = 0;
     gpointer key, value;
@@ -279,30 +276,28 @@ char * query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { //TODO: testar
         printf("erro divisão por 0\n");
         return NULL;
     }
-    double resultado = total/res;
+    double resultado = total / res;
     // guarda os resultados todos numa string separados por ";" e retorna-a
-    char* output = malloc(256*sizeof(char));
+    char* output = malloc(256 * sizeof(char));
     sprintf(output, "%.3f\n", resultado);
     return output;
 }
 
-
-char* query4 (RESERVATIONS_CATALOG* rcatalog, char *hotel_id){
+char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     gpointer key, value;
-    GList *aux = NULL;
+    GList* aux = NULL;
     GHashTableIter iter;
     GHashTable* hash = get_reservations_hash(rcatalog);
     g_hash_table_iter_init(&iter, hash);
 
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         RESERVATION* reservation = value;
-        if (strcmp(get_hotel_id(reservation), hotel_id)){
-            g_list_append(aux,reservation);
+        if (strcmp(get_hotel_id(reservation), hotel_id)) {
+            g_list_append(aux, reservation);
         }
-        
     }
 
-    GList* sorted = g_list_sort(aux,sort_function_q4);//TODO: sort_function_q4
+    GList* sorted = g_list_sort(aux, sort_function_q4);  // TODO: sort_function_q4
     int tamanho = g_list_length(sorted);
     char* output;
     for (size_t i = 0; i < tamanho; i++) {
@@ -310,22 +305,17 @@ char* query4 (RESERVATIONS_CATALOG* rcatalog, char *hotel_id){
         output = malloc(sizeof(char[30]));
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
         calc_total_price(curr_res);
-        sprintf(output," %s; %s; %s, %s, %d, %d\n", get_reservation_id(curr_res), get_begin_date(curr_res),get_end_date(curr_res),get_user_id(curr_res), get_rating(curr_res),total_price);
+        sprintf(output, " %s;%s;%s;%s;%d;%d\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
     }
 
     return output;
-
-
-
-
-
 }
 
-char* query9 (USERS_CATALOG* ucatalog, char* token){
+char* query9(USERS_CATALOG* ucatalog, char* token) {
     char* prefix = strdup(token);
     gpointer key, value;
     char* current = malloc(30);
-    GList *aux = NULL;
+    GList* aux = NULL;
     GHashTableIter iter;
     char* output;
     GHashTable* hash = get_users_hash(ucatalog);
@@ -334,15 +324,15 @@ char* query9 (USERS_CATALOG* ucatalog, char* token){
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         USER* user = value;
         current = strdup(get_id(user));
-        if (verificaPrefixo(current,prefix)) g_list_append(aux,current);
+        if (verificaPrefixo(current, prefix)) g_list_append(aux, current);
     }
 
-    GList* sorted = g_list_sort(aux,sort_function_q8);
+    GList* sorted = g_list_sort(aux, sort_function_q8);
     int tamanho = g_list_length(sorted);
     for (size_t i = 0; i < tamanho; i++) {
         USER* curr_user = g_list_nth_data(sorted, i);
         output = malloc(sizeof(char[30]));
-        sprintf(output,"%s;%s;\n", get_id(curr_user),get_name(curr_user));
+        sprintf(output, "%s;%s;\n", get_id(curr_user), get_name(curr_user));
     }
 
     free(current);
@@ -351,5 +341,3 @@ char* query9 (USERS_CATALOG* ucatalog, char* token){
 
     return output;
 }
-
-

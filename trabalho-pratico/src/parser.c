@@ -209,10 +209,12 @@ bool isValidInclude_Breakfast(const char *str) {  // strcasecmp is case insensit
     return (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
 }
 
-bool isTrueOrFalse (const char *str) {
-    if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0) return false;
-    else if (strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0) return true;
-    printf ("Invalid input on parser.c\n");
+bool isTrueOrFalse(const char *str) {
+    if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0)
+        return false;
+    else if (strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0)
+        return true;
+    printf("Invalid input on parser.c\n");
     return false;
 }
 
@@ -311,33 +313,30 @@ void parseLine_user(char *line, void *catalog) {
                     set_email(user, token);
                     break;
                 case 4:
-                    set_phone_number(user, token);
-                    break;
-                case 5:
                     set_birth_date(user, token);
                     break;
-                case 6:
+                case 5:
                     set_phone_number(user, token);
                     break;
-                case 7:
+                case 6:
                     set_gender(user, token);
                     break;
-                case 8:
+                case 7:
                     set_passport(user, token);
                     break;
-                case 9:
+                case 8:
                     set_country_code(user, token);
                     break;
-                case 10:
+                case 9:
                     set_address(user, token);
                     break;
-                case 11:
+                case 10:
                     set_account_creation(user, token);
                     break;
-                case 12:
+                case 11:
                     set_payment_method(user, token);
                     break;
-                case 13:
+                case 12:
                     set_active_status(user, token);
                     break;
             }
@@ -551,7 +550,7 @@ void parseLine_passenger(char *line, void *catalog) {
         } else {
             writeToFilePassenger(line, "Resultados/passengers_errors.csv");
             free(lineCopy);
-            free_passenger(passenger); 
+            free_passenger(passenger);
             return;
         }
         token = strtok(NULL, ";");
