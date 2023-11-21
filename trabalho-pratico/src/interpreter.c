@@ -36,14 +36,19 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             printf("Executando query 4 com token: %s\n",nextToken);
             char *result = query4(r_catalog,nextToken);
             create_result_file("Resultados", lineNumber, result);
-            
+            free(result);
 
         } else if (strcmp(token, "5") == 0) {
             // ignora
         } else if (strcmp(token, "6") == 0) {
             // ignora
         } else if (strcmp(token, "7") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " ");
+            printf("Executando query 7 com token: %s\n",nextToken);
+            char *result = query7(p_catalog,nextToken);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
+
         } else if (strcmp(token, "8") == 0) {
             // ignora
         } else if (strcmp(token, "9") == 0) {
@@ -51,6 +56,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             printf("Executando query 9 com token: %s\n",nextToken);
            char *result = query9(u_catalog,nextToken);
            create_result_file("Resultados", lineNumber, result);
+            free(result);
             
         } else if (strcmp(token, "10") == 0) {
             // ignora
@@ -60,6 +66,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char *result = query1F(u_catalog, f_catalog, r_catalog, p_catalog, nextToken);
             create_result_file("Resultados", lineNumber, result);
             free(result);
+
         } else if (strcmp(token, "2F") == 0) {
             // ignora
         } else if (strcmp(token, "3F") == 0) {
@@ -68,6 +75,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char *result = query3F(r_catalog, nextToken);
             create_result_file("Resultados", lineNumber, result);
             free(result);
+
         } else if (strcmp(token, "4F") == 0) {
             // ignora
         } else if (strcmp(token, "5F") == 0) {

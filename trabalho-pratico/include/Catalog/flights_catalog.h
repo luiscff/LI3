@@ -19,4 +19,5 @@ FLIGHT* get_flight_by_code(FLIGHTS_CATALOG *catalog, gpointer flight_code);
 
 void free_flights_catalog(FLIGHTS_CATALOG *catalog);
 
+GHashTable* get_flights_hash(FLIGHTS_CATALOG *catalog);
 #endif // FLIGHT_CATALOG_H

@@ -505,7 +505,7 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
         total_price = calc_total_price(curr_res);
 
-        sprintf(line, " %s;%s;%s;%s;%d;%.3f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        sprintf(line, "%s;%s;%s;%s;%d;%.3f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -515,6 +515,66 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
 
     return output;
 }
+
+char* query7(FLIGHTS_CATALOG* fcatalog, char* token){
+
+    int top_n = atoi(token);
+    gpointer key, value;
+    GHashTableIter iter;
+    GHashTable* hash = get_flights_hash(fcatalog);
+    GHashTable* airline_hash = g_hash_table_new(g_str_hash, g_str_equal);    
+
+    g_hash_table_iter_init(&iter,hash);
+    while (g_hash_table_iter_next(&iter, &key, &value)) {
+        FLIGHT* flight = value;
+        char* airline = strdup(get_airline(flight));
+        char* sch_departure= strdup(get_schedule_departure_date(flight));
+        char* real_departure= strdup(get_real_departure_date(flight));
+        int delay = calc_departure_delay(sch_departure,real_departure);
+        
+        if (g_hash_table_lookup(airline_hash,airline) == NULL){//se nao encontrar airline , mete la dentro com o primeiro delay
+            
+            g_hash_table_insert(airline_hash,airline,GINT_TO_POINTER(delay));
+        }
+        else {// se encontrar, calcula delay da existente e acrescenta
+            int curr_delay = GPOINTER_TO_INT( g_hash_table_lookup(airline_hash,airline));
+            int new_delay = delay + curr_delay;
+            g_hash_table_replace(airline_hash,airline, GINT_TO_POINTER(new_delay));
+        }
+        }
+    GList* airline_list = g_hash_table_get_values(airline_hash);
+    GList * sorted = g_list_sort (airline_list, NULL/*sort_function_q7*/); //TODO: sort_function_q7
+    
+    
+    GList *current = sorted;
+    char* output = malloc(1);  
+    while (current != NULL && top_n >0) {
+        gchar *key = (gchar *)current->data;
+        current = g_list_next(current);
+        char line[200]; // linha atual
+        if (current != NULL) {
+            // Certifique-se de que temos um par key-value completo
+            gpointer value = current->data;
+            
+
+            // Imprimir a key e o value
+            sprintf(output,"Key: %s, Value: %d\n", key, GPOINTER_TO_INT(value));
+            
+             // realloc para aumentar o tamanho da string output
+            output = realloc(output, strlen(output) + strlen(line) + 1);
+
+            // concatena a linha atual à string de output
+            strcat(output, line);
+            // Avançar para o próximo par
+            current = g_list_next(current);
+            top_n--;
+        }
+    }
+
+    return output;
+
+    }
+
 
 char* query9(USERS_CATALOG* ucatalog, char* token) {
     char* prefix = strdup(token);

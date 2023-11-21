@@ -32,3 +32,7 @@ void free_flights_catalog(FLIGHTS_CATALOG *catalog) {
     g_hash_table_destroy(catalog->flights);
     free(catalog);
 }
+
+GHashTable* get_flights_hash(FLIGHTS_CATALOG *catalog) {
+    return catalog->flights;
+}
