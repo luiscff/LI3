@@ -254,7 +254,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
     char* result = malloc(256 * sizeof(char));
     int entity = choose_entity(id);
 
-    if (entity == 1) {
+    if (entity == 1) { // se for uma reserva
         char* query1Result = query1(ucatalog,fcatalog,rcatalog,pcatalog,id);
         if (query1Result == NULL) {
             free(result);
@@ -270,7 +270,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
         int num_nights = 0;
         double total_price = 0;
 
-        char* token = strtok(NULL, ";");
+        char* token = strtok(aux, ";");
         if (token != NULL) {
             strcpy(hotel_id, token);
             token = strtok(NULL, ";");
@@ -317,7 +317,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
         return result;
     }
 
-    if (entity == 2) {
+    if (entity == 2) { // se for um voo
         char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
         if (query1Result == NULL) {
             free(result);
@@ -380,7 +380,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
         return result;
     }
 
-    if (entity == 3) {
+    if (entity == 3) { // se for um utilizador
         char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
         if (query1Result == NULL) {
             free(result);
