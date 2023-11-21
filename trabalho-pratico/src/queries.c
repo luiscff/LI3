@@ -91,15 +91,7 @@ int calc_idade(char* birth_date) {
 
 // aux 3
 
-int verificaPrefixo(const char* string, const char* prefixo) {
-    size_t tamanhoPrefixo = strlen(prefixo);
 
-    // Compara os primeiros 'tamanhoPrefixo' caracteres
-    int resultadoComparacao = strncmp(string, prefixo, tamanhoPrefixo);
-
-    // Se resultadoComparacao for 0, significa que o prefixo foi encontrado
-    return (resultadoComparacao == 0);
-}
 
 // aux 4
 int sort_function_q4(gconstpointer a, gconstpointer b) {
@@ -134,7 +126,18 @@ int sort_function_q4(gconstpointer a, gconstpointer b) {
 }
 
 // aux 9
-int sort_function_q8(gconstpointer a, gconstpointer b) {
+int verificaPrefixo(const char* string, const char* prefixo) {
+    size_t tamanhoPrefixo = strlen(prefixo);
+
+    // Compara os primeiros 'tamanhoPrefixo' caracteres
+    int resultadoComparacao = strncmp(string, prefixo, tamanhoPrefixo);
+
+    // Se resultadoComparacao for 0, significa que o prefixo foi encontrado
+    return (resultadoComparacao == 0);
+}
+
+
+int sort_function_q9(gconstpointer a, gconstpointer b) {
     return strcmp(a, b);
 }
 
@@ -473,7 +476,7 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {  // TODO: testar
 char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { 
     char* output = malloc(20);
     char* result = strdup(query3(rcatalog,hotel_id));
-    sprintf(output, "--- 1 ---\nrating: %s\n", result);
+    sprintf(output, "--- 1 ---\nrating: %s", result);
     return output;
 }
 
@@ -568,7 +571,7 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token){
             // Avançar para o próximo par
             current = g_list_next(current);
             top_n--;
-        }
+        } 
     }
 
     return output;
@@ -582,7 +585,6 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     char* current = malloc(30);
     GList* aux = NULL;
     GHashTableIter iter;
-    char* output;
     GHashTable* hash = get_users_hash(ucatalog);
     g_hash_table_iter_init(&iter, hash);
 
@@ -595,20 +597,26 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
                 return NULL;
             }
         }
+    }
 
-        GList* sorted = g_list_sort(aux, sort_function_q8);
-        int tamanho = g_list_length(sorted);
-        for (size_t i = 0; i < tamanho; i++) {
-            USER* curr_user = g_list_nth_data(sorted, i);
-            output = malloc(sizeof(char[30]));
-            sprintf(output, "%s;%s;\n", get_id(curr_user), get_name(curr_user));
-        }
+    GList* sorted = g_list_sort(aux, sort_function_q9);    
+    int tamanho = g_list_length(sorted);
+    char* output = malloc(1);  
+    output[0] = '\0';          // Começa com uma string vazia
+    for (size_t i = 0; i < tamanho; i++) {
+        char line[200]; // linha atual
+        USER* curr_user = g_list_nth_data(sorted, i);
+    
+        sprintf(output, "%s;%s;\n", get_id(curr_user), get_name(curr_user));
+
+        // realloc para aumentar o tamanho da string output
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+    }
 
         free(current);
         free(prefix);
 
         return output;
     }
-    printf("erro\n");
-    return NULL;
-}
