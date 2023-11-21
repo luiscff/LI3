@@ -99,68 +99,89 @@ void parseLine_flight(char *line, void *catalog) {
     // Cria um novo voo
     FLIGHT *flight = create_flight();
 
-    token = strtok(lineCopy, ";");
-    while (token != NULL) {
-        if (isValidField_flight(token, fieldIndex)) {
-            switch (fieldIndex) {
-                case 1:
-                    set_flight_id(flight, token);
-                    break;
-                case 2:
-                    set_airline(flight, token);
-                    break;
-                case 3:
-                    set_plain_model(flight, token);
-                    break;
-                case 4:
-                    set_total_seats(flight, atoi(token));
-                    break;
-                case 5:
-                    set_origin(flight, token);
-                    break;
-                case 6:
-                    set_destination(flight, token);
-                    break;
-                case 7:
-                    set_schedule_departure_date(flight, token);
-                    break;
-                case 8:
-                    set_schedule_arrival_date(flight, token);
-                    break;
-                case 9:
-                    set_real_departure_date(flight, token);
-                    break;
-                case 10:
-                    set_real_arrival_date(flight, token);
-                    break;
-                case 11:
-                    set_pilot(flight, token);
-                    break;
-                case 12:
-                    set_copilot(flight, token);
-                    break;
-                case 13:
-                    set_notes(flight, token);
-                    break;
-            }
-        } else {
-            writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
-            free(lineCopy);
-            free_flight(flight);  // Adicione esta linha
-            return;
-        }
-        token = strtok(NULL, ";");
-        fieldIndex++;
+char *schedule_begin_date = NULL;
+char *real_begin_date = NULL;
+
+while (token != NULL) {
+    if (schedule_begin_date != NULL) {
+        free(schedule_begin_date);
+        schedule_begin_date = NULL;
+    }
+    if (real_begin_date != NULL) {
+        free(real_begin_date);
+        real_begin_date = NULL;
+    }
+    if (get_schedule_departure_date(flight) != NULL) {
+        schedule_begin_date = strdup(get_schedule_departure_date(flight));
+    }
+    if (get_real_departure_date(flight) != NULL) {
+        real_begin_date = strdup(get_real_departure_date(flight));
     }
 
-    if (fieldIndex == 14) {
-        // adiciona o voo ao catálogo
-        insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
+    if (isValidField_flight(token, fieldIndex, schedule_begin_date, real_begin_date)) {
+        switch (fieldIndex) {
+            case 1:
+                set_flight_id(flight, token);
+                break;
+            case 2:
+                set_airline(flight, token);
+                break;
+            case 3:
+                set_plain_model(flight, token);
+                break;
+            case 4:
+                set_total_seats(flight, atoi(token));
+                break;
+            case 5:
+                set_origin(flight, token);
+                break;
+            case 6:
+                set_destination(flight, token);
+                break;
+            case 7:
+                set_schedule_departure_date(flight, token);
+                break;
+            case 8:
+                set_schedule_arrival_date(flight, token);
+                break;
+            case 9:
+                set_real_departure_date(flight, token);
+                break;
+            case 10:
+                set_real_arrival_date(flight, token);
+                break;
+            case 11:
+                set_pilot(flight, token);
+                break;
+            case 12:
+                set_copilot(flight, token);
+                break;
+            case 13:
+                set_notes(flight, token);
+                break;
+        }
     } else {
         writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
+        free(lineCopy);
+        free_flight(flight);
+        free(schedule_begin_date);
+        free(real_begin_date);
+        return;
     }
+    token = strtok(NULL, ";");
+    fieldIndex++;
+}
 
-    free(lineCopy);
+if (fieldIndex == 14) {
+    // adiciona o voo ao catálogo
+    insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
+} else {
+    writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
+}
+
+free(schedule_begin_date);
+free(real_begin_date);
+free(lineCopy);
 }
 
 void parseLine_passenger(char *line, void *catalog) {

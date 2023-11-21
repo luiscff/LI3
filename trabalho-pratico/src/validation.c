@@ -138,7 +138,7 @@ bool isValidCountryCode(const char *str) {
     if (strlen(str) != MAX_COUNTRY_CODE) {
         return false;
     }
-    if (!isupper(str[0]) || !isupper(str[1])) {
+    if (!isalpha(str[0]) || !isalpha(str[1])) {
         return false;
     }
     return true;
@@ -242,7 +242,7 @@ bool isValidField_user(const char *value, int fieldIndex) {
     return false;
 }
 
-bool isValidField_flight(const char *value, int fieldIndex) {
+bool isValidField_flight(const char *value, int fieldIndex, char *schedule_begin_date, char *real_begin_date) {
     switch (fieldIndex) {
         case 1:  // ID
             return isValidNotNull(value);
@@ -257,13 +257,19 @@ bool isValidField_flight(const char *value, int fieldIndex) {
         case 6:  // destination
             return isValidOriginAndDestination(value);
         case 7:                              // schedule_departure_date
-            return isValidDate_Time(value);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
+            return isValidDate_Time(value);
         case 8:                              // schedule_arrival_date
-            return isValidDate_Time(value);
+            if (isValidDate(value) && schedule_begin_date != NULL) {
+                return isDate1BeforeDate2(schedule_begin_date, value);
+            }
+            return false;
         case 9:                              // real_departure_date
-            return isValidDate_Time(value);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)
-        case 10:                             // real_arrival_date
             return isValidDate_Time(value);
+        case 10:                             // real_arrival_date
+            if (isValidDate(value) && real_begin_date != NULL) {
+                return isDate1BeforeDate2(real_begin_date, value);
+            }
+            return false;
         case 11:  // pilot
             return isValidNotNull(value);
         case 12:  // copilot

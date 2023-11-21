@@ -6,7 +6,7 @@
 // Funções de validação de campos
 bool isValidField_user(const char *value, int fieldIndex);
 
-bool isValidField_flight(const char *value, int fieldIndex);
+bool isValidField_flight(const char *value, int fieldIndex, char *schedule_begin_date, char *real_begin_date);
 
 bool isValidField_passenger(const char *value, int fieldIndex);
 
