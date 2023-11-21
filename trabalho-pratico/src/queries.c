@@ -52,7 +52,6 @@ int isNumber(char s[]) {
 }
 
 int choose_entity(char* id) {
-
     int entity = 0;
     if (strncmp(id, "Book", 4) == 0)
         // Se o ID começar por Book, é uma reserva
@@ -251,184 +250,198 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
     return NULL;
 }
 
-char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id){
+char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id) {
     char* result = malloc(256 * sizeof(char));
-    char* aux = malloc(256 * sizeof(char));
     int entity = choose_entity(id);
 
-    if (entity == 1) { 
-                        aux = strdup(query1(ucatalog,fcatalog,rcatalog,pcatalog,id));
-                        char* hotel_id = malloc(30);
-                        char* hotel_name = malloc(50);
-                        int hotel_stars = 0;
-                        char* begin_date = malloc(20);
-                        char* end_date = malloc(20);
-                        char* includes_breakfast = malloc(10);
-                        int num_nights = 0;
-                        double total_price = 0;
+    if (entity == 1) {
+        char* query1Result = query1(ucatalog,fcatalog,rcatalog,pcatalog,id);
+        if (query1Result == NULL) {
+            free(result);
+            return NULL;
+        }
+        char* aux = strdup(query1Result);
+        char* hotel_id = malloc(30);
+        char* hotel_name = malloc(50);
+        int hotel_stars = 0;
+        char* begin_date = malloc(20);
+        char* end_date = malloc(20);
+        char* includes_breakfast = malloc(10);
+        int num_nights = 0;
+        double total_price = 0;
 
-                        char* token = strtok(NULL, ";");
+        char* token = strtok(NULL, ";");
+        if (token != NULL) {
+            strcpy(hotel_id, token);
+            token = strtok(NULL, ";");
+            if (token != NULL) {
+                strcpy(hotel_name, token);
+                token = strtok(NULL, ";");
+                if (token != NULL) {
+                    hotel_stars = atoi(token);
+                    token = strtok(NULL, ";");
+                    if (token != NULL) {
+                        strcpy(begin_date, token);
+                        token = strtok(NULL, ";");
                         if (token != NULL) {
-                            strcpy(hotel_id, token);
+                            strcpy(end_date, token);
                             token = strtok(NULL, ";");
                             if (token != NULL) {
-                                strcpy(hotel_name, token);
+                                strcpy(includes_breakfast, token);
+                                ;
                                 token = strtok(NULL, ";");
                                 if (token != NULL) {
-                                    hotel_stars = atoi(token);
+                                    num_nights = atoi(token);
                                     token = strtok(NULL, ";");
                                     if (token != NULL) {
-                                        strcpy(begin_date, token);
-                                        token = strtok(NULL, ";");
-                                        if (token != NULL) {
-                                            strcpy(end_date, token);
-                                            token = strtok(NULL, ";");
-                                            if (token != NULL) {
-                                                strcpy(includes_breakfast, token);;
-                                                token = strtok(NULL, ";");
-                                                if (token != NULL) {
-                                                    num_nights = atoi(token);
-                                                    token = strtok(NULL, ";");
-                                                    if (token != NULL) {
-                                                        total_price = atof(token);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        total_price = atof(token);
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
 
+        sprintf(result, "hotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f",
+                hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
 
-    sprintf(result,  "hotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f",
-        hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
+        free(hotel_id);
+        free(hotel_name);
+        free(begin_date);
+        free(end_date);
+        free(includes_breakfast);
+        free(aux);
 
-    free(hotel_id);
-    free(hotel_name);
-    free(begin_date);
-    free(end_date);
-    free(includes_breakfast);
-    free(aux);
-
-    return result;
-     }
-    
-    if (entity == 2) { 
-                        char* airline = malloc(30);
-                        char* plane_model = malloc(30);
-                        char* origin = malloc(30);
-                        char* destination = malloc(30);
-                        char* schedule_departure = malloc(20);
-                        char* schedule_arrival = malloc(20);
-                        int num_passengers = 0;
-                        double delay = 0;
-
-                        aux = strdup(query1(ucatalog, fcatalog, rcatalog, pcatalog, id));
-                        char* token = strtok(aux, ";");
-
-                        if (token != NULL) {
-                            strcpy(airline, token);
-                            token = strtok(NULL, ";");
-                            if (token != NULL) {
-                                strcpy(plane_model, token);
-                                token = strtok(NULL, ";");
-                                if (token != NULL) {
-                                    strcpy(origin, token);
-                                    token = strtok(NULL, ";");
-                                    if (token != NULL) {
-                                        strcpy(destination, token);
-                                        token = strtok(NULL, ";");
-                                        if (token != NULL) {
-                                            strcpy(schedule_departure, token);
-                                            token = strtok(NULL, ";");
-                                            if (token != NULL) {
-                                                strcpy(schedule_arrival, token);
-                                                token = strtok(NULL, ";");
-                                                if (token != NULL) {
-                                                    num_passengers = atoi(token);
-                                                    token = strtok(NULL, ";");
-                                                    if (token != NULL) {
-                                                        delay = atof(token);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        sprintf(result, "airline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %.3f",
-                                airline, plane_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
-                        free(airline);
-                        free(plane_model);
-                        free(origin);
-                        free(destination);
-                        free(schedule_departure);
-                        free(schedule_arrival);
-                        free(aux);
-
-                        return result;
+        return result;
     }
-    
-    if (entity == 3) {  
 
+    if (entity == 2) {
+        char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
+        if (query1Result == NULL) {
+            free(result);
+            return NULL;
+        }
+        char* aux = strdup(query1Result);
 
-                        char* name = malloc(30);
-                        char* gender = malloc(5);
-                        int age = 0;
-                        char* country_code = malloc(30);
-                        char* passport = malloc(30);
-                        int num_flight= 0;
-                        int num_reservations = 0;
-                        double total_gasto = 0;
-                        aux = strdup(query1(ucatalog,fcatalog,rcatalog,pcatalog,id));
-                        char* token = strtok(aux, ";");
+        char* airline = malloc(30);
+        char* plane_model = malloc(30);
+        char* origin = malloc(30);
+        char* destination = malloc(30);
+        char* schedule_departure = malloc(20);
+        char* schedule_arrival = malloc(20);
+        int num_passengers = 0;
+        double delay = 0;
+
+        char* token = strtok(aux, ";");
+
+        if (token != NULL) {
+            strcpy(airline, token);
+            token = strtok(NULL, ";");
+            if (token != NULL) {
+                strcpy(plane_model, token);
+                token = strtok(NULL, ";");
+                if (token != NULL) {
+                    strcpy(origin, token);
+                    token = strtok(NULL, ";");
+                    if (token != NULL) {
+                        strcpy(destination, token);
+                        token = strtok(NULL, ";");
                         if (token != NULL) {
-                            strcpy(name, token);
+                            strcpy(schedule_departure, token);
                             token = strtok(NULL, ";");
                             if (token != NULL) {
-                                strcpy(gender, token);
+                                strcpy(schedule_arrival, token);
                                 token = strtok(NULL, ";");
                                 if (token != NULL) {
-                                    age = atoi(token);
+                                    num_passengers = atoi(token);
                                     token = strtok(NULL, ";");
                                     if (token != NULL) {
-                                        strcpy(country_code, token);
-                                        token = strtok(NULL, ";");
-                                        if (token != NULL) {
-                                            strcpy(passport, token);
-                                            token = strtok(NULL, ";");
-                                            if (token != NULL) {
-                                                num_flight = atoi(token);
-                                                token = strtok(NULL, ";");
-                                                if (token != NULL) {
-                                                    num_reservations = atoi(token);
-                                                    token = strtok(NULL, ";");
-                                                    if (token != NULL) {
-                                                        total_gasto = atof(token);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        delay = atof(token);
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+        sprintf(result, "airline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %.3f",
+                airline, plane_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
+        free(airline);
+        free(plane_model);
+        free(origin);
+        free(destination);
+        free(schedule_departure);
+        free(schedule_arrival);
+        free(aux);
 
-    sprintf(result, "name: %s\ngender: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
-    free(name);
-    free(gender);
-    free(country_code);
-    free(passport);
-    free(aux);
+        return result;
+    }
 
+    if (entity == 3) {
+        char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
+        if (query1Result == NULL) {
+            free(result);
+            return NULL;
+        }
+        char* aux = strdup(query1Result);
 
-    return result;
+        char* name = malloc(30);
+        char* gender = malloc(5);
+        int age = 0;
+        char* country_code = malloc(30);
+        char* passport = malloc(30);
+        int num_flight = 0;
+        int num_reservations = 0;
+        double total_gasto = 0;
+        
+        char* token = strtok(aux, ";");
+        if (token != NULL) {
+            strcpy(name, token);
+            token = strtok(NULL, ";");
+            if (token != NULL) {
+                strcpy(gender, token);
+                token = strtok(NULL, ";");
+                if (token != NULL) {
+                    age = atoi(token);
+                    token = strtok(NULL, ";");
+                    if (token != NULL) {
+                        strcpy(country_code, token);
+                        token = strtok(NULL, ";");
+                        if (token != NULL) {
+                            strcpy(passport, token);
+                            token = strtok(NULL, ";");
+                            if (token != NULL) {
+                                num_flight = atoi(token);
+                                token = strtok(NULL, ";");
+                                if (token != NULL) {
+                                    num_reservations = atoi(token);
+                                    token = strtok(NULL, ";");
+                                    if (token != NULL) {
+                                        total_gasto = atof(token);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        sprintf(result, "name: %s\ngender: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        free(name);
+        free(gender);
+        free(country_code);
+        free(passport);
+        free(aux);
+
+        return result;
+    }
+    free(result);
+    return " ";
 }
-return " ";
-}
-
 
 char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {  // TODO: testar
     int res = 0;
