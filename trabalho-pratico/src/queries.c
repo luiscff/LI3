@@ -304,7 +304,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
             }
         }
 
-        sprintf(result, "hotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f",
+        sprintf(result, "--- 1 ---\nhotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f\n",
                 hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
 
         free(hotel_id);
@@ -367,7 +367,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
                 }
             }
         }
-        sprintf(result, "airline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %.3f",
+        sprintf(result, "--- 1 ---\nairline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %.3f\n",
                 airline, plane_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
         free(airline);
         free(plane_model);
@@ -430,7 +430,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
             }
         }
 
-        sprintf(result, "name: %s\ngender: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        sprintf(result, "--- 1 ---\nname: %s\ngender: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
         free(name);
         free(gender);
         free(country_code);
@@ -467,6 +467,13 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {  // TODO: testar
     // guarda os resultados todos numa string separados por ";" e retorna-a
     char* output = malloc(256 * sizeof(char));
     sprintf(output, "%.3f\n", resultado);
+    return output;
+}
+
+char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) { 
+    char* output = malloc(20);
+    char* result = strdup(query3(rcatalog,hotel_id));
+    sprintf(output, "--- 1 ---\nrating: %s\n", result);
     return output;
 }
 
