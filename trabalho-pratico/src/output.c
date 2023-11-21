@@ -26,7 +26,7 @@ void create_result_file(const char *folderPath, int lineNumber, const char *cont
         return;
     }
 
-    if (content == NULL) fprintf(resultFile, "\n"); // Se o conteúdo for NULL, escreve uma linha vazia para não dar SEGFAULT
+    if (content == NULL) fputs("",resultFile); // Se o conteúdo for NULL, escreve uma linha vazia para não dar SEGFAULT
     else fprintf(resultFile, "%s", content); // Escreve o conteúdo no ficheiro
     fclose(resultFile);
 }
@@ -41,7 +41,7 @@ void writeToErrorFileFlight(char *line, const char *filename) {
     }
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
-    if (file_size == 0) {
+    if (file_size == 0) { // Se o ficheiro estiver vazio, escreve o cabeçalho
         fprintf(file, "id;airline;plane_model;total_seats;origin;destination;schedule_departure_date;schedule_arrival_date;real_departure_date;real_arrival_date;pilot;copilot;notes\n");
     }
     while (token != NULL) {
@@ -53,6 +53,7 @@ void writeToErrorFileFlight(char *line, const char *filename) {
     }
     fclose(file);
 }
+
 
 void writeToErrorFilePassenger(char *line, const char *filename) {
     char *token = strtok(line, ",");

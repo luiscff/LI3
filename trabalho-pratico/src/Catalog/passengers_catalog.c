@@ -1,6 +1,5 @@
 #include "Catalog/passengers_catalog.h"
 #include <string.h>
-#include <stdio.h>
 
 typedef struct passengers_catalog {
     GList *passengers;  // Lista de PASSENGER
@@ -38,7 +37,6 @@ GList *find_flights_by_user(PASSENGERS_CATALOG *catalog, const char *user_id2) {
 
 GList *find_users_by_flight(PASSENGERS_CATALOG *catalog, int flight_id2) {
     GList *users = NULL;
-    int i = 0;
     // Percorrer a lista de passageiros
     for (GList *node = catalog->passengers; node != NULL; node = node->next) {
         PASSENGER *passenger = node->data;
@@ -46,7 +44,6 @@ GList *find_users_by_flight(PASSENGERS_CATALOG *catalog, int flight_id2) {
         if (get_flight_id2(passenger) == flight_id2) {
             char *copy = strdup(get_user_id2(passenger));
             users = g_list_prepend(users, copy);
-            printf("%d\n", ++i);
         }
     }
     return users;

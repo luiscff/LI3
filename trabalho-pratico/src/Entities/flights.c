@@ -163,13 +163,5 @@ int calc_departure_delay(char *schedule_departure, char *real_departure) {
 
     delay = difftime(real_departure_time, schedule_departure_time);
 
-    printf("schedule_departure: %s\n", schedule_departure);
-    printf("real_departure: %s\n", real_departure);
-    printf("schedule_departure_tm: %d/%d/%d %d:%d:%d\n", schedule_departure_tm.tm_year, schedule_departure_tm.tm_mon, schedule_departure_tm.tm_mday, schedule_departure_tm.tm_hour, schedule_departure_tm.tm_min, schedule_departure_tm.tm_sec);
-    printf("real_departure_tm: %d/%d/%d %d:%d:%d\n", real_departure_tm.tm_year, real_departure_tm.tm_mon, real_departure_tm.tm_mday, real_departure_tm.tm_hour, real_departure_tm.tm_min, real_departure_tm.tm_sec);
-    printf("schedule_departure_time: %ld\n", (long)schedule_departure_time);
-    printf("real_departure_time: %ld\n", (long)real_departure_time);
-    printf("delay: %f\n", delay);
-
     return (int) delay;
 }

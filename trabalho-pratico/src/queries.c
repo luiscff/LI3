@@ -52,10 +52,8 @@ int isNumber(char s[]) {
 }
 
 int choose_entity(char* id) {
-    // char* id_aux = malloc((strlen(id) + 1) * sizeof(char)); //aloca memoria para o id_aux do tamanho do id + 1
-    // strncpy(id_aux, id, 4);
+
     int entity = 0;
-    // printf("id_aux: %s\n", id_aux);
     if (strncmp(id, "Book", 4) == 0)
         // Se o ID começar por Book, é uma reserva
         entity = 1;
