@@ -7,6 +7,7 @@
 #include "Catalog/users_catalog.h"
 
 char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id);
+char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id);
 char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id);
 
 char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id);

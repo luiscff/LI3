@@ -55,7 +55,11 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "10") == 0) {
             // ignora
         } else if (strcmp(token, "1F") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " ");
+            printf("Executando query 1F com token: %s\n",nextToken);
+            char *result = query1F(u_catalog, f_catalog, r_catalog, p_catalog, nextToken);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "2F") == 0) {
             // ignora
         } else if (strcmp(token, "3F") == 0) {
