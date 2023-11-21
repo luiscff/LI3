@@ -486,25 +486,31 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
 
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         RESERVATION* reservation = value;
-        if (strcmp(get_hotel_id(reservation), hotel_id)) {
-            if (g_list_append(aux, reservation) == NULL) {
+        if (strcmp(get_hotel_id(reservation), hotel_id) == 0) {
+            aux = g_list_append(aux, reservation);
+            if (aux == NULL) {
                 printf("erro ao dar append\n");
                 return NULL;
             }
         }
     }
 
-    GList* sorted = g_list_sort(aux, sort_function_q4);  // TODO: sort_function_q4
+    GList* sorted = g_list_sort(aux, sort_function_q4);
     int tamanho = g_list_length(sorted);
-    char* output;
+    char* output = malloc(1);  
+    output[0] = '\0';          // Começa com uma string vazia
     for (size_t i = 0; i < tamanho; i++) {
         double total_price = 0;
-        output = malloc(sizeof(char[30]));
+        char line[200]; // linha atual
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
         total_price = calc_total_price(curr_res);
 
-        sprintf(output, " %s;%s;%s;%s;%d;%f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
-        printf("%s", output);
+        sprintf(line, " %s;%s;%s;%s;%d;%.3f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+
+        // realloc para aumentar o tamanho da string output
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
     }
 
     return output;
