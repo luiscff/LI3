@@ -11,7 +11,6 @@
 #include "Catalog/users_catalog.h"
 #include "output.h"
 
-
 bool isTrueOrFalse(const char *str) {
     if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0)
         return false;
@@ -91,9 +90,6 @@ void parseLine_user(char *line, void *catalog) {
     free(lineCopy);
 }
 
-
-
-
 void parseLine_flight(char *line, void *catalog) {
     FLIGHTS_CATALOG *flightsCatalog = (FLIGHTS_CATALOG *)catalog;
     char *token;
@@ -167,9 +163,6 @@ void parseLine_flight(char *line, void *catalog) {
     free(lineCopy);
 }
 
-
-
-
 void parseLine_passenger(char *line, void *catalog) {
     PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
     char *token;
@@ -210,10 +203,6 @@ void parseLine_passenger(char *line, void *catalog) {
     free(lineCopy);
 }
 
-
-
-
-
 void parseLine_reservation(char *line, void *catalog) {
     RESERVATIONS_CATALOG *reservationsCatalog = (RESERVATIONS_CATALOG *)catalog;
     char *token;
@@ -222,10 +211,18 @@ void parseLine_reservation(char *line, void *catalog) {
 
     // Cria uma nova reserva
     RESERVATION *reservation = create_reservation();
+    char *begin_date = NULL; 
 
     token = strtok(lineCopy, ";");
     while (token != NULL) {
-        if (isValidField_reservation(token, fieldIndex)) {
+        if (begin_date != NULL) {
+            free(begin_date);
+            begin_date = NULL;
+        }
+        if (get_begin_date(reservation) != NULL) {
+            begin_date = strdup(get_begin_date(reservation));
+        }
+        if (isValidField_reservation(token, fieldIndex, begin_date)) {
             switch (fieldIndex) {
                 case 1:
                     set_reservation_id(reservation, token);
@@ -287,6 +284,7 @@ void parseLine_reservation(char *line, void *catalog) {
         writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
     }
 
+    if (begin_date != NULL) free(begin_date);
     free(lineCopy);
 }
 

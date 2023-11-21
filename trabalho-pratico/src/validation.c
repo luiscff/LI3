@@ -1,4 +1,6 @@
 #include "validation.h"
+#include "Entities/reservation.h"
+
 
 #include <stddef.h>
 #include <stdio.h>
@@ -69,55 +71,48 @@ bool isValidDate_Time(const char *dateTime) {
     return isValidDate(date) && isValidTime(time);
 }
 
-bool compareDates(const char *date1, const char *date2) {
+bool isDate1BeforeDate2(const char *date1, const char *date2) {
     // Convertendo strings de datas para inteiros
-    char *end = malloc(20);
-    char *begin = malloc(20);
-
-    end = strdup(date1);
-    begin = strdup(date2);
+    char *begin = strdup(date1);
+    char *end = strdup(date2);
 
     int year1, month1, day1;
     int year2, month2, day2;
 
-    sscanf(end, "%4d/%2d/%2d", &year1, &month1, &day1);
-    sscanf(begin, "%4d/%2d/%2d", &year2, &month2, &day2);
+    if (sscanf(begin, "%4d/%2d/%2d", &year1, &month1, &day1) != 3 ||
+        sscanf(end, "%4d/%2d/%2d", &year2, &month2, &day2) != 3) {
+        free(begin);
+        free(end);
+        printf("sscanf error\n");
+        return false; // As datas não estão no formato correto
+    }
+
+    free(begin);
+    free(end);
 
     // Comparando anos
     if (year1 < year2) {
-        return -1;
+        return true;
     } else if (year1 > year2) {
-        return 1;
+        return false;
     }
 
-    //
+    // Comparando meses
     if (month1 < month2) {
-        return -1;
+        return true;
     } else if (month1 > month2) {
-        return 1;
+        return false;
     }
 
     // Comparando dias
     if (day1 < day2) {
-        return -1;
+        return true; // A data 1 é menor
     } else if (day1 > day2) {
-        return 1;
-    }  // As datas são iguais
-    return 0;
+        return false; // A data 2 é menor
+    }  
+    return true; // As datas são iguais
 }
 
-bool isValidDate_Compare(const char *first_date, const char *second_date) {  // verifica se a  isValidDate_Compare funciona direto
-
-    int year, month, day;
-    if (sscanf(second_date, "%4d/%2d/%2d ", &year, &month, &day) != 3) {
-        return false;
-    }
-
-    char date[11];
-    sscanf(second_date, "%10s", date);
-
-    return isValidDate(first_date) && compareDates(first_date, second_date);
-}
 
 // users
 bool isValidEmail(const char *email) {
@@ -297,8 +292,7 @@ bool isValidField_passenger(const char *value, int fieldIndex) {
     return false;
 }
 
-bool isValidField_reservation(const char *value, int fieldIndex) {
-    // const char* begin_date = malloc(20);
+bool isValidField_reservation(const char *value, int fieldIndex, char *begin_date) {
     switch (fieldIndex) {
         case 1:  // ID
             return isValidNotNull(value);
@@ -315,11 +309,12 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 7:  // address
             return isValidNotNull(value);
         case 8:  // begin date
-            // begin_date = strdup(value);
             return isValidDate(value);
         case 9:  // end_date
-            return true;
-            // isValidDate_Compare(value,begin_date);  // TODO ver se end_date é maior do que begin_date (vai ter que ser depois de haver hash tables feitas)(fix)
+            if (isValidDate(value) && begin_date != NULL) {
+                return isDate1BeforeDate2(begin_date, value);
+            }
+            return false;
         case 10:  // price_per_night
             return isValidPricePerNight(value);
         case 11:  // include_breakfast
