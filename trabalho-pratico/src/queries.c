@@ -332,7 +332,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
         char* schedule_departure = malloc(20);
         char* schedule_arrival = malloc(20);
         int num_passengers = 0;
-        double delay = 0;
+        int delay = 0;
 
         char* token = strtok(aux, ";");
 
@@ -358,7 +358,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
                                     num_passengers = atoi(token);
                                     token = strtok(NULL, ";");
                                     if (token != NULL) {
-                                        delay = atof(token);
+                                        delay = atoi(token);
                                     }
                                 }
                             }
@@ -367,7 +367,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
                 }
             }
         }
-        sprintf(result, "--- 1 ---\nairline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %.3f\n",
+        sprintf(result, "--- 1 ---\nairline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %d\n",
                 airline, plane_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
         free(airline);
         free(plane_model);
@@ -430,7 +430,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
             }
         }
 
-        sprintf(result, "--- 1 ---\nname: %s\ngender: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        sprintf(result, "--- 1 ---\nname: %s\nsex: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
         free(name);
         free(gender);
         free(country_code);
