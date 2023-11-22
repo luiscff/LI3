@@ -22,6 +22,18 @@ bool isValidNotNull(const char *str) {
     return (str != NULL);
 }
 
+bool isdigitAll (const char *string)
+{
+    for (int i = 0; string[i]!= '\0'; i++)
+    {
+        if (!isdigit(string[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool isValidTime(const char *time) {
     int hours, minutes, seconds;
 
@@ -320,7 +332,7 @@ bool isValidField_flight(const char *value, int fieldIndex, char *schedule_begin
         case 3:  // plain_model
             return isValidNotNull(value);
         case 4:           // total_seats
-            return true;  
+            return isdigitAll(value);
         case 5:           // origin
             return isValidOriginAndDestination(value);
         case 6:  // destination
@@ -391,7 +403,7 @@ bool isValidField_reservation(const char *value, int fieldIndex, char *begin_dat
             }
             return false;
         case 10:  // price_per_night
-            return isValidPricePerNight(value);
+            return true;
         case 11:  // include_breakfast
             return isValidInclude_Breakfast(value);
         case 12:  // room_details
