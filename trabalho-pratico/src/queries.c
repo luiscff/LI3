@@ -248,8 +248,6 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
         // quando os nomes são iguais o identificador do utilizador é o critério de desempate (de forma crescente).
         // compara os ids (strings) como num dicionario
         result = strcmp(id1, id2);
-        if (result < 0) printf("%s < %s\n", id1, id2);
-        else if (result > 0) printf("%s > %s\n", id1, id2);
     }
 
     if (result == 0) printf("ERRO no sort da query9: os utilizadores têm o mesmo nome e o mesmo id\n");
@@ -336,11 +334,16 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
     if (entity == 3) {  // se for um utilizador
 
-        // TODO: verificar se o user está ativo, se não estiver, não faz nada
 
         USER* user = get_user_by_id(ucatalog, aux);
         if (user == NULL) {
             printf("User not found\n");
+            return NULL;
+        }
+
+        // verifica se o user está ativo, se não estiver, não faz nada
+        char* active_status = strdup(get_active_status(user));
+        if (strcasecmp(active_status, "inactive") == 0) {
             return NULL;
         }
         char* name = strdup(get_name(user));
@@ -352,6 +355,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         int num_flight = 0;
         int num_reservations = 0;
         double total_gasto = 0;
+
 
         age = calc_idade(birth_date);
         num_flight = g_list_length(find_flights_by_user(pcatalog, aux));  // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
