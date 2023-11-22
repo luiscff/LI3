@@ -634,7 +634,7 @@ char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     return output;
 }
 
-char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
+char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,int flag) {
     gpointer key, value;
     GList* aux = NULL;
     GHashTableIter iter;
@@ -656,6 +656,9 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     int tamanho = g_list_length(sorted);
     char* output = malloc(1);
     output[0] = '\0';  // Começa com uma string vazia
+    
+    if (flag == 1){ // query4
+    
     for (size_t i = 0; i < tamanho; i++) {
         double total_price = 0;
         char line[200];  // linha atual
@@ -669,6 +672,29 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
         // concatena a linha atual à string de output
         strcat(output, line);
     }
+    }
+
+    if (flag == 2){//query4F
+        int reg_num = 1;
+        for (size_t i = 0; i < tamanho; i++) {
+        double total_price = 0;
+        
+        char line[200];  // linha atual
+        RESERVATION* curr_res = g_list_nth_data(sorted, i);
+        total_price = calc_total_price(curr_res);
+
+        sprintf(line, "--- %d ---\nid: %s\nbegin_date: %s\nend_date: %s\nuser_id: %s\nrating: %d\ntotal_price: %.3f\n", reg_num,get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        reg_num ++;
+        // realloc para aumentar o tamanho da string output
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+        }
+
+
+
+    }
+
 
     return output;
 }

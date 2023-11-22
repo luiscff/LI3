@@ -34,7 +34,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "4") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 4 com token: %s\n",nextToken);
-            char *result = query4(r_catalog,nextToken);
+            char *result = query4(r_catalog,nextToken,1);
             create_result_file("Resultados", lineNumber, result);
             free(result);
 
@@ -77,7 +77,11 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             free(result);
 
         } else if (strcmp(token, "4F") == 0) {
-            // ignora
+           char *nextToken = strtok(NULL, " ");
+            printf("Executando query 4F com token: %s\n",nextToken);
+            char *result = query4(r_catalog,nextToken,2);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "5F") == 0) {
             // ignora
         } else if (strcmp(token, "6F") == 0) {
