@@ -683,7 +683,7 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,int flag) {
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
         total_price = calc_total_price(curr_res);
 
-        sprintf(line, "--- %d ---\nid: %s\nbegin_date: %s\nend_date: %s\nuser_id: %s\nrating: %d\ntotal_price: %.3f\n", reg_num,get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        sprintf(line, "--- %d ---\nid: %s\nbegin_date: %s\nend_date: %s\nuser_id: %s\nrating: %d\ntotal_price: %.3f\n\n", reg_num,get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
         reg_num ++;
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
