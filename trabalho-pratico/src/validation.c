@@ -12,7 +12,11 @@
 #define MAX_COUNTRY_CODE 2
 
 
-//=========== VALIDATION =============
+//=========== VALIDATION PÓS-PARSER=============
+// TODO O número de lugares de um voo (total_seats) não poderá ser inferior ao número de passageiros nesse voo TEM QUE SER DEPOIS DOS CATALOGS ESTAREM CARREGADOS
+
+
+//=========== VALIDATION IN-PARSER =============
 // geral
 bool isValidNotNull(const char *str) {
     return (str != NULL);
@@ -69,6 +73,71 @@ bool isValidDate_Time(const char *dateTime) {
     sscanf(dateTime, "%10s %8s", date, time);
 
     return isValidDate(date) && isValidTime(time);
+}
+
+bool isDateTime1BeforeDateTime2(const char* date1, const char* date2) {
+    // Convertendo strings de datas para inteiros
+    char *begin = strdup(date1);
+    char *end = strdup(date2);
+
+    int year1, month1, day1, hours1, minutes1, seconds1;
+    int year2, month2, day2, hours2, minutes2, seconds2;
+
+    if (sscanf(begin, "%4d/%2d/%2d %2d:%2d:%2d", &year1, &month1, &day1, &hours1, &minutes1, &seconds1) != 6 ||
+        sscanf(end, "%4d/%2d/%2d %2d:%2d:%2d", &year2, &month2, &day2, &hours2, &minutes2, &seconds2) != 6) {
+        free(begin);
+        free(end);
+        printf("sscanf error\n");
+        return false; // As datas não estão no formato correto
+    }
+
+    free(begin);
+    free(end);
+
+    // Comparando anos
+    if (year1 < year2) {
+        return true;
+    } else if (year1 > year2) {
+        return false;
+    }
+
+    // Comparando meses
+    if (month1 < month2) {
+        return true;
+    } else if (month1 > month2) {
+        return false;
+    }
+
+    // Comparando dias
+    if (day1 < day2) {
+        return true;
+    } else if (day1 > day2) {
+        return false;
+    }
+
+    // Comparando horas
+    if (hours1 < hours2) {
+        return true;
+    } else if (hours1 > hours2) {
+        return false;
+    }
+
+    // Comparando minutos
+    if (minutes1 < minutes2) {
+        return true;
+    } else if (minutes1 > minutes2) {
+        return false;
+    }
+
+    // Comparando segundos
+    if (seconds1 < seconds2) {
+        return true;
+    } else if (seconds1 > seconds2) {
+        return false;
+    }
+
+    return true; // As datas são iguais
+
 }
 
 bool isDate1BeforeDate2(const char *date1, const char *date2) {
@@ -251,7 +320,7 @@ bool isValidField_flight(const char *value, int fieldIndex, char *schedule_begin
         case 3:  // plain_model
             return isValidNotNull(value);
         case 4:           // total_seats
-            return true;  // TODO O número de lugares de um voo (total_seats) não poderá ser inferior ao número de passageiros nesse voo;
+            return true;  
         case 5:           // origin
             return isValidOriginAndDestination(value);
         case 6:  // destination
@@ -259,15 +328,15 @@ bool isValidField_flight(const char *value, int fieldIndex, char *schedule_begin
         case 7:                              // schedule_departure_date
             return isValidDate_Time(value);
         case 8:                              // schedule_arrival_date
-            if (isValidDate(value) && schedule_begin_date != NULL) {
-                return isDate1BeforeDate2(schedule_begin_date, value);
+            if (isValidDate_Time(value) && schedule_begin_date != NULL) {
+                return isDateTime1BeforeDateTime2(schedule_begin_date, value);
             }
             return false;
         case 9:                              // real_departure_date
             return isValidDate_Time(value);
         case 10:                             // real_arrival_date
-            if (isValidDate(value) && real_begin_date != NULL) {
-                return isDate1BeforeDate2(real_begin_date, value);
+            if (isValidDate_Time(value) && real_begin_date != NULL) {
+                return isDateTime1BeforeDateTime2(real_begin_date, value);
             }
             return false;
         case 11:  // pilot
