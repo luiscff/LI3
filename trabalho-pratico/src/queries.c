@@ -761,7 +761,7 @@ GHashTable* users_hash = get_users_hash(ucatalog);
         strcat(output, line);
     }
     
-    printf("\n%s\n",output);
+
     return output;
     }
 
