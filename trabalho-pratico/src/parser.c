@@ -67,6 +67,8 @@ void parseLine_user(char *line, void *catalog) {
                     set_payment_method(user, token);
                     break;
                 case 12:
+                    //tira o \n do final
+                    token[strcspn(token, "\n")] = '\0';
                     set_active_status(user, token);
                     break;
             }
