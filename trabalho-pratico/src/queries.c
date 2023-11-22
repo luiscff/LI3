@@ -1,10 +1,10 @@
 #include <ctype.h>
 #include <stdio.h>
 
-//para converter para minusculas e retirar acentos 
+// para converter para minusculas e retirar acentos
 #include <locale.h>
-#include <wctype.h> 
-#include <wchar.h> 
+#include <wchar.h>
+#include <wctype.h>
 
 #include "Catalog/flights_catalog.h"
 #include "Catalog/passengers_catalog.h"
@@ -160,22 +160,19 @@ int verificaPrefixo(const char* string, const char* prefixo) {
     return (resultadoComparacao == 0);
 }
 
-
-
-
 void convert_to_lower_case(char* str) {
     printf("estourou no convert to lower case?\n");
     if (str == NULL) {
         printf("String is NULL\n");
         return;
     }
-    setlocale(LC_ALL, "");  // set the locale to the user's default locale
+    setlocale(LC_ALL, "");                // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
     if (wstr == NULL) {
-    printf("Failed to allocate memory\n");
-    return;
-}
+        printf("Failed to allocate memory\n");
+        return;
+    }
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 
     for (size_t i = 0; i < len; i++) {
@@ -186,24 +183,45 @@ void convert_to_lower_case(char* str) {
     free(wstr);
 }
 
-
-
 void remove_accents(char* str) {
     printf("estourou no remove accents?\n");
-    setlocale(LC_ALL, "");  // set the locale to the user's default locale
+    setlocale(LC_ALL, "");                // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 
     for (size_t i = 0; i < len; i++) {
         switch (wstr[i]) {
-            case L'ã': case L'á': case L'à': case L'â': wstr[i] = L'a'; break;
-            case L'é': case L'è': case L'ê': wstr[i] = L'e'; break;
-            case L'í': case L'ì': case L'î': wstr[i] = L'i'; break;
-            case L'ó': case L'ò': case L'ô': wstr[i] = L'o'; break;
-            case L'ú': case L'ù': case L'û': wstr[i] = L'u'; break;
-            case L'ç': wstr[i] = L'c'; break;
-            // Add more cases if needed
+            case L'ã':
+            case L'á':
+            case L'à':
+            case L'â':
+                wstr[i] = L'a';
+                break;
+            case L'é':
+            case L'è':
+            case L'ê':
+                wstr[i] = L'e';
+                break;
+            case L'í':
+            case L'ì':
+            case L'î':
+                wstr[i] = L'i';
+                break;
+            case L'ó':
+            case L'ò':
+            case L'ô':
+                wstr[i] = L'o';
+                break;
+            case L'ú':
+            case L'ù':
+            case L'û':
+                wstr[i] = L'u';
+                break;
+            case L'ç':
+                wstr[i] = L'c';
+                break;
+                // Add more cases if needed
         }
     }
 
@@ -225,8 +243,7 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
     char* id2 = strtok(aux2, ";");
     char* name2 = strtok(NULL, ";");
 
-
-    //se os nomes tiverem "-" mudar para " "
+    // se os nomes tiverem "-" mudar para " "
 
     for (int i = 0; name1[i] != '\0'; i++) {
         if (name1[i] == '-') {
@@ -241,12 +258,12 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
     }
 
     // converter para minusculas e retirar acentos
-    convert_to_lower_case(id1);
-    convert_to_lower_case(id2);
-    convert_to_lower_case(name1);
-    convert_to_lower_case(name2);
+    // convert_to_lower_case(id1);
+    // convert_to_lower_case(id2);
+    // convert_to_lower_case(name1);
+    // convert_to_lower_case(name2);
 
-    printf("nao estourou no convert to lower case\n");
+    // printf("nao estourou no convert to lower case\n");
 
     remove_accents(id1);
     remove_accents(id2);
@@ -255,7 +272,7 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
     printf("nao estourou no remove accents\n");
 
     // ordenados por nome (de forma crescente).
-    // compara os nomes (strings) como num dicionario 
+    // compara os nomes (strings) como num dicionario
 
     int result = strcmp(name1, name2);
     if (result == 0) {
@@ -348,7 +365,6 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
     if (entity == 3) {  // se for um utilizador
 
-
         USER* user = get_user_by_id(ucatalog, aux);
         if (user == NULL) {
             printf("User not found\n");
@@ -369,7 +385,6 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         int num_flight = 0;
         int num_reservations = 0;
         double total_gasto = 0;
-
 
         age = calc_idade(birth_date);
         num_flight = g_list_length(find_flights_by_user(pcatalog, aux));  // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
@@ -724,7 +739,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         USER* user = value;
         if (strcasecmp(get_active_status(user), "inactive") != 0) {  // se o user não for "inactive"
-        printf("nao estourou na verificação do active status\n");
+            printf("nao estourou na verificação do active status\n");
             char* id = strdup(get_id(user));
             char* name = strdup(get_name(user));
             if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
@@ -743,8 +758,9 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
                     return NULL;
                 }
             } else {  // se nao tiver o prefixo, liberta a memoria
-                free(id);
             }
+            free(id);
+            free(name);
         }
     }
 
@@ -763,6 +779,12 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
         strcat(output, "\n");
     }
 
+    // frees
+    GList* l;
+    for (l = aux; l != NULL; l = l->next) {  // free de cada elemento da lista
+        free(l->data);
+    }
+    g_list_free(aux);  // free da lista em si
     free(prefix);
 
     return output;
