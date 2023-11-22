@@ -594,6 +594,64 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
     return " ";
 }
 
+char* query2(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS_CATALOG *ucatalog, char* token,char* catalog) {
+    GHashTable* users_hash = get_users_hash(ucatalog);
+    gpointer key, value;
+    GHashTableIter iter;
+    GList* aux = NULL;
+    char* output = malloc(1);
+    output[0] = '\0';  // Começa com uma string vazia
+    if(strcmp(catalog,"flights") == 0){
+        GHashTable* hash = get_flights_hash(fcatalog);
+        g_hash_table_iter_init(&iter, hash);
+        while (g_hash_table_iter_next(&iter, &key, &value)) {
+            FLIGHT* flight = value;
+
+        
+
+    }
+    }
+    if (strcmp(catalog,"reservations")==0){
+        GHashTable* hash = get_reservations_hash(rcatalog);
+        g_hash_table_iter_init(&iter, hash);
+        while (g_hash_table_iter_next(&iter, &key, &value)) {
+        RESERVATION* reservation = value;
+        USER* user = g_hash_table_lookup(users_hash,token);
+
+        char* active_status = strdup(get_active_status(user));
+        char* curr_user_id = strdup(get_user_id(reservation));
+        if (strcasecmp(active_status, "inactive") == 0) {
+            g_hash_table_iter_next(&iter, &key, &value);
+        }
+        if(strcmp(token, curr_user_id) == 0) aux = g_list_append(aux, reservation);
+        
+    }
+
+    GList* sorted = g_list_sort(aux, sort_function_q4);
+    int tamanho = g_list_length(sorted);
+    
+    
+    
+
+    for (size_t i = 0; i < tamanho; i++) {
+        char line[200];  // linha atual
+        RESERVATION* curr_res = g_list_nth_data(sorted, i);
+
+        sprintf(line, "%s;%s\n", get_reservation_id(curr_res), get_begin_date(curr_res));
+
+        // realloc para aumentar o tamanho da string output
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+    }
+    
+    return output;
+    
+    }
+
+    return NULL;
+}
+
 char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     int res = 0;
     double total = 0;

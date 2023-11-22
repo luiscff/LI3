@@ -22,8 +22,20 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             create_result_file("Resultados", lineNumber, result);
             free(result);
 
-        } else if (strcmp(token, "2") == 0) {
-            // ignora
+        }  else if (strcmp(token, "2") == 0) {
+            char *nextToken = strtok(NULL, " ");
+            char *nextToken2 = strtok(NULL, " ");
+            printf("Executando query 2 com token: %s %s\n",nextToken,nextToken2);
+            if (nextToken2 == NULL) create_result_file("Resultados", lineNumber, NULL); //TODO: criar funçao que faça com os dois
+            
+            else {
+                char *result = query2(f_catalog, r_catalog, u_catalog, nextToken, nextToken2);
+                create_result_file("Resultados", lineNumber, result);
+                if (result != NULL) printf ("\n%s\n", result);
+                free(result);}
+
+
+           
         } else if (strcmp(token, "3") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3 com token: %s\n",nextToken);
