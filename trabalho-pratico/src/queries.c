@@ -150,6 +150,7 @@ int sort_function_q4(gconstpointer a, gconstpointer b) {
 
 // aux 9
 int verificaPrefixo(const char* string, const char* prefixo) {
+    printf("estourou na verificação do prefixo?\n");
     size_t tamanhoPrefixo = strlen(prefixo);
 
     // Compara os primeiros 'tamanhoPrefixo' caracteres
@@ -163,6 +164,7 @@ int verificaPrefixo(const char* string, const char* prefixo) {
 
 
 void convert_to_lower_case(char* str) {
+    printf("estourou no convert to lower case?\n");
     setlocale(LC_ALL, "");  // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
@@ -179,6 +181,7 @@ void convert_to_lower_case(char* str) {
 
 
 void remove_accents(char* str) {
+    printf("estourou no remove accents?\n");
     setlocale(LC_ALL, "");  // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
@@ -201,6 +204,7 @@ void remove_accents(char* str) {
 }
 
 int sort_function_q9(gconstpointer a, gconstpointer b) {
+    printf("estourou no sort da query9?\n");
     // formato das strings recebidas (a e b): "id;name"
 
     // saca os 2 tokens da string a
@@ -234,11 +238,13 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
     convert_to_lower_case(name1);
     convert_to_lower_case(name2);
 
+    printf("nao estourou no convert to lower case\n");
+
     remove_accents(id1);
     remove_accents(id2);
     remove_accents(name1);
     remove_accents(name2);
-    
+    printf("nao estourou no remove accents\n");
 
     // ordenados por nome (de forma crescente).
     // compara os nomes (strings) como num dicionario 
@@ -710,9 +716,11 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         USER* user = value;
         if (strcasecmp(get_active_status(user), "inactive") != 0) {  // se o user não for "inactive"
+        printf("nao estourou na verificação do active status\n");
             char* id = strdup(get_id(user));
             char* name = strdup(get_name(user));
             if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
+                printf("não estourou na verificação do prefixo\n");
                 // concatena o id e o nome do user
                 char* idName = malloc(strlen(id) + strlen(name) + 2);
                 strcpy(idName, id);
@@ -733,6 +741,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     }
 
     GList* sorted = g_list_sort(aux, sort_function_q9);
+    printf("nao estourou no sort da query9\n");
     int tamanho = g_list_length(sorted);
     char* output = malloc(1);
     output[0] = '\0';  // começa com uma string vazia
