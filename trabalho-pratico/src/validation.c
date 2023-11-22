@@ -21,7 +21,7 @@
 bool isValidNotNull(const char *str) {
     return (str != NULL);
 }
-
+// verifica se uma string é apenas composta por digitos
 bool isdigitAll (const char *string)
 {
     for (int i = 0; string[i]!= '\0'; i++)

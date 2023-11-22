@@ -30,6 +30,7 @@ void create_result_file(const char *folderPath, int lineNumber, const char *cont
     else fprintf(resultFile, "%s", content); // Escreve o conteúdo no ficheiro
     fclose(resultFile);
 }
+// função responsável por escrever no ficheiro de erros dos flights
 
 void writeToErrorFileFlight(char *line, const char *filename) {
     char *token = strtok(line, ",");
@@ -54,6 +55,7 @@ void writeToErrorFileFlight(char *line, const char *filename) {
     fclose(file);
 }
 
+// função responsável por escrever no ficheiro de erros dos passengers
 
 void writeToErrorFilePassenger(char *line, const char *filename) {
     char *token = strtok(line, ",");
@@ -77,6 +79,7 @@ void writeToErrorFilePassenger(char *line, const char *filename) {
     }
     fclose(file);
 }
+// função responsável por escrever no ficheiro de erros das reservations
 
 void writeToErrorFileReservation(char *line, const char *filename) {
     FILE *file = fopen(filename, "a");
@@ -87,7 +90,7 @@ void writeToErrorFileReservation(char *line, const char *filename) {
     }
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
-    if (file_size == 0) {
+    if (file_size == 0) { // Se o ficheiro estiver vazio, escreve o cabeçalho
         fprintf(file, "id;user_id;hotel_id;hotel_name;hotel_stars;city_tax;address;begin_date;end_date;price_per_night;includes_breakfast;room_details;rating;comment\n");
     }
 
@@ -95,7 +98,7 @@ void writeToErrorFileReservation(char *line, const char *filename) {
 
     fclose(file);
 }
-
+// função responsável por escrever no ficheiro de erros dos users
 void writeToErrorFileUser(char *line, const char *filename) {
     FILE *file = fopen(filename, "a");
 
@@ -105,7 +108,7 @@ void writeToErrorFileUser(char *line, const char *filename) {
     }
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
-    if (file_size == 0) {
+    if (file_size == 0) { // Se o ficheiro estiver vazio, escreve o cabeçalho
         fprintf(file, "id;name;email;phone_number;birth_date;sex;passport;country_code;address;account_creation;pay_method;account_status\n");
     }
 

@@ -724,7 +724,7 @@ GHashTable* users_hash = get_users_hash(ucatalog);
         char line[200];  // linha atual
         FLIGHT* curr_flight = g_list_nth_data(sorted_flights, i);
 
-        sprintf(line, "%s;%s;reservation\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
+        sprintf(line, "%s;%s;flight\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
