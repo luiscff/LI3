@@ -11,6 +11,7 @@
 #include "Catalog/users_catalog.h"
 #include "output.h"
 
+// função responsável por tratar dos casos da include_breakfast, feita para aceitar tanto os chars f, como t, como os valores 0 ou 1
 bool isTrueOrFalse(const char *str) {
     if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0)
         return false;
@@ -19,7 +20,7 @@ bool isTrueOrFalse(const char *str) {
     printf("Invalid input on parser.c\n");
     return false;
 }
-
+// função responsável por fazer o parse de cada linha do user, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos users
 void parseLine_user(char *line, void *catalog) {
     USERS_CATALOG *usersCatalog = (USERS_CATALOG *)catalog;
     char *token;
@@ -73,7 +74,7 @@ void parseLine_user(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToErrorFileUser(line, "Resultados/users_errors.csv");
+            writeToErrorFileUser(line, "Resultados/users_errors.csv");// função responável por escrever no ficheiro de erros dos users
             free(lineCopy);
             free_user(user);  // Adicione esta linha
             return;
@@ -91,7 +92,7 @@ void parseLine_user(char *line, void *catalog) {
 
     free(lineCopy);
 }
-
+// função responsável por fazer o parse de cada linha dos flights, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos flights
 void parseLine_flight(char *line, void *catalog) {
     FLIGHTS_CATALOG *flightsCatalog = (FLIGHTS_CATALOG *)catalog;
     char *token;
@@ -103,7 +104,7 @@ void parseLine_flight(char *line, void *catalog) {
 
     char *schedule_begin_date = NULL;
     char *real_begin_date = NULL;
-
+// são guardados os valores das datas schedule_departure_date e real_departure_date para mais tarde se poder comparar com as datas de arrival respetivas de modo a garantir que as datas de arrival são depois das de departure
     token = strtok(lineCopy, ";");
     while (token != NULL) {
         if (schedule_begin_date != NULL) {
@@ -164,7 +165,7 @@ void parseLine_flight(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
+            writeToErrorFileFlight(line, "Resultados/flights_errors.csv");// função responsável por escrever no ficheiro de erros dos flights caso algum caso falhe
             free(lineCopy);
             free_flight(flight);
             free(schedule_begin_date);
@@ -186,7 +187,7 @@ void parseLine_flight(char *line, void *catalog) {
     free(real_begin_date);
     free(lineCopy);
 }
-
+// função responsável por fazer o parse de cada linha dos passengers, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos passengers
 void parseLine_passenger(char *line, void *catalog) {
     PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
     char *token;
@@ -208,7 +209,7 @@ void parseLine_passenger(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
+            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");// função responsável por escrever no ficheiro de erros dos passengers caso algum caso falhe
             free(lineCopy);
             free_passenger(passenger);
             return;
@@ -227,6 +228,7 @@ void parseLine_passenger(char *line, void *catalog) {
     free(lineCopy);
 }
 
+// função responsável por fazer o parse de cada linha das reservations, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos reservations
 void parseLine_reservation(char *line, void *catalog) {
     RESERVATIONS_CATALOG *reservationsCatalog = (RESERVATIONS_CATALOG *)catalog;
     char *token;
@@ -239,7 +241,7 @@ void parseLine_reservation(char *line, void *catalog) {
 
     token = strtok(lineCopy, ";");
     while (token != NULL) {
-        if (begin_date != NULL) {
+        if (begin_date != NULL) {// é guardado o token da begin_date que mais tarde vai ser necessário para depois garantir que a segunda data é posterior à primeira
             free(begin_date);
             begin_date = NULL;
         }
@@ -312,6 +314,7 @@ void parseLine_reservation(char *line, void *catalog) {
     free(lineCopy);
 }
 
+// função responsável por fazer o parse do ficheiro .csv inteiro, onde abre o ficheiro e chama as funções que leem cada linha do ficheiro para fazer o parse da linha
 void parseCSV(const char *filepath, int token, void *catalog) {
     FILE *file = fopen(filepath, "r");
     if (file == NULL) {
