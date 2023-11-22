@@ -93,6 +93,84 @@ int calc_idade(char* birth_date) {
     }  // Ajustar a idade caso ainda nao tenha feito anos nesse mesmo ano
     return idade;
 }
+// aux q2
+char* extractDate(const char* inputString) {
+ 
+    char* datePart = malloc(11);  
+    if (datePart != NULL) {
+        strncpy(datePart, inputString, 10);
+        datePart[10] = '\0'; 
+        return datePart;
+    } else {
+        return NULL;  // Memory allocation failed
+    }
+}
+
+char* fix_flight_id(int num) {
+    char* str = malloc(11);  // Allocate space for 10 digits and the null terminator
+    if (str == NULL) {
+        printf("Memory allocation failed\n");
+        return NULL;
+    }
+    sprintf(str, "%010d", num);  // Format the integer with leading zeros
+    return str;
+}
+
+
+int sort_function_q2(gconstpointer a, gconstpointer b) {
+    const FLIGHT* flight1 = a;
+    const FLIGHT* flight2 = b;
+
+    // ordenadas por data de início (da mais recente para a mais antiga).
+    char* date1 = strdup( extractDate(get_schedule_departure_date(flight1)));
+    char* date2 = strdup( extractDate(get_schedule_departure_date(flight2)));
+
+    int ano1, mes1, dia1;
+    sscanf(date1, "%d/%d/%d", &ano1, &mes1, &dia1);
+
+    int ano2, mes2, dia2;
+    sscanf(date2, "%d/%d/%d", &ano2, &mes2, &dia2);
+
+    // compara anos
+    if (ano1 > ano2) {
+        return -1;
+    } else if (ano1 < ano2) {
+        return 1;
+    }
+
+    // compara meses
+    if (mes1 > mes2) {
+        return -1;
+    } else if (mes1 < mes2) {
+        return 1;
+    }
+
+    // compara dias
+    if (dia1 > dia2) {
+        return -1;
+    } else if (dia1 < dia2) {
+        return 1;
+    }
+
+    // quando as datas são iguais
+    // o identificador da reserva é o critério de desempate (de forma crescente).
+    int id1 = get_flight_id(flight1);
+    int id2 = get_flight_id(flight2);
+
+    // compara os ids (strings) como num dicionario
+    if (id1 < id2 ) {
+        return -1;
+    } else if (id1> id2) {
+        return 1;
+    }
+
+    printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
+    return 0;
+}
+
+
+
+
 
 // aux 3
 
@@ -594,6 +672,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
     return " ";
 }
 
+
 char* query2(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS_CATALOG *ucatalog, PASSENGERS_CATALOG* pcatalog, char* token,char* catalog) {
     GHashTable* users_hash = get_users_hash(ucatalog);
     
@@ -607,25 +686,26 @@ char* query2(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS_CAT
         GHashTable* hash = get_flights_hash(fcatalog);
         while (flight_ids != NULL) {
             int flight_id_by_user = GPOINTER_TO_INT(flight_ids->data); 
-            printf("%d\n", flight_id_by_user);
+            //printf("%d\n", flight_id_by_user);
             g_hash_table_iter_init(&iter, hash);
             
             while (g_hash_table_iter_next(&iter, &key, &value)) {
                 FLIGHT* flight = value;
+ 
                 int curr_flight_id = get_flight_id(flight); 
-                if (flight_id_by_user==curr_flight_id)printf("%d\n", curr_flight_id);// g_list_append(aux, flight);
+                if (flight_id_by_user==curr_flight_id) aux = g_list_append(aux, flight);
             }
             flight_ids = flight_ids->next;
         }
-
-        GList* sorted = g_list_sort(aux, NULL);
+        if (aux == NULL) printf ("aba");
+        GList* sorted = g_list_sort(aux, sort_function_q2);
         int tamanho = g_list_length(sorted);
 
     for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
         FLIGHT* curr_flight = g_list_nth_data(sorted, i);
 
-        sprintf(line, "%d;%s\n", get_flight_id(curr_flight), get_schedule_departure_date(curr_flight));
+        sprintf(line, "%s;%s\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -635,9 +715,6 @@ char* query2(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS_CAT
     printf("\n%s\n",output);
 
     return output;}
-    
-
-
 
     if (strcmp(catalog,"reservations")==0){
         GHashTable* hash = get_reservations_hash(rcatalog);
@@ -657,9 +734,6 @@ char* query2(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS_CAT
 
     GList* sorted = g_list_sort(aux, sort_function_q4);
     int tamanho = g_list_length(sorted);
-    
-    
-    
 
     for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
