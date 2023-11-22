@@ -691,7 +691,8 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,int flag) {
         strcat(output, line);
         }
 
-
+        //tira os 2 ultimos \n's
+        output[strlen(output)-2] = '\0';
 
     }
 
