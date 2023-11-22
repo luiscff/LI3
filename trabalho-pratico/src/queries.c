@@ -150,7 +150,6 @@ int sort_function_q4(gconstpointer a, gconstpointer b) {
 
 // aux 9
 int verificaPrefixo(const char* string, const char* prefixo) {
-    printf("estourou na verificação do prefixo?\n");
     size_t tamanhoPrefixo = strlen(prefixo);
 
     // Compara os primeiros 'tamanhoPrefixo' caracteres
@@ -161,7 +160,6 @@ int verificaPrefixo(const char* string, const char* prefixo) {
 }
 
 void convert_to_lower_case(char* str) {
-    printf("estourou no convert to lower case?\n");
     if (str == NULL) {
         printf("String is NULL\n");
         return;
@@ -184,7 +182,6 @@ void convert_to_lower_case(char* str) {
 }
 
 void remove_accents(char* str) {
-    printf("estourou no remove accents?\n");
     setlocale(LC_ALL, "");                // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
@@ -230,7 +227,6 @@ void remove_accents(char* str) {
 }
 
 int sort_function_q9(gconstpointer a, gconstpointer b) {
-    printf("estourou no sort da query9?\n");
     // formato das strings recebidas (a e b): "id;name"
 
     // saca os 2 tokens da string a
@@ -263,13 +259,11 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
     convert_to_lower_case(name1);
     convert_to_lower_case(name2);
 
-    printf("nao estourou no convert to lower case\n");
 
     remove_accents(id1);
     remove_accents(id2);
     remove_accents(name1);
     remove_accents(name2);
-    printf("nao estourou no remove accents\n");
 
     // ordenados por nome (de forma crescente).
     // compara os nomes (strings) como num dicionario
@@ -765,32 +759,49 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         USER* user = value;
         if (strcasecmp(get_active_status(user), "inactive") != 0) {  // se o user não for "inactive"
-            printf("nao estourou na verificação do active status\n");
             char* id = strdup(get_id(user));
+            if (id == NULL) {
+                printf("Error: failed to allocate memory on id\n");
+                free(prefix);
+                return NULL;
+            }
+
             char* name = strdup(get_name(user));
+            if (name == NULL) {
+                printf("Error: failed to allocate memory on name\n");
+                free(id);
+                free(prefix);
+                return NULL;
+            }
             if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
-                printf("não estourou na verificação do prefixo\n");
-                // concatena o id e o nome do user
                 char* idName = malloc(strlen(id) + strlen(name) + 2);
+                if (idName == NULL) {
+                    printf("Error: failed to allocate memory on idName\n");
+                    free(id);
+                    free(name);
+                    free(prefix);
+                    return NULL;
+                }
+                // concatena o id e o nome do user
                 strcpy(idName, id);
                 strcat(idName, ";");
                 strcat(idName, name);
 
                 aux = g_list_append(aux, idName);  // dá append à lista do "id;name"
                 if (aux == NULL) {
-                    printf("erro ao dar append\n");
+                    printf("Error: failed to append to list\n");
+                    free(idName);
                     free(id);
+                    free(name);
                     free(prefix);
                     return NULL;
                 }
             } else {  // se nao tiver o prefixo, liberta a memoria
             }
-
         }
     }
 
     GList* sorted = g_list_sort(aux, sort_function_q9);
-    printf("nao estourou no sort da query9\n");
     int tamanho = g_list_length(sorted);
     char* output = malloc(1);
     output[0] = '\0';  // começa com uma string vazia
@@ -812,5 +823,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     // g_list_free(aux);  // free da lista em si
     // free(prefix);
 
+    //tira o \n do fim da string
+    output[strlen(output) - 1] = '\0';
     return output;
 }
