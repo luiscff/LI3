@@ -102,7 +102,6 @@ void writeToErrorFileReservation(char *line, const char *filename) {
 }
 
 void writeToErrorFileUser(char *line, const char *filename) {
-    char *token = strtok(line, ",");
     FILE *file = fopen(filename, "a");
 
     if (file == NULL) {
@@ -113,15 +112,9 @@ void writeToErrorFileUser(char *line, const char *filename) {
     long file_size = ftell(file);
     if (file_size == 0) {
         fprintf(file, "id;name;email;phone_number;birth_date;sex;passport;country_code;address;account_creation;pay_method;account_status\n");
-    } else {
     }
 
-    while (token != NULL) {
-        fprintf(file, "%s", token);
-        token = strtok(NULL, ",");
-        if (token != NULL) {
-            fprintf(file, ";");
-        }
-    }
+    fprintf(file, "%s", line);  // Write the whole line to the file
+
     fclose(file);
 }
