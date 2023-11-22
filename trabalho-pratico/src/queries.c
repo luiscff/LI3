@@ -165,9 +165,17 @@ int verificaPrefixo(const char* string, const char* prefixo) {
 
 void convert_to_lower_case(char* str) {
     printf("estourou no convert to lower case?\n");
+    if (str == NULL) {
+        printf("String is NULL\n");
+        return;
+    }
     setlocale(LC_ALL, "");  // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
+    if (wstr == NULL) {
+    printf("Failed to allocate memory\n");
+    return;
+}
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 
     for (size_t i = 0; i < len; i++) {
