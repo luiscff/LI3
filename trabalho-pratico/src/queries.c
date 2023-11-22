@@ -719,12 +719,12 @@ GHashTable* users_hash = get_users_hash(ucatalog);
     int tamanho1 = g_list_length(sorted_flights);
 
 
-
+    // escreve no output as linhas correspondentes aos flights
     for(size_t i = 0; i < tamanho1; i++) {
         char line[200];  // linha atual
         FLIGHT* curr_flight = g_list_nth_data(sorted_flights, i);
 
-        sprintf(line, "%s;%s\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
+        sprintf(line, "%s;%s;reservation\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -748,12 +748,12 @@ GHashTable* users_hash = get_users_hash(ucatalog);
         int tamanho2 = g_list_length(sorted_reservations);
 
 
-        // printa tudo
+        // escreve no output as linhas correspondentes as reservations
         for (size_t i = 0; i < tamanho2; i++) {
         char line[200];  // linha atual
         RESERVATION* curr_reservation = g_list_nth_data(sorted_reservations, i);
 
-        sprintf(line, "%s;%s\n", get_reservation_id(curr_reservation), get_begin_date(curr_reservation));
+        sprintf(line, "%s;%s;reservation\n", get_reservation_id(curr_reservation), get_begin_date(curr_reservation));
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -799,7 +799,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS
         int tamanho = g_list_length(sorted);
 
 
-    if (flag == 1){
+    if (flag == 1){ // 2 normal
 
     for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
@@ -813,13 +813,13 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS
         strcat(output, line);
     }
     }
-    if (flag == 2){
+    if (flag == 2){ // 2F
         int reg_num = 1;
         for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
         FLIGHT* curr_flight = g_list_nth_data(sorted, i);
 
-        sprintf(line, "--- %d ---\nid: %s\ndate: %s\n", reg_num, fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
+        sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
         reg_num++;
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -845,7 +845,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS
     GList* sorted = g_list_sort(aux, sort_function_q4);
     int tamanho = g_list_length(sorted);
 
-    if (flag == 1){
+    if (flag == 1){ // 2 normal
     for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
@@ -858,14 +858,14 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog,USERS
         strcat(output, line);
     }
     }
-     if (flag == 2){
+     if (flag == 2){ // 2F
         int reg_num =1;
         for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
 
         sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num ,get_reservation_id(curr_res), get_begin_date(curr_res));
-
+        reg_num++;
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
