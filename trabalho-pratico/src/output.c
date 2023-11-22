@@ -79,7 +79,6 @@ void writeToErrorFilePassenger(char *line, const char *filename) {
 }
 
 void writeToErrorFileReservation(char *line, const char *filename) {
-    char *token = strtok(line, ",");
     FILE *file = fopen(filename, "a");
 
     if (file == NULL) {
@@ -89,15 +88,11 @@ void writeToErrorFileReservation(char *line, const char *filename) {
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
     if (file_size == 0) {
-        fprintf(file, "id;user_id;hotel_id;hotel_name;hotel_stars;city_tax;address;begin_date;end_date;price_per_night;includes_breakfast;room_details;rating;comment;\n");
+        fprintf(file, "id;user_id;hotel_id;hotel_name;hotel_stars;city_tax;address;begin_date;end_date;price_per_night;includes_breakfast;room_details;rating;comment\n");
     }
-    while (token != NULL) {
-        fprintf(file, "%s", token);
-        token = strtok(NULL, ",");
-        if (token != NULL) {
-            fprintf(file, ";");
-        }
-    }
+
+    fprintf(file, "%s", line);  // Write the whole line to the file
+
     fclose(file);
 }
 
