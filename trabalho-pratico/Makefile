@@ -24,3 +24,7 @@ leaks: programa-principal
 
 clean:
 	rm -f programa-principal programa-testes src/*.o  src/Catalog/*.o src/Entities/*.o Resultados/*.txt
+	> Resultados/users_errors.csv
+	> Resultados/flights_errors.csv
+	> Resultados/passengers_errors.csv
+	> Resultados/reservations_errors.csv
