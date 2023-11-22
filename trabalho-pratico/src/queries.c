@@ -1,6 +1,11 @@
 #include <ctype.h>
 #include <stdio.h>
 
+//para converter para minusculas e retirar acentos 
+#include <locale.h>
+#include <wctype.h> 
+#include <wchar.h> 
+
 #include "Catalog/flights_catalog.h"
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
@@ -154,8 +159,105 @@ int verificaPrefixo(const char* string, const char* prefixo) {
     return (resultadoComparacao == 0);
 }
 
+
+
+
+void convert_to_lower_case(char* str) {
+    setlocale(LC_ALL, "");  // set the locale to the user's default locale
+    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
+    wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
+    mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
+
+    for (size_t i = 0; i < len; i++) {
+        wstr[i] = towlower(wstr[i]);  // convert to lowercase
+    }
+
+    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
+    free(wstr);
+}
+
+
+
+void remove_accents(char* str) {
+    setlocale(LC_ALL, "");  // set the locale to the user's default locale
+    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
+    wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
+    mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
+
+    for (size_t i = 0; i < len; i++) {
+        switch (wstr[i]) {
+            case L'ã': case L'á': case L'à': case L'â': wstr[i] = L'a'; break;
+            case L'é': case L'è': case L'ê': wstr[i] = L'e'; break;
+            case L'í': case L'ì': case L'î': wstr[i] = L'i'; break;
+            case L'ó': case L'ò': case L'ô': wstr[i] = L'o'; break;
+            case L'ú': case L'ù': case L'û': wstr[i] = L'u'; break;
+            case L'ç': wstr[i] = L'c'; break;
+            // Add more cases if needed
+        }
+    }
+
+    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
+    free(wstr);
+}
+
 int sort_function_q9(gconstpointer a, gconstpointer b) {
-    return strcmp(a, b);
+    // formato das strings recebidas (a e b): "id;name"
+
+    // saca os 2 tokens da string a
+    char* aux1 = strdup(a);
+    char* id1 = strtok(aux1, ";");
+    char* name1 = strtok(NULL, ";");
+
+    // saca os 2 tokens da string b
+    char* aux2 = strdup(b);
+    char* id2 = strtok(aux2, ";");
+    char* name2 = strtok(NULL, ";");
+
+
+    //se os nomes tiverem "-" mudar para " "
+
+    for (int i = 0; name1[i] != '\0'; i++) {
+        if (name1[i] == '-') {
+            name1[i] = ' ';
+        }
+    }
+
+    for (int i = 0; name2[i] != '\0'; i++) {
+        if (name2[i] == '-') {
+            name2[i] = ' ';
+        }
+    }
+
+    // converter para minusculas e retirar acentos
+    convert_to_lower_case(id1);
+    convert_to_lower_case(id2);
+    convert_to_lower_case(name1);
+    convert_to_lower_case(name2);
+
+    remove_accents(id1);
+    remove_accents(id2);
+    remove_accents(name1);
+    remove_accents(name2);
+    
+
+    // ordenados por nome (de forma crescente).
+    // compara os nomes (strings) como num dicionario 
+
+    int result = strcmp(name1, name2);
+    if (result == 0) {
+        // quando os nomes são iguais o identificador do utilizador é o critério de desempate (de forma crescente).
+        // compara os ids (strings) como num dicionario
+        result = strcmp(id1, id2);
+        if (result < 0) printf("%s < %s\n", id1, id2);
+        else if (result > 0) printf("%s > %s\n", id1, id2);
+    }
+
+    if (result == 0) printf("ERRO no sort da query9: os utilizadores têm o mesmo nome e o mesmo id\n");
+
+    free(aux1);
+    free(aux2);
+
+    return result;
 }
 
 //--------------
@@ -233,6 +335,9 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
     }
 
     if (entity == 3) {  // se for um utilizador
+
+        // TODO: verificar se o user está ativo, se não estiver, não faz nada
+
         USER* user = get_user_by_id(ucatalog, aux);
         if (user == NULL) {
             printf("User not found\n");
@@ -463,7 +568,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
     return " ";
 }
 
-char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {  // TODO: testar
+char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     int res = 0;
     double total = 0;
     gpointer key, value;
@@ -593,7 +698,6 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token) {
 char* query9(USERS_CATALOG* ucatalog, char* token) {
     char* prefix = strdup(token);
     gpointer key, value;
-    char* current = malloc(30);
     GList* aux = NULL;
     GHashTableIter iter;
     GHashTable* hash = get_users_hash(ucatalog);
@@ -601,11 +705,25 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
 
     while (g_hash_table_iter_next(&iter, &key, &value)) {
         USER* user = value;
-        current = strdup(get_id(user));
-        if (verificaPrefixo(current, prefix)) {
-            if (g_list_append(aux, current) == NULL) {
-                printf("erro ao dar append\n");
-                return NULL;
+        if (strcasecmp(get_active_status(user), "inactive") != 0) {  // se o user não for "inactive"
+            char* id = strdup(get_id(user));
+            char* name = strdup(get_name(user));
+            if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
+                // concatena o id e o nome do user
+                char* idName = malloc(strlen(id) + strlen(name) + 2);
+                strcpy(idName, id);
+                strcat(idName, ";");
+                strcat(idName, name);
+
+                aux = g_list_append(aux, idName);  // dá append à lista do "id;name"
+                if (aux == NULL) {
+                    printf("erro ao dar append\n");
+                    free(id);
+                    free(prefix);
+                    return NULL;
+                }
+            } else {  // se nao tiver o prefixo, liberta a memoria
+                free(id);
             }
         }
     }
@@ -613,20 +731,17 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
     GList* sorted = g_list_sort(aux, sort_function_q9);
     int tamanho = g_list_length(sorted);
     char* output = malloc(1);
-    output[0] = '\0';  // Começa com uma string vazia
+    output[0] = '\0';  // começa com uma string vazia
     for (size_t i = 0; i < tamanho; i++) {
-        char line[200];  // linha atual
-        USER* curr_user = g_list_nth_data(sorted, i);
+        char* curr_user = g_list_nth_data(sorted, i);
 
-        sprintf(output, "%s;%s;\n", get_id(curr_user), get_name(curr_user));
-
-        // realloc para aumentar o tamanho da string output
-        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // realloc to increase the size of the output string
+        output = realloc(output, strlen(output) + strlen(curr_user) + 2);  // +2 para o "\n" e para o "\0"
         // concatena a linha atual à string de output
-        strcat(output, line);
+        strcat(output, curr_user);
+        strcat(output, "\n");
     }
 
-    free(current);
     free(prefix);
 
     return output;
