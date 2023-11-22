@@ -257,13 +257,13 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
         }
     }
 
-    // converter para minusculas e retirar acentos
-    // convert_to_lower_case(id1);
-    // convert_to_lower_case(id2);
-    // convert_to_lower_case(name1);
-    // convert_to_lower_case(name2);
+    //converter para minusculas e retirar acentos
+    convert_to_lower_case(id1);
+    convert_to_lower_case(id2);
+    convert_to_lower_case(name1);
+    convert_to_lower_case(name2);
 
-    // printf("nao estourou no convert to lower case\n");
+    printf("nao estourou no convert to lower case\n");
 
     remove_accents(id1);
     remove_accents(id2);
@@ -283,8 +283,7 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
 
     if (result == 0) printf("ERRO no sort da query9: os utilizadores têm o mesmo nome e o mesmo id\n");
 
-    free(aux1);
-    free(aux2);
+
 
     return result;
 }
@@ -759,8 +758,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
                 }
             } else {  // se nao tiver o prefixo, liberta a memoria
             }
-            free(id);
-            free(name);
+
         }
     }
 
@@ -779,13 +777,13 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
         strcat(output, "\n");
     }
 
-    // frees
-    GList* l;
-    for (l = aux; l != NULL; l = l->next) {  // free de cada elemento da lista
-        free(l->data);
-    }
-    g_list_free(aux);  // free da lista em si
-    free(prefix);
+    // // frees
+    // GList* l;
+    // for (l = aux; l != NULL; l = l->next) {  // free de cada elemento da lista
+    //     free(l->data);
+    // }
+    // g_list_free(aux);  // free da lista em si
+    // free(prefix);
 
     return output;
 }
