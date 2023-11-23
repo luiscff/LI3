@@ -747,7 +747,6 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         strcat(output, line);
     }
 
-    printf("\n%s\n", output);
     free(active_status);
     return output;
 }
