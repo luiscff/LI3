@@ -94,6 +94,32 @@ int calc_idade(char* birth_date) {
     return idade;
 }
 // aux q2
+
+typedef struct aux_q2 {
+    char* id;
+    char* date;
+    char* type;
+}AUX_Q2;
+
+const char* get_aux_id(const AUX_Q2 *aux) { return aux->id; }
+const char* get_aux_date(const AUX_Q2 *aux) { return aux->date; }
+const char* get_aux_type(const AUX_Q2 *aux) { return aux->type; }
+
+void set_aux_id(AUX_Q2 *aux, const char *id) {
+    if (aux->id) free(aux->id);
+    aux->id = strdup(id);
+}
+
+void set_aux_date(AUX_Q2 *aux, const char *date) {
+    if (aux->date) free(aux->date);
+    aux->date = strdup(date);
+}
+
+void set_aux_type(AUX_Q2 *aux, const char *type) {
+    aux->type = strdup(type);
+}
+
+
 char* extractDate(const char* inputString) {
     char* datePart = malloc(11);
     if (datePart != NULL) {
@@ -116,7 +142,55 @@ char* fix_flight_id(int num) {
 }
 
 int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
+    const AUX_Q2* aux1 = a;
+    const AUX_Q2* aux2 = b;
+
+    // ordenadas por data de início (da mais recente para a mais antiga).
+    char* date1 = strdup(get_aux_date(aux1));
+    char* date2 = strdup(get_aux_date(aux2));
+
+    int ano1, mes1, dia1;
+    sscanf(date1, "%d/%d/%d", &ano1, &mes1, &dia1);
+
+    int ano2, mes2, dia2;
+    sscanf(date2, "%d/%d/%d", &ano2, &mes2, &dia2);
+
+    // compara anos
+    if (ano1 > ano2) {
+        return -1;
+    } else if (ano1 < ano2) {
+        return 1;
+    }
+
+    // compara meses
+    if (mes1 > mes2) {
+        return -1;
+    } else if (mes1 < mes2) {
+        return 1;
+    }
+
+    // compara dias
+    if (dia1 > dia2) {
+        return -1;
+    } else if (dia1 < dia2) {
+        return 1;
+    }
+
+    // quando as datas são iguais
+    // o identificador da reserva é o critério de desempate (de forma crescente).
+    char* id1 = strdup(get_aux_id(aux1));
+    char* id2 = strdup(get_aux_id(aux2));
+
+    // compara os ids (strings) como num dicionario
+    if (strcmp(id1, id2) < 0) {
+        return -1;
+    } else if (strcmp(id1, id2) > 0) {
+        return 1;
+    }
+
+    printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
     return 0;
+
 }
 
 int sort_function_q2(gconstpointer a, gconstpointer b) {
@@ -666,7 +740,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
     return " ";
 }
 
-char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USERS_CATALOG* ucatalog, PASSENGERS_CATALOG* pcatalog, char* token) {  // TODO: funçao sort
+char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USERS_CATALOG* ucatalog, PASSENGERS_CATALOG* pcatalog, char* token, int flag) {  // TODO: funçao sort
     GHashTable* users_hash = get_users_hash(ucatalog);
     USER* user = g_hash_table_lookup(users_hash, token);
     if (user == NULL) {
@@ -678,17 +752,21 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         return NULL;
     }
 
+    const char* type1 = strdup("flight");
+    const char* type2 = strdup("reservation");
+
     gpointer key1, value1;  // flights
     GHashTableIter iter1;
     gpointer key2, value2;  // reservations
     GHashTableIter iter2;
-    GList* aux_flights = NULL;
-    GList* aux_reservations = NULL;
+    GList* aux_list = NULL;
+    
     char* output = malloc(1);
     output[0] = '\0';  // Começa com uma string vazia
     GList* flight_ids = find_flights_by_user(pcatalog, token);
 
     // inserir a parte dos flights
+
     GHashTable* hash_flights = get_flights_hash(fcatalog);
     while (flight_ids != NULL) {
         int flight_id_by_user = GPOINTER_TO_INT(flight_ids->data);
@@ -696,27 +774,20 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         g_hash_table_iter_init(&iter1, hash_flights);
 
         while (g_hash_table_iter_next(&iter1, &key1, &value1)) {
+            AUX_Q2* new_entidade = malloc(sizeof(AUX_Q2));
             FLIGHT* flight = value1;
             int curr_flight_id = get_flight_id(flight);
-            if (flight_id_by_user == curr_flight_id) aux_flights = g_list_append(aux_flights, flight);
+
+            if (flight_id_by_user == curr_flight_id) {
+                set_aux_id(new_entidade, fix_flight_id(get_flight_id(flight)));
+                set_aux_date(new_entidade, extractDate(get_schedule_departure_date(flight)));
+                set_aux_type(new_entidade,type1);
+
+                printf( "%s;%s;%s\n", strdup(get_aux_id(new_entidade)), strdup(get_aux_date(new_entidade)), strdup(get_aux_type(new_entidade)));
+                aux_list = g_list_append(aux_list, new_entidade);
+            }   
         }
         flight_ids = flight_ids->next;
-    }
-
-    GList* sorted_flights = g_list_sort(aux_flights, sort_function_q2);
-    int tamanho1 = g_list_length(sorted_flights);
-
-    // escreve no output as linhas correspondentes aos flights
-    for (size_t i = 0; i < tamanho1; i++) {
-        char line[200];  // linha atual
-        FLIGHT* curr_flight = g_list_nth_data(sorted_flights, i);
-
-        sprintf(line, "%s;%s;flight\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
-
-        // realloc para aumentar o tamanho da string output
-        output = realloc(output, strlen(output) + strlen(line) + 1);
-        // concatena a linha atual à string de output
-        strcat(output, line);
     }
 
     // inserir a parte das reservations
@@ -725,27 +796,52 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
     g_hash_table_iter_init(&iter2, hash_reservations);
 
     while (g_hash_table_iter_next(&iter2, &key2, &value2)) {
+        AUX_Q2* new_entidade = malloc(sizeof(AUX_Q2));
         RESERVATION* reservation = value2;
         char* curr_user_id = strdup(get_user_id(reservation));
-        if (strcmp(token, curr_user_id) == 0) aux_reservations = g_list_append(aux_reservations, reservation);
-        free(curr_user_id);
+        if (strcmp(token, curr_user_id) == 0){
+            set_aux_id(new_entidade, strdup(get_reservation_id(reservation)));
+            set_aux_date(new_entidade, strdup(get_begin_date(reservation)));
+            set_aux_type(new_entidade,strdup(type2));
+            printf( "%s;%s;%s\n", strdup(get_aux_id(new_entidade)), strdup(get_aux_date(new_entidade)), strdup(get_aux_type(new_entidade)));
+
+            aux_list = g_list_append(aux_list, new_entidade);      
     }
+    free(curr_user_id);  
+    }
+    GList* sorted_aux= g_list_sort(aux_list, sort_function_q2_nocat);
+    int tamanho = g_list_length(sorted_aux);
 
-    GList* sorted_reservations = g_list_sort(aux_reservations, sort_function_q4);
-    int tamanho2 = g_list_length(sorted_reservations);
-
+ if (flag == 1) {
     // escreve no output as linhas correspondentes as reservations
-    for (size_t i = 0; i < tamanho2; i++) {
+    for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
-        RESERVATION* curr_reservation = g_list_nth_data(sorted_reservations, i);
+        AUX_Q2* curr_aux = g_list_nth_data(sorted_aux, i);
 
-        sprintf(line, "%s;%s;reservation\n", get_reservation_id(curr_reservation), get_begin_date(curr_reservation));
+        sprintf(line, "%s;%s;%s\n", get_aux_id(curr_aux), get_aux_date(curr_aux), get_aux_type(curr_aux));
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
     }
+}
+     if (flag == 2) {  // 2F
+            int reg_num = 1;
+            for (size_t i = 0; i < tamanho; i++) {
+                char line[200];  // linha atual
+                AUX_Q2* curr_aux = g_list_nth_data(sorted_aux, i);
+
+                sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n", reg_num, get_aux_id(curr_aux), get_aux_date(curr_aux), get_aux_type(curr_aux));
+                reg_num++;
+                // realloc para aumentar o tamanho da string output
+                output = realloc(output, strlen(output) + strlen(line) + 1);
+                // concatena a linha atual à string de output
+                strcat(output, line);
+            }
+            // tira os 1 ultimos \n's
+            output[strlen(output) - 1] = '\0';
+        }
 
     free(active_status);
     return output;

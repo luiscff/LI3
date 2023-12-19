@@ -29,7 +29,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             
             if (nextToken2 == NULL) {// if da query 2 com o 2 argumento nulo, chama a função responsável para produzir o output
                 printf("Executando query 2 com token: %s\n",nextToken);
-                char *result = query2_nocat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken);
+                char *result = query2_nocat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken,1);
                 create_result_file("Resultados", lineNumber, result); // escrita no ficheiro respetivo
                 free(result);}
             else { // if da query 2, chama a função responsável para produzir o output
@@ -91,16 +91,17 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             
             if (nextToken2 == NULL) {
                 printf("Executando query 2F com token: %s \n",nextToken);
-                //char *result = query2_nocat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken);
-                //create_result_file("Resultados", lineNumber, result);
-                //free(result);
+                char *result = query2_nocat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken,2);
+                create_result_file("Resultados", lineNumber, result);
+                free(result);
             }
             else {
                 printf("Executando query 2F com tokens: %s %s\n",nextToken,nextToken2);
                 char *result = query2_cat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken, nextToken2,2);
                 create_result_file("Resultados", lineNumber, result);
+                free(result);
+                }
 
-                free(result);}
         } else if (strcmp(token, "3F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3F com token: %s\n",nextToken);
