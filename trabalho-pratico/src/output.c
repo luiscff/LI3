@@ -4,7 +4,7 @@
 
 #include "output.h"
 
-
+#define PATH_SIZE 512
 // cria o ficheiro de resultados com o conteúdo
 void create_result_file(const char *folderPath, int lineNumber, const char *content) {
     char resultsFolderPath[MAX_PATH_SIZE];
@@ -17,8 +17,8 @@ void create_result_file(const char *folderPath, int lineNumber, const char *cont
             return;
         }
     }
-    char filePath[MAX_PATH_SIZE];
-    snprintf(filePath, MAX_PATH_SIZE, "%s/command%d_output.txt", resultsFolderPath, lineNumber);
+    char filePath[PATH_SIZE];
+    snprintf(filePath, PATH_SIZE, "%s/command%d_output.txt", resultsFolderPath, lineNumber);
 
     FILE *resultFile = fopen(filePath, "w");
     if (resultFile == NULL) {
