@@ -46,7 +46,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             printf("Executando query 3 com token: %s\n",nextToken);
             char *result = query3(r_catalog,nextToken);
             create_result_file("Resultados", lineNumber, result);
-            free(result);
+            if (result != NULL) free(result);
 
         } else if (strcmp(token, "4") == 0) {// query4 e escrita numa linha no ficheiro
             char *nextToken = strtok(NULL, " ");

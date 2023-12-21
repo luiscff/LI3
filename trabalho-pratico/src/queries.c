@@ -101,12 +101,9 @@ typedef struct aux_q2 {
     char* type;
 }AUX_Q2;
 
-const char* get_aux_id(const AUX_Q2 *aux) { return aux->id; }
-const char* get_aux_date(const AUX_Q2 *aux) { return aux->date; }
-const char* get_aux_type(const AUX_Q2 *aux) { return aux->type; }
 
 void set_aux_id(AUX_Q2 *aux, const char *id) {
-    if (aux->id) free(aux->id);
+    if (aux->id!=NULL) free(aux->id);
     aux->id = strdup(id);
 }
 
@@ -146,8 +143,8 @@ int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
     const AUX_Q2* aux2 = b;
 
     // ordenadas por data de início (da mais recente para a mais antiga).
-    char* date1 = strdup(get_aux_date(aux1));
-    char* date2 = strdup(get_aux_date(aux2));
+    char* date1 = strdup(aux1->date);
+    char* date2 = strdup(aux2->date);
 
     int ano1, mes1, dia1;
     sscanf(date1, "%d/%d/%d", &ano1, &mes1, &dia1);
@@ -178,8 +175,8 @@ int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
 
     // quando as datas são iguais
     // o identificador da reserva é o critério de desempate (de forma crescente).
-    char* id1 = strdup(get_aux_id(aux1));
-    char* id2 = strdup(get_aux_id(aux2));
+    char* id1 = strdup(aux1->id);
+    char* id2 = strdup(aux2->id);
 
     // compara os ids (strings) como num dicionario
     if (strcmp(id1, id2) < 0) {
@@ -305,7 +302,7 @@ typedef struct aux_q7 {
     GList* delays;  // Guarda os atrasos em segundos
 }AUX_Q7;
 
-const char *get_aux_origin(const AUX_Q7 *aux) { return aux->origin; }
+char *get_aux_origin(const AUX_Q7 *aux) { return aux->origin; }
 
 gboolean compare_origin(gconstpointer data, gconstpointer user_data) {
     const AUX_Q7 *element = (const AUX_Q7 *)data;
@@ -835,10 +832,14 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         while (g_hash_table_iter_next(&iter1, &key1, &value1)) {
             AUX_Q2* new_entidade = malloc(sizeof(AUX_Q2));
             FLIGHT* flight = value1;
+            if (flight == NULL) {
+                return NULL;
+            }
             int curr_flight_id = get_flight_id(flight);
 
             if (flight_id_by_user == curr_flight_id) {
-                set_aux_id(new_entidade, fix_flight_id(get_flight_id(flight)));
+                set_aux_id(new_entidade, strdup(fix_flight_id(get_flight_id(flight))));
+                printf("1 %s\n", new_entidade->id);
                 set_aux_date(new_entidade, extractDate(get_schedule_departure_date(flight)));
                 set_aux_type(new_entidade,type1);
                 aux_list = g_list_append(aux_list, new_entidade);
@@ -857,7 +858,11 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         RESERVATION* reservation = value2;
         char* curr_user_id = strdup(get_user_id(reservation));
         if (strcmp(token, curr_user_id) == 0){
-            set_aux_id(new_entidade, strdup(get_reservation_id(reservation)));
+            printf("2 %s\n",curr_user_id);
+            const char *a = get_reservation_id(reservation);
+            printf("SEGFAULT AQUI set_aux_id(new_entidade, %s)\n",a);
+            set_aux_id(new_entidade, a);
+
             set_aux_date(new_entidade, strdup(get_begin_date(reservation)));
             set_aux_type(new_entidade,strdup(type2));
             aux_list = g_list_append(aux_list, new_entidade);      
@@ -873,7 +878,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         char line[200];  // linha atual
         AUX_Q2* curr_aux = g_list_nth_data(sorted_aux, i);
 
-        sprintf(line, "%s;%s;%s\n", get_aux_id(curr_aux), get_aux_date(curr_aux), get_aux_type(curr_aux));
+        sprintf(line, "%s;%s;%s\n", curr_aux->id, curr_aux->date, curr_aux->type);
 
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -887,7 +892,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
                 char line[200];  // linha atual
                 AUX_Q2* curr_aux = g_list_nth_data(sorted_aux, i);
 
-                sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n", reg_num, get_aux_id(curr_aux), get_aux_date(curr_aux), get_aux_type(curr_aux));
+                sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n", reg_num, curr_aux->id, curr_aux->date, curr_aux->type);
                 reg_num++;
                 // realloc para aumentar o tamanho da string output
                 output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -903,8 +908,10 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
 }
 
 char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USERS_CATALOG* ucatalog, PASSENGERS_CATALOG* pcatalog, char* token, char* catalog, int flag) {
-    GHashTable* users_hash = get_users_hash(ucatalog);
-    USER* user = g_hash_table_lookup(users_hash, token);
+    USER* user = get_user_by_id(ucatalog, token);
+    if (user == NULL) {
+        return NULL;
+    }
     char* active_status = strdup(get_active_status(user));
     if (strcasecmp(active_status, "inactive") == 0) {
         free(active_status);
@@ -1048,7 +1055,11 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
 
 char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     char* output = malloc(20);
-    char* result = strdup(query3(rcatalog, hotel_id));
+    char* r = query3(rcatalog, hotel_id);
+    if (r == NULL) {
+        return NULL;
+    }
+    char* result = r;
     sprintf(output, "--- 1 ---\nrating: %s", result);
     return output;
 }
