@@ -1,7 +1,7 @@
 #ifndef PASSENGERS_CATALOG_H
 #define PASSENGERS_CATALOG_H
 
-#include "Entities/passengers.h"
+#include "Entities/passenger.h"
 
 #include <glib.h>
 

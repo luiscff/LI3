@@ -1,7 +1,7 @@
 CFLAGS=-Wall -Iinclude `pkg-config --cflags glib-2.0`
 LDFLAGS=`pkg-config --libs glib-2.0`
 
-programa-principal: src/programa-principal.o src/parser.o src/interpreter.o src/queries.o src/output.o src/validation.o src/Catalog/flights_catalog.o src/Catalog/passengers_catalog.o src/Catalog/users_catalog.o src/Catalog/reservations_catalog.o src/Entities/flights.o src/Entities/passengers.o src/Entities/user.o src/Entities/reservation.o
+programa-principal: src/programa-principal.o src/parser.o src/interpreter.o src/queries.o src/output.o src/validation.o src/Catalog/flights_catalog.o src/Catalog/passengers_catalog.o src/Catalog/users_catalog.o src/Catalog/reservations_catalog.o src/Entities/flight.o src/Entities/passenger.o src/Entities/user.o src/Entities/reservation.o
 	gcc -g $^ -lglib-2.0 -o $@
 
 src/programa-principal.o: src/programa-principal.c
@@ -14,8 +14,8 @@ src/Catalog/flights_catalog.o: src/Catalog/flights_catalog.c
 src/Catalog/passengers_catalog.o: src/Catalog/passengers_catalog.c
 src/Catalog/users_catalog.o: src/Catalog/users_catalog.c
 src/Catalog/reservations_catalog.o: src/Catalog/reservations_catalog.c
-src/Entities/flights.o: src/Entities/flights.c
-src/Entities/passengers.o: src/Entities/passengers.c
+src/Entities/flight.o: src/Entities/flight.c
+src/Entities/passenger.o: src/Entities/passenger.c
 src/Entities/user.o: src/Entities/user.c
 src/Entities/reservation.o: src/Entities/reservation.c
 
