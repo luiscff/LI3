@@ -22,6 +22,8 @@ typedef struct user
     char *account_creation;
     char *payment_method;
     char *active_status;
+    double total_spent;
+    int num_reservations;
 } USER;
 
 
@@ -171,3 +173,21 @@ const char *get_email(const USER *user) {
     return user->email;
 }
 
+double get_total_spent(const USER *user) {
+    return user->total_spent;
+}
+
+int get_num_reservations(const USER *user) {
+    return user->num_reservations;
+}
+
+
+// adiciona um valor ao total gasto pelo utilizador
+void add_total_spent(USER *user, double total_spent) {
+    user->total_spent += total_spent;
+}
+
+// adiciona uma reserva ao utilizador
+void add_reservation(USER *user) {
+    user->num_reservations++;
+}

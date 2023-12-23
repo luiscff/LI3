@@ -6,47 +6,11 @@
 #include <wchar.h>
 #include <wctype.h>
 
-#include "Catalog/flights_catalog.h"
-#include "Catalog/passengers_catalog.h"
-#include "Catalog/reservations_catalog.h"
-#include "Catalog/users_catalog.h"
+#include "queries.h"
 
 #define current_date "2023/10/01"
 
 // aux query 1
-
-double calc_total_spent_by_user_id(RESERVATIONS_CATALOG* catalog, char* user_id) {
-    double total = 0;
-    gpointer key, value;
-    GHashTableIter iter;
-    GHashTable* hash = get_reservations_hash(catalog);
-    g_hash_table_iter_init(&iter, hash);
-
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        RESERVATION* reservation = value;
-        if ((strcmp(user_id, get_user_id(reservation)) == 0)) {
-            total += calc_total_price(reservation);
-        }
-    }
-    return total;
-}
-
-int calc_num_reservations(RESERVATIONS_CATALOG* rcatalog, char* user_id) {
-    int res = 0;
-    gpointer key, value;
-    GHashTableIter iter;
-    GHashTable* hash = get_reservations_hash(rcatalog);
-    g_hash_table_iter_init(&iter, hash);
-
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        RESERVATION* reservation = value;
-        if (strcmp(user_id, get_user_id(reservation)) == 0) {
-            res++;
-        }
-    }
-
-    return res;
-}
 
 int isNumber(char s[]) {
     for (int i = 0; s[i] != '\0'; i++) {
@@ -583,8 +547,8 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         age = calc_idade(birth_date);
         num_flight = g_list_length(find_flights_by_user(pcatalog, aux));  // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
-        num_reservations = calc_num_reservations(rcatalog, aux);
-        total_gasto = calc_total_spent_by_user_id(rcatalog, aux);
+        num_reservations = get_num_reservations(user);
+        total_gasto = get_total_spent(user);
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));

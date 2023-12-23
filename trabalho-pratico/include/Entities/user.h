@@ -33,5 +33,13 @@ const char *get_address(const USER *user);
 const char *get_account_creation(const USER *user);
 const char *get_payment_method(const USER *user);
 const char *get_active_status(const USER *user);
+double get_total_spent(const USER *user);
+int get_num_reservations(const USER *user);
+
+// adiciona um valor ao total gasto pelo utilizador
+void add_total_spent(USER *user, double total_spent);
+
+// adiciona uma reserva ao utilizador
+void add_reservation(USER *user);
 
 #endif // USER_H

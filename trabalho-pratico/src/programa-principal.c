@@ -9,7 +9,6 @@
 #include "Catalog/users_catalog.h"
 #include "interpreter.h"
 #include "parser.h"
-#include "output.h"
 
 
 
@@ -33,7 +32,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/users.csv");
 
-    parseCSV(filePath, 1, users_catalog);
+    parseCSV(filePath, 1, users_catalog, NULL);
 
     // Cria o catálogo de voos
     FLIGHTS_CATALOG *flights_catalog = create_flights_catalog();
@@ -42,7 +41,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/flights.csv");
 
-    parseCSV(filePath, 2, flights_catalog);
+    parseCSV(filePath, 2, flights_catalog, NULL);
 
     // Cria o catálogo de reservas
     RESERVATIONS_CATALOG *reservations_catalog = create_reservations_catalog();
@@ -51,7 +50,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/reservations.csv");
 
-    parseCSV(filePath, 4, reservations_catalog);
+    parseCSV(filePath, 4, reservations_catalog, users_catalog);
 
     // Cria o catálogo de passageiros
     PASSENGERS_CATALOG *passengers_catalog = create_passengers_catalog();
@@ -60,7 +59,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/passengers.csv");
 
-    parseCSV(filePath, 3, passengers_catalog);
+    parseCSV(filePath, 3, passengers_catalog, NULL);
 
     // Faz o parse do ficheiro de input
     if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog)) {
