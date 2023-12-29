@@ -27,12 +27,12 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
             
-            if (nextToken2 == NULL) {// if da query 2 com o 2 argumento nulo, chama a função responsável para produzir o output
+            if (nextToken2 == NULL) {// se for chamada a query 2 com o 2º argumento nulo, chama a função responsável para produzir o output inteiro (voos e reservas)
                 printf("Executando query 2 com token: %s\n",nextToken);
                 char *result = query2_nocat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken,1);
                 create_result_file("Resultados", lineNumber, result); // escrita no ficheiro respetivo
                 free(result);}
-            else { // if da query 2, chama a função responsável para produzir o output
+            else { // se a query 2 for chamada com um argumento, chama a função responsável para produzir o output do token dado (reserva ou voo)
                 printf("Executando query 2 com tokens: %s %s\n",nextToken,nextToken2);
                 char *result = query2_cat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken, nextToken2,1);
                 create_result_file("Resultados", lineNumber, result);

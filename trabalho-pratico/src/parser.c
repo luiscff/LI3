@@ -10,6 +10,7 @@
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
 #include "output.h"
+#include "utils.h"
 
 // função responsável por tratar dos casos da include_breakfast, feita para aceitar tanto os chars f, como t, como os valores 0 ou 1
 bool isTrueOrFalse(const char *str) {
@@ -68,13 +69,13 @@ void parseLine_user(char *line, void *catalog) {
                     set_payment_method(user, token);
                     break;
                 case 12:
-                    //tira o \n do final
+                    // tira o \n do final
                     token[strcspn(token, "\n")] = '\0';
                     set_active_status(user, token);
                     break;
             }
         } else {
-            writeToErrorFileUser(line, "Resultados/users_errors.csv");// função responável por escrever no ficheiro de erros dos users
+            writeToErrorFileUser(line, "Resultados/users_errors.csv");  // função responável por escrever no ficheiro de erros dos users
             free(lineCopy);
             free_user(user);
             return;
@@ -104,7 +105,7 @@ void parseLine_flight(char *line, void *catalog) {
 
     char *schedule_begin_date = NULL;
     char *real_begin_date = NULL;
-// são guardados os valores das datas schedule_departure_date e real_departure_date para mais tarde se poder comparar com as datas de arrival respetivas de modo a garantir que as datas de arrival são depois das de departure
+    // são guardados os valores das datas schedule_departure_date e real_departure_date para mais tarde se poder comparar com as datas de arrival respetivas de modo a garantir que as datas de arrival são depois das de departure
     token = strtok(lineCopy, ";");
     while (token != NULL) {
         if (schedule_begin_date != NULL) {
@@ -165,7 +166,7 @@ void parseLine_flight(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToErrorFileFlight(line, "Resultados/flights_errors.csv");// função responsável por escrever no ficheiro de erros dos flights caso algum caso falhe
+            writeToErrorFileFlight(line, "Resultados/flights_errors.csv");  // função responsável por escrever no ficheiro de erros dos flights caso algum caso falhe
             free(lineCopy);
             free_flight(flight);
             free(schedule_begin_date);
@@ -188,7 +189,7 @@ void parseLine_flight(char *line, void *catalog) {
     free(lineCopy);
 }
 // função responsável por fazer o parse de cada linha dos passengers, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos passengers
-void parseLine_passenger(char *line, void *catalog) {
+void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog) {
     PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
@@ -209,7 +210,7 @@ void parseLine_passenger(char *line, void *catalog) {
                     break;
             }
         } else {
-            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");// função responsável por escrever no ficheiro de erros dos passengers caso algum caso falhe
+            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");  // função responsável por escrever no ficheiro de erros dos passengers caso algum caso falhe
             free(lineCopy);
             free_passenger(passenger);
             return;
@@ -219,6 +220,15 @@ void parseLine_passenger(char *line, void *catalog) {
     }
 
     if (fieldIndex == 3) {
+        // vai buscar o user associado a este passageiro ao users_catalog
+        char *user_id = strdup(get_user_id2(passenger));
+        USER *user = get_user_by_id(usersCatalog, user_id);
+        free(user_id);
+
+        //adiciona o voo à lista de voos do user
+        char* flight_id = fix_flight_id(get_flight_id2(passenger));
+        add_flight(user, flight_id);
+
         // adiciona o passageiro ao catálogo
         insert_passenger(passengersCatalog, passenger);
     } else {
@@ -241,7 +251,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 
     token = strtok(lineCopy, ";");
     while (token != NULL) {
-        if (begin_date != NULL) {// é guardado o token da begin_date que mais tarde vai ser necessário para depois garantir que a segunda data é posterior à primeira
+        if (begin_date != NULL) {  // é guardado o token da begin_date que mais tarde vai ser necessário para depois garantir que a segunda data é posterior à primeira
             free(begin_date);
             begin_date = NULL;
         }
@@ -308,13 +318,13 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
         char *user_id = strdup(get_user_id(reservation));
         USER *user = get_user_by_id(usersCatalog, user_id);
         free(user_id);
-        
-        //adiciona o total gasto ao respetivo user no users_catalog
+
+        // adiciona o total gasto ao respetivo user no users_catalog
         double price_reservation = calc_total_price(reservation);
         add_total_spent(user, price_reservation);
 
-        //adiciona mais uma reserva ao respetivo user no users_catalog
-        add_reservation(user);
+        // adiciona mais uma reserva ao respetivo user no users_catalog
+        add_reservation(user, get_reservation_id(reservation));
 
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
@@ -334,7 +344,7 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
         return;
     }
 
-    //casts para o tipo de catálogo que se pretende
+    // casts para o tipo de catálogo que se pretende
     USERS_CATALOG *usersCatalog = (USERS_CATALOG *)users_catalog;
 
     char *line = NULL;
@@ -360,7 +370,7 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
 
     if (token == 3)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_passenger(line, catalog);
+            parseLine_passenger(line, catalog, usersCatalog);
         }
 
     if (token == 4)

@@ -7,6 +7,7 @@
 #include <wctype.h>
 
 #include "queries.h"
+#include "utils.h"
 
 #define current_date "2023/10/01"
 
@@ -64,21 +65,6 @@ typedef struct aux_q2 {
     char* date;
     char* type;
 }AUX_Q2;
-
-
-void set_aux_id(AUX_Q2 *aux, const char *id) {
-    if (aux->id!=NULL) free(aux->id);
-    aux->id = strdup(id);
-}
-
-void set_aux_date(AUX_Q2 *aux, const char *date) {
-    if (aux->date) free(aux->date);
-    aux->date = strdup(date);
-}
-
-void set_aux_type(AUX_Q2 *aux, const char *type) {
-    aux->type = strdup(type);
-}
 
 
 char* extractDate(const char* inputString) {
@@ -761,8 +747,7 @@ char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_C
 }
 
 char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USERS_CATALOG* ucatalog, PASSENGERS_CATALOG* pcatalog, char* token, int flag) {  
-    GHashTable* users_hash = get_users_hash(ucatalog);
-    USER* user = g_hash_table_lookup(users_hash, token);
+    USER* user = get_user_by_id(ucatalog, token);
     if (user == NULL) {
         return NULL;
     }
@@ -771,76 +756,58 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         free(active_status);
         return NULL;
     }
-
-    const char* type1 = strdup("flight");
-    const char* type2 = strdup("reservation");
-
-    gpointer key1, value1;  // flights
-    GHashTableIter iter1;
-    gpointer key2, value2;  // reservations
-    GHashTableIter iter2;
-    GList* aux_list = NULL;
     
     char* output = malloc(1);
     output[0] = '\0';  // Começa com uma string vazia
-    GList* flight_ids = find_flights_by_user(pcatalog, token);
 
-    // inserir a parte dos flights
+    GList *flights = get_flights(user);
+    GList *reservations = get_reservations(user);
 
-    GHashTable* hash_flights = get_flights_hash(fcatalog);
-    while (flight_ids != NULL) {
-        int flight_id_by_user = GPOINTER_TO_INT(flight_ids->data);
-        // printf("%d\n", flight_id_by_user);
-        g_hash_table_iter_init(&iter1, hash_flights);
+    GList* aux_list = NULL; 
+    // percorre a lista de flights e adiciona novas entidades à aux_list
+    while (flights != NULL) {
+        char* flight_id = flights->data;
+        FLIGHT* flight = get_flight_by_id(fcatalog, atoi(flight_id));
+        char* id = strdup(fix_flight_id(get_flight_id(flight)));
+        char* date = strdup(extractDate(get_schedule_departure_date(flight)));
+        char* type = strdup("flight");
 
-        while (g_hash_table_iter_next(&iter1, &key1, &value1)) {
-            AUX_Q2* new_entidade = malloc(sizeof(AUX_Q2));
-            FLIGHT* flight = value1;
-            if (flight == NULL) {
-                return NULL;
-            }
-            int curr_flight_id = get_flight_id(flight);
+        AUX_Q2* aux = malloc(sizeof(AUX_Q2));
+        // set_aux_id(aux, id);
+        aux->id = id;
+        aux->date = date;
+        aux->type = type;
 
-            if (flight_id_by_user == curr_flight_id) {
-                set_aux_id(new_entidade, strdup(fix_flight_id(get_flight_id(flight))));
-                printf("1 %s\n", new_entidade->id);
-                set_aux_date(new_entidade, extractDate(get_schedule_departure_date(flight)));
-                set_aux_type(new_entidade,type1);
-                aux_list = g_list_append(aux_list, new_entidade);
-            }   
-        }
-        flight_ids = flight_ids->next;
+        aux_list = g_list_append(aux_list, aux);
+
+        flights = flights->next;
+    }
+    // percorre a lista de reservations e adiciona novas entidades à aux_list
+    while (reservations != NULL) {
+        char* reservation_id = reservations->data;
+        RESERVATION* reservation = get_reservation_by_id(rcatalog, reservation_id);
+        char* id = strdup(get_reservation_id(reservation));
+        char* date = strdup(get_begin_date(reservation));
+        char* type = strdup("reservation");
+
+        AUX_Q2* aux = malloc(sizeof(AUX_Q2));
+        aux->id = id;
+        aux->date = date;
+        aux->type = type;
+
+        aux_list = g_list_append(aux_list, aux);
+
+        reservations = reservations->next;
     }
 
-    // inserir a parte das reservations
-
-    GHashTable* hash_reservations = get_reservations_hash(rcatalog);
-    g_hash_table_iter_init(&iter2, hash_reservations);
-
-    while (g_hash_table_iter_next(&iter2, &key2, &value2)) {
-        AUX_Q2* new_entidade = malloc(sizeof(AUX_Q2));
-        RESERVATION* reservation = value2;
-        char* curr_user_id = strdup(get_user_id(reservation));
-        if (strcmp(token, curr_user_id) == 0){
-            printf("2 %s\n",curr_user_id);
-            const char *a = get_reservation_id(reservation);
-            printf("SEGFAULT AQUI set_aux_id(new_entidade, %s)\n",a);
-            set_aux_id(new_entidade, a);
-
-            set_aux_date(new_entidade, strdup(get_begin_date(reservation)));
-            set_aux_type(new_entidade,strdup(type2));
-            aux_list = g_list_append(aux_list, new_entidade);      
-    }
-    free(curr_user_id);  
-    }
-    GList* sorted_aux= g_list_sort(aux_list, sort_function_q2_nocat);
-    int tamanho = g_list_length(sorted_aux);
+    GList* sorted_list = g_list_sort(aux_list, sort_function_q2_nocat);
+    int tamanho = g_list_length(sorted_list);
 
  if (flag == 1) { // 2 normal
     // escreve no output as linhas correspondentes as reservations
     for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
-        AUX_Q2* curr_aux = g_list_nth_data(sorted_aux, i);
+        AUX_Q2* curr_aux = g_list_nth_data(sorted_list, i);
 
         sprintf(line, "%s;%s;%s\n", curr_aux->id, curr_aux->date, curr_aux->type);
 
@@ -854,7 +821,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
             int reg_num = 1;
             for (size_t i = 0; i < tamanho; i++) {
                 char line[200];  // linha atual
-                AUX_Q2* curr_aux = g_list_nth_data(sorted_aux, i);
+                AUX_Q2* curr_aux = g_list_nth_data(sorted_list, i);
 
                 sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n", reg_num, curr_aux->id, curr_aux->date, curr_aux->type);
                 reg_num++;
@@ -863,9 +830,10 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
                 // concatena a linha atual à string de output
                 strcat(output, line);
             }
-            // tira os 1 ultimos \n's
-            output[strlen(output) - 1] = '\0';
         }
+
+    // tira o ultimo \n
+    output[strlen(output) - 1] = '\0';
 
     free(active_status);
     return output;
@@ -882,27 +850,20 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
         return NULL;
     }
 
-    gpointer key, value;
-    GHashTableIter iter;
     GList* aux = NULL;
     char* output = malloc(1);
     output[0] = '\0';  // Começa com uma string vazia
-    GList* flight_ids = find_flights_by_user(pcatalog, token);
+    GList* flights = get_flights(user);
     if (strcmp(catalog, "flights") == 0) {
-        GHashTable* hash = get_flights_hash(fcatalog);
-        while (flight_ids != NULL) {
-            int flight_id_by_user = GPOINTER_TO_INT(flight_ids->data);
-            // printf("%d\n", flight_id_by_user);
-            g_hash_table_iter_init(&iter, hash);
+        while (flights != NULL) {
+            char* flight_id = flights->data;
+            FLIGHT* flight = get_flight_by_id(fcatalog, atoi(flight_id));
 
-            while (g_hash_table_iter_next(&iter, &key, &value)) {
-                FLIGHT* flight = value;
-                int curr_flight_id = get_flight_id(flight);
-                if (flight_id_by_user == curr_flight_id) aux = g_list_append(aux, flight);
-            }
-            flight_ids = flight_ids->next;
+            aux = g_list_append(aux, flight);
+
+            flights = flights->next;
         }
-
+        
         GList* sorted = g_list_sort(aux, sort_function_q2);
         int tamanho = g_list_length(sorted);
 
@@ -933,21 +894,25 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
                 // concatena a linha atual à string de output
                 strcat(output, line);
             }
-            // tira os 1 ultimos \n's
-            output[strlen(output) - 1] = '\0';
         }
+        // tira o ultimo \n
+        output[strlen(output) - 1] = '\0';
+        
         free(active_status);
         return output;
     }
 
     if (strcmp(catalog, "reservations") == 0) {
-        GHashTable* hash = get_reservations_hash(rcatalog);
-        g_hash_table_iter_init(&iter, hash);
-        while (g_hash_table_iter_next(&iter, &key, &value)) {
-            RESERVATION* reservation = value;
-            char* curr_user_id = strdup(get_user_id(reservation));
-            if (strcmp(token, curr_user_id) == 0) aux = g_list_append(aux, reservation);
-            free(curr_user_id);
+        
+        
+        GList* reservations = get_reservations(user);
+        while (reservations != NULL) {
+            char* reservation_id = reservations->data;
+            RESERVATION* reservation = get_reservation_by_id(rcatalog, reservation_id);
+
+            aux = g_list_append(aux, reservation);
+
+            reservations = reservations->next;
         }
 
         GList* sorted = g_list_sort(aux, sort_function_q4);
@@ -979,9 +944,10 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
                 // concatena a linha atual à string de output
                 strcat(output, line);
             }
-            // tira os 1 ultimos \n's
-            output[strlen(output) - 1] = '\0';
         }
+        // tira o ultimo \n
+        output[strlen(output) - 1] = '\0';
+        
         free(active_status);
         return output;
     }

@@ -1,6 +1,8 @@
 #ifndef USER_H
 #define USER_H
 
+#include <glib.h>
+
 typedef struct user USER;
 
 USER * create_user();
@@ -35,11 +37,25 @@ const char *get_payment_method(const USER *user);
 const char *get_active_status(const USER *user);
 double get_total_spent(const USER *user);
 int get_num_reservations(const USER *user);
+GList *get_reservations(const USER *user);
+GList *get_flights(const USER *user);
 
 // adiciona um valor ao total gasto pelo utilizador
 void add_total_spent(USER *user, double total_spent);
 
-// adiciona uma reserva ao utilizador
-void add_reservation(USER *user);
+// adiciona uma reserva ao numero de reservas do utilizador
+void add_num_reservations(USER *user);
+
+// adiciona uma reserva à lista de reservas do utilizador e incrementa o numero de reservas
+void add_reservation(USER *user, const char *reservation_id);
+
+// remove uma reserva da lista de reservas do utilizador
+void remove_reservation(USER *user, const char *reservation_id);
+
+// adiciona um voo à lista de voos do utilizador
+void add_flight(USER *user, const char *flight_id);
+
+//remove um voo da lista de voos do utilizador
+void remove_flight(USER *user, const char *flight_id);
 
 #endif // USER_H

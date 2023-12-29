@@ -59,7 +59,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/passengers.csv");
 
-    parseCSV(filePath, 3, passengers_catalog, NULL);
+    parseCSV(filePath, 3, passengers_catalog, users_catalog);
 
     // Faz o parse do ficheiro de input
     if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog)) {
