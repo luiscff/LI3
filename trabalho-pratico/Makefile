@@ -7,12 +7,18 @@ programa-principal: src/programa-principal.o src/parser.o src/interpreter.o src/
 	gcc -g $^ -lglib-2.0 -o $@
 	make clean_objs
 
+programa-testes: src/Tests/programa-testes.o src/Tests/interpreter-testes.o src/parser.o src/queries.o src/output.o src/validation.o src/Catalog/flights_catalog.o src/Catalog/passengers_catalog.o src/Catalog/users_catalog.o src/Catalog/reservations_catalog.o src/Entities/flight.o src/Entities/passenger.o src/Entities/user.o src/Entities/reservation.o
+	gcc -g $^ -lglib-2.0 -o $@
+	make clean_objs
+
 clean_objs:
-	rm -f src/*.o src/Catalog/*.o src/Entities/*.o
+	rm -f src/*.o src/Catalog/*.o src/Entities/*.o src/Tests/*.o
 
 src/programa-principal.o: src/programa-principal.c
+src/programa-testes.o: src/Tests/programa-testes.c
 src/parser.o: src/parser.c
 src/interpreter.o: src/interpreter.c
+src/interpreter-testes.o: src/Tests/interpreter-testes.c
 src/queries.o: src/queries.c
 src/output.o: src/output.c
 src/validation.o: src/validation.c
