@@ -17,7 +17,7 @@ int compareFiles(const char *expectedResultsFolderPath, const char *actualResult
     FILE *actual = fopen(actualResultPath, "r");
 
     if (expected == NULL || actual == NULL) {
-        printf("Erro ao abrir os arquivos\n");
+        // printf("Erro ao abrir os arquivos\n"); //TODO quando as queries estiverem todas prontas, tirar esta linha de comentário
         return -1;
     }
 
