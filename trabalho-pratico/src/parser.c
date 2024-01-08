@@ -9,6 +9,7 @@
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
+#include "Catalog/stats.h"
 #include "output.h"
 #include "utils.h"
 
@@ -239,9 +240,10 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog)
 }
 
 // função responsável por fazer o parse de cada linha das reservations, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos reservations
-void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalog) {
+void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalog, STATS* stats) {
     RESERVATIONS_CATALOG *reservationsCatalog = (RESERVATIONS_CATALOG *)catalog;
     char *token;
+
     int fieldIndex = 1;
     char *lineCopy = strdup(line);
 
@@ -326,6 +328,15 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
         // adiciona mais uma reserva ao respetivo user no users_catalog
         add_reservation(user, get_reservation_id(reservation));
 
+        // adiciona ou da update as informaçoes de um hotel
+        char *hotel_id = strdup(get_hotel_id(reservation));
+        int hotel_rating = get_rating(reservation);
+        
+        insert_or_update_hotel(stats,hotel_id, hotel_rating);
+        printf ("hotel: %s", hotel_id);
+
+        
+
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
     } else {
@@ -337,12 +348,13 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 }
 
 // função responsável por fazer o parse do ficheiro .csv inteiro, onde abre o ficheiro e chama as funções que leem cada linha do ficheiro para fazer o parse da linha
-void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog) {
+void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog,STATS* stats) {
     FILE *file = fopen(filepath, "r");
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
         return;
     }
+
 
     // casts para o tipo de catálogo que se pretende
     USERS_CATALOG *usersCatalog = (USERS_CATALOG *)users_catalog;
@@ -375,7 +387,7 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
 
     if (token == 4)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_reservation(line, catalog, usersCatalog);
+            parseLine_reservation(line, catalog, usersCatalog,stats);
         }
 
     free(line);

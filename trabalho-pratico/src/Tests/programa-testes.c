@@ -7,6 +7,7 @@
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/users_catalog.h"
+#include "Catalog/stats.h"
 #include "interpreter-testes.h"
 #include "parser.h"
 
@@ -59,6 +60,8 @@ int main(int argc, char const *argv[]) {
 
     char filePath[MAX_PATH_SIZE];
 
+    STATS* stats = create_stats_catalog();
+
     // Cria o catálogo de utilizadores
     USERS_CATALOG *users_catalog = create_users_catalog();
 
@@ -66,7 +69,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/users.csv");
 
-    parseCSV(filePath, 1, users_catalog, NULL);
+    parseCSV(filePath, 1, users_catalog, NULL,stats);
 
     // Cria o catálogo de voos
     FLIGHTS_CATALOG *flights_catalog = create_flights_catalog();
@@ -75,7 +78,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/flights.csv");
 
-    parseCSV(filePath, 2, flights_catalog, NULL);
+    parseCSV(filePath, 2, flights_catalog, NULL,stats);
 
     // Cria o catálogo de reservas
     RESERVATIONS_CATALOG *reservations_catalog = create_reservations_catalog();
@@ -84,7 +87,7 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/reservations.csv");
 
-    parseCSV(filePath, 4, reservations_catalog, users_catalog);
+    parseCSV(filePath, 4, reservations_catalog, users_catalog,stats);
 
     // Cria o catálogo de passageiros
     PASSENGERS_CATALOG *passengers_catalog = create_passengers_catalog();
@@ -93,10 +96,10 @@ int main(int argc, char const *argv[]) {
     strcpy(filePath, folderPathDataset);
     strcat(filePath, "/passengers.csv");
 
-    parseCSV(filePath, 3, passengers_catalog, users_catalog);
+    parseCSV(filePath, 3, passengers_catalog, users_catalog,stats);
 
     // Faz o parse do ficheiro de input
-    if (!inputParserTestes(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog)) {
+    if (!inputParserTestes(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats)) {
         printf("Error parsing input file\n");
         // Libera a memória antes de retornar
         free_users_catalog(users_catalog);

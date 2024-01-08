@@ -956,21 +956,20 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
     return NULL;
 }
 
-char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
+char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
     int res = 0;
     double total = 0;
-    gpointer key, value;
-    GHashTableIter iter;
-    GHashTable* hash = get_reservations_hash(rcatalog);
-    g_hash_table_iter_init(&iter, hash);
+    GHashTable *hotel_hash = get_hotel_hash(stats);
+    HOTEL* hotel = g_hash_table_lookup(hotel_hash,hotel_id);
 
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        RESERVATION* reservation = value;
-        if (strcmp(hotel_id, get_hotel_id(reservation)) == 0) {
-            res++;
-            total += get_rating(reservation);
-        }
-    }
+ 
+    
+
+    if (hotel == NULL) printf ("\nFODEU\n");
+
+    total = get_hotel_sum_rating(hotel);
+    res = get_hotel_num_reservations(hotel);
+
 
     if (res == 0) {
         printf("erro divisão por 0\n");
@@ -983,9 +982,9 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
     return output;
 }
 
-char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id) {
+char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
     char* output = malloc(20);
-    char* r = query3(rcatalog, hotel_id);
+    char* r = query3(rcatalog, hotel_id,stats);
     if (r == NULL) {
         return NULL;
     }

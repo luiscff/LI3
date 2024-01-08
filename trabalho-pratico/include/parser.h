@@ -3,13 +3,15 @@
 
 #include <validation.h>
 #include <stdbool.h>
+#include "Catalog/stats.h"
+
 
 #define MAX_PHONE 12
 #define MAX_PASSPORT 8
 #define MAX_COUNTRY_CODE 2
 
 
-void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog);
+void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog, STATS *stats);
 
 
 

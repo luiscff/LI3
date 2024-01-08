@@ -4,7 +4,7 @@
 #include <time.h>
 
 //função que vai tratar do input e chamar as queries respetivas para cada linha do ficheiro passado como argumento
-int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG *f_catalog, RESERVATIONS_CATALOG *r_catalog, PASSENGERS_CATALOG *p_catalog) {
+int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG *f_catalog, RESERVATIONS_CATALOG *r_catalog, PASSENGERS_CATALOG *p_catalog, STATS* stats) {
     char buffer[256];
     FILE *file = fopen(inputPath, "r");
     int lineNumber = 1;
@@ -48,7 +48,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "3") == 0) {// query3 e escrita numa linha no ficheiro
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3 com token: %s\n",nextToken);
-            char *result = query3(r_catalog,nextToken);
+            char *result = query3(r_catalog,nextToken,stats);
             create_result_file("Resultados", lineNumber, result);
             if (result != NULL) free(result);
 
@@ -109,7 +109,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "3F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3F com token: %s\n",nextToken);
-            char *result = query3F(r_catalog, nextToken);
+            char *result = query3F(r_catalog, nextToken,stats);
             create_result_file("Resultados", lineNumber, result);
             free(result);
 

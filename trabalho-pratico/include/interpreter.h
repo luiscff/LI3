@@ -8,7 +8,7 @@
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/flights_catalog.h"
 
-int inputParser(const char *inputPath, USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog, RESERVATIONS_CATALOG *reservations_catalog, PASSENGERS_CATALOG *passengers_catalog);
+int inputParser(const char *inputPath, USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog, RESERVATIONS_CATALOG *reservations_catalog, PASSENGERS_CATALOG *passengers_catalog , STATS* stats);
 
 
 #endif
