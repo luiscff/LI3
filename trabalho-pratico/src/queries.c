@@ -1111,7 +1111,7 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token) {
 }
 
 
-char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats) {
+char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
     char* prefix = strdup(token);
     GList* users = get_user_name_list(stats);
     GList* aux = NULL;
@@ -1120,7 +1120,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats) {
 
     for (size_t i = 0; i < tamanho; i++) {
         USER_NAME* user = g_list_nth_data(users, i);
-
+        
         
         if (strcasecmp(get_user_name_status(user), "inactive") != 0) {  // se o user não for "inactive"
             char* id = strdup(get_user_name_id(user));
@@ -1129,6 +1129,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats) {
                 free(prefix);
                 return NULL;
             }
+            //printf ("\n%ld\n", i); get_user_name_name da seg quando i = 9463 na 9F
 
             char* name = strdup(get_user_name_name(user));
             if (name == NULL) {
@@ -1139,31 +1140,27 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats) {
             }
             if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
                 aux = g_list_append(aux, user);  // dá append à lista
-            } else printf ("\n NAO TEM PREFIXO");
+            } 
         }
     }
-    if (aux == NULL) printf("\n AQUI no AUX \n");
-
     char* output = malloc(1);
     output[0] = '\0';  // começa com uma string vazia
-    int flag = 1;
     int tamanho_aux = g_list_length(aux);
     GList* sorted = g_list_sort(aux, sort_function_q9);
 
     if (flag == 1) { //9
 
-    
-    
     for (size_t i = 0; i < tamanho_aux; i++) {
         USER_NAME* curr_user = g_list_nth_data(sorted, i);
-        char line[200]; 
+        char line[200];
         sprintf(line, "%s;%s\n", get_user_name_id(curr_user), get_user_name_name(curr_user));
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
+        }
     }
-    }
+
     if (flag == 2) {  // 9F
     int reg_num = 1;
     for (size_t i = 0; i < tamanho; i++) {
@@ -1172,20 +1169,14 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats) {
 
         sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num, get_user_name_id(curr_user), get_user_name_name(curr_user));
         reg_num++;
-        // realloc para aumentar o tamanho da string output
-        output = realloc(output, strlen(output) + strlen(line) + 1);
-        // concatena a linha atual à string de output
-        strcat(output, line);
+        output = realloc(output, strlen(output) + strlen(line) + 1); // realloc para aumentar o tamanho da string output
+        strcat(output, line); // concatena a linha atual à string de output
+            
             }
         }
-        // tira o ultimo \n
-        output[strlen(output) - 1] = '\0';
-        
-        //free(active_status);
-        return output;
+        output[strlen(output) - 1] = '\0';  // tira o ultimo \n
+        return output; //free(active_status);
 
     output[strlen(output) - 1] = '\0';
-
-
     return output;
 }

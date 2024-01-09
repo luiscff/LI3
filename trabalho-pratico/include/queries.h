@@ -15,5 +15,5 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats);
 char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats);
 char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,int flag);
 char* query7(FLIGHTS_CATALOG* fcatalog, char* token);
-char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats);
+char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag);
 #endif

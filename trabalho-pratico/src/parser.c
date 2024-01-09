@@ -91,13 +91,8 @@ void parseLine_user(char *line, void *catalog,STATS* stats) {
 
         USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
         insert_user_name(stats,user_name);
-        printf("user_name: %s;%s;%s\n",get_user_name_name(user_name), get_user_name_id(user_name), get_user_name_status(user_name));
-        
 
-
-        // adiciona o user ao catálogo
-
-        
+        // adiciona o user ao catálogo        
         insert_user(usersCatalog, user, get_id(user));
     } else {
         writeToErrorFileUser(line, "Resultados/users_errors.csv");
