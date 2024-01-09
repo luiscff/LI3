@@ -382,17 +382,19 @@ void remove_accents(char* str) {
 }
 
 int sort_function_q9(gconstpointer a, gconstpointer b) {
-    // formato das strings recebidas (a e b): "id;name"
+    // formato das structs recebidas (a e b): id;name;status
+
+    const USER_NAME* user = (const USER_NAME*)a;
+    const USER_NAME* user2 = (const USER_NAME*)b;
 
     // saca os 2 tokens da string a
-    char* aux1 = strdup(a);
-    char* id1 = strtok(aux1, ";");
-    char* name1 = strtok(NULL, ";");
 
+    char* id1 = strdup(get_user_name_id(user));
+    char* name1 = strdup(get_user_name_name(user));
     // saca os 2 tokens da string b
-    char* aux2 = strdup(b);
-    char* id2 = strtok(aux2, ";");
-    char* name2 = strtok(NULL, ";");
+
+    char* id2 = strdup(get_user_name_id(user2));
+    char* name2 = strdup(get_user_name_name(user2));
 
     // se os nomes tiverem "-" mudar para " "
 
@@ -962,11 +964,6 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
     GHashTable *hotel_hash = get_hotel_hash(stats);
     HOTEL* hotel = g_hash_table_lookup(hotel_hash,hotel_id);
 
- 
-    
-
-    if (hotel == NULL) printf ("\nFODEU\n");
-
     total = get_hotel_sum_rating(hotel);
     res = get_hotel_num_reservations(hotel);
 
@@ -976,9 +973,9 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
         return NULL;
     }
     double resultado = total / res;
-    // guarda os resultados todos numa string separados por ";" e retorna-a
+    // guarda o resultado numa string e retorna-a
     char* output = malloc(256 * sizeof(char));
-    sprintf(output, "%.3f\n", resultado);
+    sprintf(output, "%.3f", resultado);
     return output;
 }
 
@@ -1114,25 +1111,26 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token) {
 }
 
 
-char* query9(USERS_CATALOG* ucatalog, char* token) {
+char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats) {
     char* prefix = strdup(token);
-    gpointer key, value;
+    GList* users = get_user_name_list(stats);
     GList* aux = NULL;
-    GHashTableIter iter;
-    GHashTable* hash = get_users_hash(ucatalog);
-    g_hash_table_iter_init(&iter, hash);
+    int tamanho = g_list_length(users);
+    if (users == NULL) printf("\n AQUI no USERS \n");
 
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        USER* user = value;
-        if (strcasecmp(get_active_status(user), "inactive") != 0) {  // se o user não for "inactive"
-            char* id = strdup(get_id(user));
+    for (size_t i = 0; i < tamanho; i++) {
+        USER_NAME* user = g_list_nth_data(users, i);
+
+        
+        if (strcasecmp(get_user_name_status(user), "inactive") != 0) {  // se o user não for "inactive"
+            char* id = strdup(get_user_name_id(user));
             if (id == NULL) {
                 printf("Error: failed to allocate memory on id\n");
                 free(prefix);
                 return NULL;
             }
 
-            char* name = strdup(get_name(user));
+            char* name = strdup(get_user_name_name(user));
             if (name == NULL) {
                 printf("Error: failed to allocate memory on name\n");
                 free(id);
@@ -1140,56 +1138,54 @@ char* query9(USERS_CATALOG* ucatalog, char* token) {
                 return NULL;
             }
             if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
-                char* idName = malloc(strlen(id) + strlen(name) + 2);
-                if (idName == NULL) {
-                    printf("Error: failed to allocate memory on idName\n");
-                    free(id);
-                    free(name);
-                    free(prefix);
-                    return NULL;
-                }
-                // concatena o id e o nome do user
-                strcpy(idName, id);
-                strcat(idName, ";");
-                strcat(idName, name);
-
-                aux = g_list_append(aux, idName);  // dá append à lista do "id;name"
-                if (aux == NULL) {
-                    printf("Error: failed to append to list\n");
-                    free(idName);
-                    free(id);
-                    free(name);
-                    free(prefix);
-                    return NULL;
-                }
-            } else {  // se nao tiver o prefixo, liberta a memoria
-            }
+                aux = g_list_append(aux, user);  // dá append à lista
+            } else printf ("\n NAO TEM PREFIXO");
         }
     }
+    if (aux == NULL) printf("\n AQUI no AUX \n");
 
-    GList* sorted = g_list_sort(aux, sort_function_q9);
-    int tamanho = g_list_length(sorted);
     char* output = malloc(1);
     output[0] = '\0';  // começa com uma string vazia
-    for (size_t i = 0; i < tamanho; i++) {
-        char* curr_user = g_list_nth_data(sorted, i);
+    int flag = 1;
+    int tamanho_aux = g_list_length(aux);
+    GList* sorted = g_list_sort(aux, sort_function_q9);
 
+    if (flag == 1) { //9
+
+    
+    
+    for (size_t i = 0; i < tamanho_aux; i++) {
+        USER_NAME* curr_user = g_list_nth_data(sorted, i);
+        char line[200]; 
+        sprintf(line, "%s;%s\n", get_user_name_id(curr_user), get_user_name_name(curr_user));
         // realloc to increase the size of the output string
-        output = realloc(output, strlen(output) + strlen(curr_user) + 2);  // +2 para o "\n" e para o "\0"
+        output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
-        strcat(output, curr_user);
-        strcat(output, "\n");
+        strcat(output, line);
     }
+    }
+    if (flag == 2) {  // 9F
+    int reg_num = 1;
+    for (size_t i = 0; i < tamanho; i++) {
+        char line[200];  // linha atual
+        USER_NAME* curr_user = g_list_nth_data(sorted, i);
 
-    // // frees
-    // GList* l;
-    // for (l = aux; l != NULL; l = l->next) {  // free de cada elemento da lista
-    //     free(l->data);
-    // }
-    // g_list_free(aux);  // free da lista em si
-    // free(prefix);
+        sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num, get_user_name_id(curr_user), get_user_name_name(curr_user));
+        reg_num++;
+        // realloc para aumentar o tamanho da string output
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+            }
+        }
+        // tira o ultimo \n
+        output[strlen(output) - 1] = '\0';
+        
+        //free(active_status);
+        return output;
 
-    // tira o \n do fim da string
     output[strlen(output) - 1] = '\0';
+
+
     return output;
 }

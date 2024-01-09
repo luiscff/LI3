@@ -64,14 +64,15 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             printf("Executando query 7 com token: %s\n",nextToken);
             //char *result = query7(f_catalog,nextToken);
             //create_result_file("Resultados", lineNumber, result);
-            //free(result);g
+            //free(result);
 
         } else if (strcmp(token, "8") == 0) {
             // ignora
         } else if (strcmp(token, "9") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 9 com token: %s\n",nextToken);
-            char *result = query9(u_catalog,nextToken);
+            char *result = query9(u_catalog,nextToken, stats);
+            if (result == NULL) printf("\n AQUI \n");
             create_result_file("Resultados", lineNumber, result);
             free(result);
             

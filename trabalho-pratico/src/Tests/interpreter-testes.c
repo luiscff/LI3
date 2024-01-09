@@ -75,7 +75,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "9") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 9 com token: %s\n",nextToken);
-            char *result = query9(u_catalog,nextToken);
+            char *result = query9(u_catalog,nextToken, stats);
             create_result_file("Resultados", lineNumber, result);
             free(result);
             

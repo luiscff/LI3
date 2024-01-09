@@ -23,7 +23,7 @@ bool isTrueOrFalse(const char *str) {
     return false;
 }
 // função responsável por fazer o parse de cada linha do user, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos users
-void parseLine_user(char *line, void *catalog) {
+void parseLine_user(char *line, void *catalog,STATS* stats) {
     USERS_CATALOG *usersCatalog = (USERS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
@@ -86,7 +86,18 @@ void parseLine_user(char *line, void *catalog) {
     }
 
     if (fieldIndex == 13) {
+
+        //adiciona conjunto nome e id as stats
+
+        USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
+        insert_user_name(stats,user_name);
+        printf("user_name: %s;%s;%s\n",get_user_name_name(user_name), get_user_name_id(user_name), get_user_name_status(user_name));
+        
+
+
         // adiciona o user ao catálogo
+
+        
         insert_user(usersCatalog, user, get_id(user));
     } else {
         writeToErrorFileUser(line, "Resultados/users_errors.csv");
@@ -95,7 +106,7 @@ void parseLine_user(char *line, void *catalog) {
     free(lineCopy);
 }
 // função responsável por fazer o parse de cada linha dos flights, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos flights
-void parseLine_flight(char *line, void *catalog) {
+void parseLine_flight(char *line, void *catalog, STATS* stats) {
     FLIGHTS_CATALOG *flightsCatalog = (FLIGHTS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
@@ -190,7 +201,7 @@ void parseLine_flight(char *line, void *catalog) {
     free(lineCopy);
 }
 // função responsável por fazer o parse de cada linha dos passengers, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos passengers
-void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog) {
+void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,STATS* stats) {
     PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
@@ -333,9 +344,6 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
         int hotel_rating = get_rating(reservation);
         
         insert_or_update_hotel(stats,hotel_id, hotel_rating);
-        printf ("hotel: %s", hotel_id);
-
-        
 
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
@@ -372,17 +380,17 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
 
     if (token == 1)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_user(line, catalog);
+            parseLine_user(line, catalog, stats);
         }
 
     if (token == 2)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_flight(line, catalog);
+            parseLine_flight(line, catalog,stats);
         }
 
     if (token == 3)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_passenger(line, catalog, usersCatalog);
+            parseLine_passenger(line, catalog, usersCatalog,stats);
         }
 
     if (token == 4)
