@@ -248,17 +248,28 @@ int sort_function_q4(gconstpointer a, gconstpointer b) {
 // aux q7
 
 
-
-
 gint compare_ints(gconstpointer a, gconstpointer b) {
-    return GPOINTER_TO_INT(a) - GPOINTER_TO_INT(b);
+    int num1 = GPOINTER_TO_INT(a);
+    int num2 = GPOINTER_TO_INT(b);
+
+    if (num1 < num2) return -1; // num1 é menor que num2
+    if (num1 > num2) return 1; // num1 é maior que num2
+
+    return 0; // os números são iguais
 }
 
 // Função para calcular a mediana de um GArray de inteiros
-int calcula_mediana(GList* list) {
+double calcula_mediana(GList* list) {
     GList* ordenada = g_list_sort(list, compare_ints);
+    int i = 0;
+    while (list!=NULL){
+    printf("\n ORD %d : %d",i,GPOINTER_TO_INT(g_list_nth_data(ordenada,i)));
+    i++;
+    }
+    printf("\n");
+  
 
-    guint size = g_list_length(list);
+    guint size = g_list_length(ordenada);
     if (size == 0) {
         // Array vazio, mediana indefinida
         return 0.0;
@@ -266,12 +277,12 @@ int calcula_mediana(GList* list) {
 
     if (size % 2 == 0) {
         // Número par de elementos, calcular a média dos dois valores do meio
-        int middle1 = GPOINTER_TO_INT(g_list_nth(ordenada, size / 2 - 1));
-        int middle2 = GPOINTER_TO_INT(g_list_nth(ordenada,  size / 2));
+        int middle1 = GPOINTER_TO_INT(g_list_nth_data(ordenada, size / 2 - 1));
+        int middle2 = GPOINTER_TO_INT(g_list_nth_data(ordenada,  size / 2));
         return (middle1 + middle2) / 2.0;
     } else {
         // Número ímpar de elementos, a mediana é o valor do meio
-        return GPOINTER_TO_INT(g_list_nth(ordenada,  size / 2));
+        return GPOINTER_TO_INT(g_list_nth_data(ordenada,  size / 2));
     }
 }
 
@@ -287,8 +298,8 @@ int sort_function_q7(gconstpointer a, gconstpointer b) {
     char* name_a = strdup(get_airport_name(airport1));
     char* name_b = strdup(get_airport_name(airport2));
     
-    int mediana_a = calcula_mediana(list_a);
-    int mediana_b = calcula_mediana(list_b);
+    double mediana_a = calcula_mediana(list_a);
+    double mediana_b = calcula_mediana(list_b);
 
     if (mediana_a > mediana_b) return 1;
     else if (mediana_a < mediana_b) return -1;
@@ -1069,7 +1080,7 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats) {
         GList* curr_list = get_airport_delay_list(curr_airport);
         if (curr_list == NULL) printf ("\n THATS IT");
         char line[200];
-        sprintf(line, "%s;%d\n", get_airport_name(curr_airport), calcula_mediana(curr_list));
+        sprintf(line, "%s;%f\n", get_airport_name(curr_airport),  calcula_mediana(curr_list));
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
