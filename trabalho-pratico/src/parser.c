@@ -89,8 +89,8 @@ void parseLine_user(char *line, void *catalog,STATS* stats) {
 
         //adiciona conjunto nome e id as stats
 
-        USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
-        insert_user_name(stats,user_name);
+        //USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
+        //insert_user_name(stats,user_name);
 
         // adiciona o user ao catálogo        
         insert_user(usersCatalog, user, get_id(user));
@@ -186,11 +186,11 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
 
     if (fieldIndex == 14) {
 
-        char* origin = strdup(get_origin(flight));
-        char* schedule_departure_date = strdup(get_schedule_departure_date(flight));
-        char* real_departure_date = strdup(get_real_departure_date(flight));
-        int new_delay = calc_departure_delay(schedule_departure_date, real_departure_date);
-        insert_or_update_airport(stats,origin,new_delay);
+        //char* origin = strdup(get_origin(flight));
+        //char* schedule_departure_date = strdup(get_schedule_departure_date(flight));
+        //char* real_departure_date = strdup(get_real_departure_date(flight));
+        //int new_delay = calc_departure_delay(schedule_departure_date, real_departure_date);
+        //insert_or_update_airport(stats,origin,new_delay);
 
         // adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
@@ -203,17 +203,20 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
     free(lineCopy);
 }
 // função responsável por fazer o parse de cada linha dos passengers, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos passengers
-void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,STATS* stats) {
+void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog, FLIGHTS_CATALOG *flightCatalog, STATS* stats) {
     PASSENGERS_CATALOG *passengersCatalog = (PASSENGERS_CATALOG *)catalog;
     char *token;
     int fieldIndex = 1;
     char *lineCopy = strdup(line);
 
+
     // Cria um novo passageiro
     PASSENGER *passenger = create_passenger();
 
     token = strtok(lineCopy, ";");
+    int flag;
     while (token != NULL) {
+        flag = 0;
         if (isValidField_passenger(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
@@ -232,16 +235,24 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-
+        
     if (fieldIndex == 3) {
         // vai buscar o user associado a este passageiro ao users_catalog
+        //adiciona o voo à lista de voos do user
         char *user_id = strdup(get_user_id2(passenger));
         USER *user = get_user_by_id(usersCatalog, user_id);
+        if (user==NULL)
+        {
+            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
+            flag=1;
+        }
+        //char* flight_id = fix_flight_id(get_flight_id2(passenger));
+        FLIGHT *flight = get_flight_by_id(flightCatalog, get_flight_id2(passenger));
+        if (flight==NULL&& flag==0) writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv"); 
+        //add_flight(user, flight_id);
+
         free(user_id);
 
-        //adiciona o voo à lista de voos do user
-        char* flight_id = fix_flight_id(get_flight_id2(passenger));
-        add_flight(user, flight_id);
 
         // adiciona o passageiro ao catálogo
         insert_passenger(passengersCatalog, passenger);
@@ -330,22 +341,22 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 
     if (fieldIndex == 15) {
         // vai buscar o user associado a esta reserva ao users_catalog
-        char *user_id = strdup(get_user_id(reservation));
-        USER *user = get_user_by_id(usersCatalog, user_id);
-        free(user_id);
+        //char *user_id = strdup(get_user_id(reservation));
+        //USER *user = get_user_by_id(usersCatalog, user_id);
+        //free(user_id);
 
         // adiciona o total gasto ao respetivo user no users_catalog
-        double price_reservation = calc_total_price(reservation);
-        add_total_spent(user, price_reservation);
+        //double price_reservation = calc_total_price(reservation);
+        //add_total_spent(user, price_reservation);
 
         // adiciona mais uma reserva ao respetivo user no users_catalog
-        add_reservation(user, get_reservation_id(reservation));
+        //add_reservation(user, get_reservation_id(reservation));
 
         // adiciona ou da update as informaçoes de um hotel
-        char *hotel_id = strdup(get_hotel_id(reservation));
-        int hotel_rating = get_rating(reservation);
+        //char *hotel_id = strdup(get_hotel_id(reservation));
+        //int hotel_rating = get_rating(reservation);
         
-        insert_or_update_hotel(stats,hotel_id, hotel_rating);
+        //insert_or_update_hotel(stats,hotel_id, hotel_rating);
 
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
@@ -358,7 +369,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 }
 
 // função responsável por fazer o parse do ficheiro .csv inteiro, onde abre o ficheiro e chama as funções que leem cada linha do ficheiro para fazer o parse da linha
-void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog,STATS* stats) {
+void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog, void *flights_catalog, STATS* stats) {
     FILE *file = fopen(filepath, "r");
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
@@ -368,6 +379,7 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
 
     // casts para o tipo de catálogo que se pretende
     USERS_CATALOG *usersCatalog = (USERS_CATALOG *)users_catalog;
+    FLIGHTS_CATALOG *flightsCatalog = (FLIGHTS_CATALOG *)flights_catalog;
 
     char *line = NULL;
     size_t len = 0;
@@ -392,7 +404,7 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
 
     if (token == 3)
         while ((read = getline(&line, &len, file)) != -1) {
-            parseLine_passenger(line, catalog, usersCatalog,stats);
+            parseLine_passenger(line, catalog, usersCatalog, flightsCatalog, stats);
         }
 
     if (token == 4)

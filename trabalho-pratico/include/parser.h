@@ -11,9 +11,10 @@
 #define MAX_COUNTRY_CODE 2
 
 
-void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog, STATS *stats);
+void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog, void *flights_catalog, STATS *stats);
 
 
 
 #endif
+
 
