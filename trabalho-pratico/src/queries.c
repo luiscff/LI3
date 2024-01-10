@@ -1116,7 +1116,6 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
     GList* users = get_user_name_list(stats);
     GList* aux = NULL;
     int tamanho = g_list_length(users);
-    if (users == NULL) printf("\n AQUI no USERS \n");
 
     for (size_t i = 0; i < tamanho; i++) {
         USER_NAME* user = g_list_nth_data(users, i);
@@ -1129,9 +1128,10 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
                 free(prefix);
                 return NULL;
             }
-            //printf ("\n%ld\n", i); get_user_name_name da seg quando i = 9463 na 9F
 
             char* name = strdup(get_user_name_name(user));
+
+
             if (name == NULL) {
                 printf("Error: failed to allocate memory on name\n");
                 free(id);
@@ -1140,7 +1140,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
             }
             if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
                 aux = g_list_append(aux, user);  // dá append à lista
-            } 
+            }
         }
     }
     char* output = malloc(1);
@@ -1163,7 +1163,7 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
 
     if (flag == 2) {  // 9F
     int reg_num = 1;
-    for (size_t i = 0; i < tamanho; i++) {
+    for (size_t i = 0; i < tamanho_aux; i++) {
         char line[200];  // linha atual
         USER_NAME* curr_user = g_list_nth_data(sorted, i);
 

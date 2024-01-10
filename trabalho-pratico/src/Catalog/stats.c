@@ -39,10 +39,12 @@ STATS* create_stats_catalog() {
 }
 
 void free_user_name(USER_NAME *user_name) {
-    if (user_name->name) free(user_name->name) ;
-    if (user_name->id) free(user_name->id) ;
-    if (user_name->status) free(user_name->status) ;
-    if (user_name) free(user_name);
+    if (user_name) {
+        if (user_name->name) free(user_name->name);
+        if (user_name->id) free(user_name->id);
+        if (user_name->status) free(user_name->status);
+        free(user_name);
+    }
 }
 
 void free_stats(STATS *catalog) {
