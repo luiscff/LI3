@@ -71,9 +71,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "9") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 9 com token: %s\n",nextToken);
-            char *result = query9(u_catalog,nextToken, stats, 1);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query9(u_catalog,nextToken, stats, 1);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
             
         } else if (strcmp(token, "10") == 0) {
             // ignora
@@ -126,9 +126,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "9F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 9F com token: %s\n",nextToken);
-            char *result = query9(u_catalog,nextToken, stats, 2);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query9(u_catalog,nextToken, stats, 2);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
         } else if (strcmp(token, "10F") == 0) {
             // ignora
         }
