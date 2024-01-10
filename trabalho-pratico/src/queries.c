@@ -247,20 +247,8 @@ int sort_function_q4(gconstpointer a, gconstpointer b) {
 
 // aux q7
 
-typedef struct aux_q7 {
-    char* origin;
-    GList* delays;  // Guarda os atrasos em segundos
-}AUX_Q7;
 
-char *get_aux_origin(const AUX_Q7 *aux) { return aux->origin; }
 
-gboolean compare_origin(gconstpointer data, gconstpointer user_data) {
-    const AUX_Q7 *element = (const AUX_Q7 *)data;
-    const char *target_origin = (const char *)user_data;
-
-    // Use strcmp para comparar as origens
-    return strcmp(element->origin, target_origin) == 0;
-}
 
 gint compare_ints(gconstpointer a, gconstpointer b) {
     return GPOINTER_TO_INT(a) - GPOINTER_TO_INT(b);
@@ -288,18 +276,24 @@ int calcula_mediana(GList* list) {
 }
 
 // Função de comparação para ordenar aeroportos por mediana e desempatar pelo nome do aeroporto
-gint compare_airports(gconstpointer a, gconstpointer b) {
-    const AUX_Q7* airport1 = (const AUX_Q7*)a;
-    const AUX_Q7* airport2 = (const AUX_Q7*)b;
 
-    int mediana_a = calcula_mediana(airport1->delays);
-    int mediana_b = calcula_mediana(airport2->delays);
+int sort_function_q7(gconstpointer a, gconstpointer b) {
+
+    const AIRPORTS* airport1 = (const AIRPORTS*)a;
+    const AIRPORTS* airport2 = (const AIRPORTS*)b;
+
+    GList* list_a = get_airport_delay_list(airport1);
+    GList* list_b = get_airport_delay_list(airport2);
+    char* name_a = strdup(get_airport_name(airport1));
+    char* name_b = strdup(get_airport_name(airport2));
+    
+    int mediana_a = calcula_mediana(list_a);
+    int mediana_b = calcula_mediana(list_b);
 
     if (mediana_a > mediana_b) return 1;
     else if (mediana_a < mediana_b) return -1;
     
-    else return strcmp(airport1->origin, airport2->origin); // Se as medianas forem iguais, use o nome do aeroporto como critério de desempate
-        
+    else return strcmp(name_a,name_b);
 }
 
 
@@ -1058,55 +1052,30 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, int flag) {
 
 
 // Função principal para calcular e listar os top N aeroportos
-char* query7(FLIGHTS_CATALOG* fcatalog, char* token) {
-    GHashTable* airport_delays_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats) {
+    GHashTable* airportS_hash = get_airportS_hash(stats);
     int top_n = atoi(token);
     // Calcular os atrasos para cada voo
-    
-    gpointer key, value;
-    GHashTableIter iter;
-    GHashTable* hash = get_flights_hash(fcatalog);
-    
-    
-    g_hash_table_iter_init(&iter, hash);
-    while (g_hash_table_iter_next(&iter, &key, &value)) {
-        FLIGHT* flight = value;
+    GList* airportS_list = g_hash_table_get_values(airportS_hash);
+    GList* sorted = g_list_sort(airportS_list,sort_function_q7);
 
-        char* origin = strdup(get_origin(flight));
-        char* sch_departure = strdup(get_schedule_departure_date(flight));
-        char* real_departure = strdup(get_real_departure_date(flight));
-        int delay = calc_departure_delay(sch_departure, real_departure);
-
-        AUX_Q7* airport_delay = g_hash_table_lookup(airport_delays_hash, origin);
-        if (airport_delay == NULL) {
-            airport_delay->origin = strdup(origin);
-            airport_delay->delays = g_list_append(airport_delay->delays, GINT_TO_POINTER(delay));
-            g_hash_table_insert(airport_delays_hash, airport_delay->origin, airport_delay);
-        }
-        else  airport_delay->delays = g_list_append(airport_delay->delays, GINT_TO_POINTER(delay));
-    }
-
-    GList* airport_list = g_hash_table_get_values(airport_delays_hash);
-    GList* top_airports = g_list_sort(airport_list, compare_airports);
-
-    int tamanho = g_list_length(top_airports);
     char* output = malloc(1);
-    output[0] = '\0';  // Começa com uma string vazia
+    output[0] = '\0'; 
+    int tamanho = g_list_length(sorted);
 
-    for (size_t i = 0; (i < top_n) | (i < tamanho); i++) {
-                char line[200];  // linha atual
-                AUX_Q7* curr_aux = g_list_nth_data(top_airports, i);
-
-                sprintf(line, "%s;%i\n", get_aux_origin(curr_aux),calcula_mediana(curr_aux->delays));
-
-                // realloc para aumentar o tamanho da string output
-                output = realloc(output, strlen(output) + strlen(line) + 1);
-                // concatena a linha atual à string de output
-                strcat(output, line);
-            }
-        
-    g_hash_table_destroy(airport_delays_hash);
-
+    
+    for (size_t i = 0; i < top_n && top_n < tamanho ; i++) {
+        AIRPORTS* curr_airport = g_list_nth_data(sorted, i);
+        GList* curr_list = get_airport_delay_list(curr_airport);
+        if (curr_list == NULL) printf ("\n THATS IT");
+        char line[200];
+        sprintf(line, "%s;%d\n", get_airport_name(curr_airport), calcula_mediana(curr_list));
+        // realloc to increase the size of the output string
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+        }
+    
     return output;
 }
 

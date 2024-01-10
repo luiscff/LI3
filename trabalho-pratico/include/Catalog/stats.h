@@ -6,6 +6,7 @@
 typedef struct stats STATS;
 typedef struct hotel HOTEL;
 typedef struct user_name USER_NAME;
+typedef struct airportS AIRPORTS;
 
 STATS* create_stats_catalog();
 void free_stats(STATS *catalog);
@@ -25,6 +26,19 @@ const char *get_user_name_name(const USER_NAME *user);
 const char *get_user_name_id(const USER_NAME *user);
 
 const char *get_user_name_status(const USER_NAME *user);
+
+void insert_airportS(STATS *catalog, AIRPORTS *airportS,const char* key);
+
+void add_delay_to_airportS(AIRPORTS* airportS, int delay);
+
+AIRPORTS* create_airportS(const char* origin, int delay);
+
+void insert_or_update_airport(STATS* stats, const char* origin, int delay);
+
+GHashTable *get_airportS_hash(STATS *catalog);
+char* get_airport_name(const AIRPORTS* airportS);
+
+GList* get_airport_delay_list (const AIRPORTS* airportS);
 
 
 

@@ -62,9 +62,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "7") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
-            //char *result = query7(f_catalog,nextToken);
-            //create_result_file("Resultados", lineNumber, result);
-            //free(result);
+            char *result = query7(f_catalog,nextToken,stats);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
 
         } else if (strcmp(token, "8") == 0) {
             // ignora

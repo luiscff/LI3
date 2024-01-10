@@ -8,6 +8,7 @@
 typedef struct stats {
     GHashTable *hotel_hash;
     GList *user_name;
+    GHashTable *airports_hash;
 } STATS;
 
 typedef struct hotel
@@ -23,11 +24,24 @@ typedef struct user_name{
     char* status;
 }USER_NAME;
 
+typedef struct airportS{
+    char* origin;
+    GList* delays;
+}AIRPORTS;
+
 
 void free_hotel(HOTEL *hotel) {
     if (hotel->hotel_id) free(hotel->hotel_id);
     if (hotel) free(hotel);
 }
+
+void free_airportS(AIRPORTS *airportS) {
+    if (airportS->origin) free(airportS->origin);
+    if (airportS->delays) g_list_free(airportS->delays);
+    if (airportS) free(airportS);
+}
+
+
 
 STATS* create_stats_catalog() {
     STATS *new_catalog = malloc(sizeof(STATS));
@@ -35,6 +49,8 @@ STATS* create_stats_catalog() {
     new_catalog->hotel_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_hotel);
     new_catalog->user_name = NULL;
+    new_catalog->airports_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
+                                                 (GDestroyNotify)free_airportS);
     return new_catalog;
 }
 
@@ -50,7 +66,7 @@ void free_user_name(USER_NAME *user_name) {
 void free_stats(STATS *catalog) {
     g_hash_table_destroy(catalog->hotel_hash);
     g_list_free_full(catalog->user_name, (GDestroyNotify)free_user_name);
-
+    g_hash_table_destroy(catalog->airports_hash);
     free(catalog);
 }
 
@@ -149,6 +165,47 @@ const char *get_user_name_status(const USER_NAME *user) {
     return user->status;
 }
 
+        
+// AIRPORT
+
+void insert_airportS(STATS *catalog, AIRPORTS *airportS,const char* key) {
+    g_hash_table_insert(catalog->airports_hash, strdup(key), airportS);
+}
+
+void add_delay_to_airportS(AIRPORTS* airportS, int delay){
+    airportS->delays = g_list_append(airportS->delays,GINT_TO_POINTER(delay));
+}
+
+AIRPORTS* create_airportS(const char* origin, int delay){
+    AIRPORTS* airportS = malloc(sizeof(AIRPORTS));
+    if(airportS){
+        airportS->origin = strdup(origin);
+        airportS->delays = NULL;
+        airportS->delays = g_list_append(airportS->delays,GINT_TO_POINTER(delay));
+    }
+    return airportS;
+}
+
+void insert_or_update_airport(STATS* stats, const char* origin, int delay){
+    AIRPORTS* airportS = g_hash_table_lookup(stats->airports_hash, origin);
+    if (airportS == NULL) {
+        AIRPORTS* new_airportS = create_airportS(origin,delay);
+        insert_airportS(stats,new_airportS, origin);
+    }
+    else add_delay_to_airportS(airportS,delay);
+}
+
+GHashTable *get_airportS_hash(STATS *catalog) {
+    return catalog->airports_hash;
+}
+
+char* get_airport_name(const AIRPORTS* airportS){
+    return airportS->origin;
+}
+
+GList* get_airport_delay_list (const AIRPORTS* airportS){
+    return airportS->delays;
+}
 
 
 

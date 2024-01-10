@@ -185,6 +185,13 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
     }
 
     if (fieldIndex == 14) {
+
+        char* origin = strdup(get_origin(flight));
+        char* schedule_departure_date = strdup(get_schedule_departure_date(flight));
+        char* real_departure_date = strdup(get_real_departure_date(flight));
+        int new_delay = calc_departure_delay(schedule_departure_date, real_departure_date);
+        insert_or_update_airport(stats,origin,new_delay);
+
         // adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
     } else {
