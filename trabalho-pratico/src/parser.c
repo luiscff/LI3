@@ -13,6 +13,115 @@
 #include "output.h"
 #include "utils.h"
 
+
+
+bool isDateTime1BeforeDateTime2(const char* date1, const char* date2) {
+    // Convertendo strings de datas para inteiros
+    char *begin = strdup(date1);
+    char *end = strdup(date2);
+
+    int year1, month1, day1, hours1, minutes1, seconds1;
+    int year2, month2, day2, hours2, minutes2, seconds2;
+
+    if (sscanf(begin, "%4d/%2d/%2d %2d:%2d:%2d", &year1, &month1, &day1, &hours1, &minutes1, &seconds1) != 6 ||
+        sscanf(end, "%4d/%2d/%2d %2d:%2d:%2d", &year2, &month2, &day2, &hours2, &minutes2, &seconds2) != 6) {
+        free(begin);
+        free(end);
+        printf("sscanf error\n");
+        return false; // As datas não estão no formato correto
+    }
+
+    free(begin);
+    free(end);
+
+    // Comparando anos
+    if (year1 < year2) {
+        return true;
+    } else if (year1 > year2) {
+        return false;
+    }
+
+    // Comparando meses
+    if (month1 < month2) {
+        return true;
+    } else if (month1 > month2) {
+        return false;
+    }
+
+    // Comparando dias
+    if (day1 < day2) {
+        return true;
+    } else if (day1 > day2) {
+        return false;
+    }
+
+    // Comparando horas
+    if (hours1 < hours2) {
+        return true;
+    } else if (hours1 > hours2) {
+        return false;
+    }
+
+    // Comparando minutos
+    if (minutes1 < minutes2) {
+        return true;
+    } else if (minutes1 > minutes2) {
+        return false;
+    }
+
+    // Comparando segundos
+    if (seconds1 < seconds2) {
+        return true;
+    } else if (seconds1 > seconds2) {
+        return false;
+    }
+
+    return true; // As datas são iguais
+
+}
+
+bool isDate1BeforeDate2(const char *date1, const char *date2) {
+    // Convertendo strings de datas para inteiros
+    char *begin = strdup(date1);
+    char *end = strdup(date2);
+
+    int year1, month1, day1;
+    int year2, month2, day2;
+
+    if (sscanf(begin, "%4d/%2d/%2d", &year1, &month1, &day1) != 3 ||
+        sscanf(end, "%4d/%2d/%2d", &year2, &month2, &day2) != 3) {
+        free(begin);
+        free(end);
+        printf("sscanf error\n");
+        return false; // As datas não estão no formato correto
+    }
+
+    free(begin);
+    free(end);
+
+    // Comparando anos
+    if (year1 < year2) {
+        return true;
+    } else if (year1 > year2) {
+        return false;
+    }
+
+    // Comparando meses
+    if (month1 < month2) {
+        return true;
+    } else if (month1 > month2) {
+        return false;
+    }
+
+    // Comparando dias
+    if (day1 < day2) {
+        return true; // A data 1 é menor
+    } else if (day1 > day2) {
+        return false; // A data 2 é menor
+    }  
+    return true; // As datas são iguais
+}
+
 // função responsável por tratar dos casos da include_breakfast, feita para aceitar tanto os chars f, como t, como os valores 0 ou 1
 bool isTrueOrFalse(const char *str) {
     if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0)
@@ -89,8 +198,8 @@ void parseLine_user(char *line, void *catalog,STATS* stats) {
 
         //adiciona conjunto nome e id as stats
 
-        //USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
-        //insert_user_name(stats,user_name);
+        USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
+        insert_user_name(stats,user_name);
 
         // adiciona o user ao catálogo        
         insert_user(usersCatalog, user, get_id(user));
@@ -110,27 +219,10 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
     // Cria um novo voo
     FLIGHT *flight = create_flight();
 
-    char *schedule_begin_date = NULL;
-    char *real_begin_date = NULL;
     // são guardados os valores das datas schedule_departure_date e real_departure_date para mais tarde se poder comparar com as datas de arrival respetivas de modo a garantir que as datas de arrival são depois das de departure
     token = strtok(lineCopy, ";");
     while (token != NULL) {
-        if (schedule_begin_date != NULL) {
-            free(schedule_begin_date);
-            schedule_begin_date = NULL;
-        }
-        if (real_begin_date != NULL) {
-            free(real_begin_date);
-            real_begin_date = NULL;
-        }
-        if (get_schedule_departure_date(flight) != NULL) {
-            schedule_begin_date = strdup(get_schedule_departure_date(flight));
-        }
-        if (get_real_departure_date(flight) != NULL) {
-            real_begin_date = strdup(get_real_departure_date(flight));
-        }
-
-        if (isValidField_flight(token, fieldIndex, schedule_begin_date, real_begin_date)) {
+        if (isValidField_flight(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
                     set_flight_id(flight, token);
@@ -176,8 +268,6 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
             writeToErrorFileFlight(line, "Resultados/flights_errors.csv");  // função responsável por escrever no ficheiro de erros dos flights caso algum caso falhe
             free(lineCopy);
             free_flight(flight);
-            free(schedule_begin_date);
-            free(real_begin_date);
             return;
         }
         token = strtok(NULL, ";");
@@ -186,20 +276,42 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
 
     if (fieldIndex == 14) {
 
-        //char* origin = strdup(get_origin(flight));
-        //char* schedule_departure_date = strdup(get_schedule_departure_date(flight));
-        //char* real_departure_date = strdup(get_real_departure_date(flight));
-        //int new_delay = calc_departure_delay(schedule_departure_date, real_departure_date);
-        //insert_or_update_airport(stats,origin,new_delay);
+        //validaçao de datas
+        char* schedule_departure_date = strdup(get_schedule_departure_date(flight));
+        char* real_departure_date = strdup(get_real_departure_date(flight));
+        char* schedule_arrival_date = strdup(get_schedule_arrival_date(flight));
+        char* real_arrival_date = strdup(get_real_arrival_date(flight));
+        bool errordata1 = isDateTime1BeforeDateTime2(schedule_arrival_date,schedule_departure_date);
+        bool errordata2 = isDateTime1BeforeDateTime2(real_arrival_date,real_departure_date);
+        if(errordata1==true){
+            writeToErrorFileReservation(line, "Resultados/flights_errors.csv");
+            free(schedule_departure_date);
+            free(schedule_arrival_date);
+            free(real_departure_date);
+            free(real_arrival_date);
+            return;
+        }
+        if(errordata2==true){
+            writeToErrorFileReservation(line, "Resultados/flights_errors.csv");
+            free(schedule_departure_date);
+            free(schedule_arrival_date);
+            free(real_departure_date);
+            free(real_arrival_date);
+            return;
+        }
+
+        //funçoes para estatistica
+        char* origin = strdup(get_origin(flight));
+        char* aux_schedule_departure_date = strdup(get_schedule_departure_date(flight));
+        char* aux_real_departure_date = strdup(get_real_departure_date(flight));
+        int new_delay = calc_departure_delay(aux_schedule_departure_date, aux_real_departure_date);
+        insert_or_update_airport(stats,origin,new_delay);
 
         // adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
     } else {
         writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
     }
-
-    free(schedule_begin_date);
-    free(real_begin_date);
     free(lineCopy);
 }
 // função responsável por fazer o parse de cada linha dos passengers, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos passengers
@@ -277,14 +389,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 
     token = strtok(lineCopy, ";");
     while (token != NULL) {
-        if (begin_date != NULL) {  // é guardado o token da begin_date que mais tarde vai ser necessário para depois garantir que a segunda data é posterior à primeira
-            free(begin_date);
-            begin_date = NULL;
-        }
-        if (get_begin_date(reservation) != NULL) {
-            begin_date = strdup(get_begin_date(reservation));
-        }
-        if (isValidField_reservation(token, fieldIndex, begin_date)) {
+        if (isValidField_reservation(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
                     set_reservation_id(reservation, token);
@@ -340,23 +445,29 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
     }
 
     if (fieldIndex == 15) {
-        // vai buscar o user associado a esta reserva ao users_catalog
-        //char *user_id = strdup(get_user_id(reservation));
-        //USER *user = get_user_by_id(usersCatalog, user_id);
-        //free(user_id);
+        char *begin_date = strdup(get_begin_date(reservation));
+        char *end_date = strdup(get_end_date(reservation));
+        if(isDate1BeforeDate2(end_date,begin_date)==true){
+            writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
+            return;
+        }
+        //vai buscar o user associado a esta reserva ao users_catalog
+        char *user_id = strdup(get_user_id(reservation));
+        USER *user = get_user_by_id(usersCatalog, user_id);
+        free(user_id);
 
-        // adiciona o total gasto ao respetivo user no users_catalog
-        //double price_reservation = calc_total_price(reservation);
-        //add_total_spent(user, price_reservation);
+        //adiciona o total gasto ao respetivo user no users_catalog
+        double price_reservation = calc_total_price(reservation);
+        add_total_spent(user, price_reservation);
 
         // adiciona mais uma reserva ao respetivo user no users_catalog
-        //add_reservation(user, get_reservation_id(reservation));
+        add_reservation(user, get_reservation_id(reservation));
 
         // adiciona ou da update as informaçoes de um hotel
-        //char *hotel_id = strdup(get_hotel_id(reservation));
-        //int hotel_rating = get_rating(reservation);
+        char *hotel_id = strdup(get_hotel_id(reservation));
+        int hotel_rating = get_rating(reservation);
         
-        //insert_or_update_hotel(stats,hotel_id, hotel_rating);
+        insert_or_update_hotel(stats,hotel_id, hotel_rating);
 
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));

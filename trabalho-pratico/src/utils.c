@@ -1,6 +1,7 @@
 #include "utils.h"
 
 #include <stdio.h>
+#include <stdbool.h>
 
 
 char* fix_flight_id(int num) {

@@ -4,6 +4,7 @@
 #include <validation.h>
 #include <stdbool.h>
 #include "Catalog/stats.h"
+#include "utils.h"
 
 
 #define MAX_PHONE 12
