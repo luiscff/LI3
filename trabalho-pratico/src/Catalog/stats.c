@@ -27,6 +27,7 @@ typedef struct user_name{
 typedef struct airportS{
     char* origin;
     GList* delays;
+    int mediana;
 }AIRPORTS;
 
 
@@ -182,6 +183,7 @@ AIRPORTS* create_airportS(const char* origin, int delay){
         airportS->origin = strdup(origin);
         airportS->delays = NULL;
         airportS->delays = g_list_append(airportS->delays,GINT_TO_POINTER(delay));
+        airportS->mediana=0;
     }
     return airportS;
 }
@@ -206,6 +208,59 @@ char* get_airport_name(const AIRPORTS* airportS){
 GList* get_airport_delay_list (const AIRPORTS* airportS){
     return airportS->delays;
 }
+
+
+int compare_ints2(gconstpointer a, gconstpointer b) {
+    int int_a = GPOINTER_TO_INT(a);
+    int int_b = GPOINTER_TO_INT(b);
+
+    if (int_a < int_b) {
+        return -1;
+    } else if (int_a > int_b) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void calculate_and_set_median(AIRPORTS* airport) {
+    // Ensure that the delays list is not empty
+    if (airport->delays == NULL || g_list_length(airport->delays) == 0) {
+        printf("Error: Delays list is empty.\n");
+        return;
+    }
+
+    // Sort the delays list
+    airport->delays = g_list_sort(airport->delays, compare_ints2);
+
+    guint size = g_list_length(airport->delays);
+
+    // Calculate the median
+    if (size % 2 == 0) {
+        // Número par de elementos, calcular a média dos dois valores do meio
+        int middle1 = GPOINTER_TO_INT(g_list_nth_data(airport->delays, size / 2 - 1));
+        int middle2 = GPOINTER_TO_INT(g_list_nth_data(airport->delays, size / 2));
+        airport->mediana = (middle1 + middle2) / 2;
+    } else {
+        // Número ímpar de elementos, a mediana é o valor do meio
+        airport->mediana = GPOINTER_TO_INT(g_list_nth_data(airport->delays, size / 2));
+    }
+}
+
+void calculate_and_set_median_for_one(gpointer data, gpointer user_data) {
+    AIRPORTS* airport = (AIRPORTS*)data;
+    calculate_and_set_median(airport);
+}
+
+void calculate_and_set_median_for_all(GList* airport_list) {
+    // Apply the callback function to each element in the list
+    g_list_foreach(airport_list, calculate_and_set_median_for_one, NULL);
+}
+
+int get_mediana(const AIRPORTS* airportS){
+    return airportS->mediana;
+}
+
 
 
 

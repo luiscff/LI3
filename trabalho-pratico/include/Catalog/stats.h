@@ -39,6 +39,8 @@ GHashTable *get_airportS_hash(STATS *catalog);
 char* get_airport_name(const AIRPORTS* airportS);
 
 GList* get_airport_delay_list (const AIRPORTS* airportS);
+void calculate_and_set_median_for_all(GList* airport_list);
+int get_mediana(const AIRPORTS* airportS);
 
 
 

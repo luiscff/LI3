@@ -261,14 +261,6 @@ gint compare_ints(gconstpointer a, gconstpointer b) {
 // Função para calcular a mediana de um GArray de inteiros
 double calcula_mediana(GList* list) {
     GList* ordenada = g_list_sort(list, compare_ints);
-    int i = 0;
-    while (list!=NULL){
-    printf("\n ORD %d : %d",i,GPOINTER_TO_INT(g_list_nth_data(ordenada,i)));
-    i++;
-    }
-    printf("\n");
-  
-
     guint size = g_list_length(ordenada);
     if (size == 0) {
         // Array vazio, mediana indefinida
@@ -295,18 +287,37 @@ int sort_function_q7(gconstpointer a, gconstpointer b) {
 
     GList* list_a = get_airport_delay_list(airport1);
     GList* list_b = get_airport_delay_list(airport2);
+
     char* name_a = strdup(get_airport_name(airport1));
     char* name_b = strdup(get_airport_name(airport2));
     
     double mediana_a = calcula_mediana(list_a);
+    printf("\nA: %f\n",mediana_a);
     double mediana_b = calcula_mediana(list_b);
+    printf("\nB: %f\n",mediana_b);
 
-    if (mediana_a > mediana_b) return 1;
-    else if (mediana_a < mediana_b) return -1;
+    if (mediana_a < mediana_b) return 1;
+    else if (mediana_a > mediana_b) return -1;
     
     else return strcmp(name_a,name_b);
 }
 
+int sort_function_by_mediana(gconstpointer a, gconstpointer b) {
+    const AIRPORTS* airport1 = (const AIRPORTS*)a;
+    const AIRPORTS* airport2 = (const AIRPORTS*)b;
+
+    int mediana1 = get_mediana(airport1); 
+    int mediana2 = get_mediana(airport2);
+    // Compare mediana values
+    if (mediana1 > mediana2) {
+        return -1;
+    } else if (mediana1 < mediana2) {
+        return 1;
+    }
+
+    // When mediana values are equal, use the airport name as a tiebreaker
+    return strcmp(get_airport_name(airport1), get_airport_name(airport2));
+}
 
 
 // aux 9
@@ -1068,10 +1079,11 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats) {
     int top_n = atoi(token);
     // Calcular os atrasos para cada voo
     GList* airportS_list = g_hash_table_get_values(airportS_hash);
-    GList* sorted = g_list_sort(airportS_list,sort_function_q7);
+    calculate_and_set_median_for_all(airportS_list);
 
     char* output = malloc(1);
     output[0] = '\0'; 
+    GList* sorted = g_list_sort(airportS_list,sort_function_by_mediana);
     int tamanho = g_list_length(sorted);
 
     
@@ -1080,7 +1092,7 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats) {
         GList* curr_list = get_airport_delay_list(curr_airport);
         if (curr_list == NULL) printf ("\n THATS IT");
         char line[200];
-        sprintf(line, "%s;%f\n", get_airport_name(curr_airport),  calcula_mediana(curr_list));
+        sprintf(line, "%s;%d\n", get_airport_name(curr_airport),  get_mediana(curr_airport));
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
