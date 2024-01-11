@@ -283,15 +283,7 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
         char* real_arrival_date = strdup(get_real_arrival_date(flight));
         bool errordata1 = isDateTime1BeforeDateTime2(schedule_arrival_date,schedule_departure_date);
         bool errordata2 = isDateTime1BeforeDateTime2(real_arrival_date,real_departure_date);
-        if(errordata1==true){
-            writeToErrorFileReservation(line, "Resultados/flights_errors.csv");
-            free(schedule_departure_date);
-            free(schedule_arrival_date);
-            free(real_departure_date);
-            free(real_arrival_date);
-            return;
-        }
-        if(errordata2==true){
+        if(errordata1==true || errordata2==true){
             writeToErrorFileReservation(line, "Resultados/flights_errors.csv");
             free(schedule_departure_date);
             free(schedule_arrival_date);
@@ -302,15 +294,21 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
 
         //funçoes para estatistica
         char* origin = strdup(get_origin(flight));
-        char* aux_schedule_departure_date = strdup(get_schedule_departure_date(flight));
-        char* aux_real_departure_date = strdup(get_real_departure_date(flight));
-        int new_delay = calc_departure_delay(aux_schedule_departure_date, aux_real_departure_date);
+        int new_delay = calc_departure_delay(schedule_departure_date, real_departure_date);
         insert_or_update_airport(stats,origin,new_delay);
 
         // adiciona o voo ao catálogo
         insert_flight(flightsCatalog, flight, GINT_TO_POINTER(get_flight_id(flight)));
+
+        //frees
+        free(origin);
+        free(schedule_departure_date);
+        free(schedule_arrival_date);
+        free(real_departure_date);
+        free(real_arrival_date);
     } else {
         writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
+        free(lineCopy);
     }
     free(lineCopy);
 }
@@ -385,7 +383,6 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 
     // Cria uma nova reserva
     RESERVATION *reservation = create_reservation();
-    char *begin_date = NULL;
 
     token = strtok(lineCopy, ";");
     while (token != NULL) {
@@ -469,13 +466,19 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
         
         insert_or_update_hotel(stats,hotel_id, hotel_rating);
 
+        free(hotel_id);
+
         // adiciona a reserva ao catálogo
         insert_reservation(reservationsCatalog, reservation, get_reservation_id(reservation));
+
+        free(begin_date);
+        free(end_date);
+
+
     } else {
         writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
     }
 
-    if (begin_date != NULL) free(begin_date);
     free(lineCopy);
 }
 

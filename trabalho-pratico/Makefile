@@ -36,6 +36,7 @@ src/Entities/reservation.o: src/Entities/reservation.c
 
 leaks: programa-principal
 	valgrind --leak-check=full ./programa-principal ~/Desktop/dataset/data_clean ~/Desktop/dataset/input.txt
+	make clean_objs
 
 clean:
 	rm -f programa-principal programa-testes src/*.o  src/Catalog/*.o src/Entities/*.o Resultados/*.txt

@@ -505,8 +505,10 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         int num_passengers = 0;  // necessario percorrer o ficheiro dos flights e ver quantos passageiros
         int delay = 0;
 
-        num_passengers = g_list_length(find_users_by_flight(pcatalog, flight_id));  // se find_users_by_flight retornar a lista com todos os users com este flight_id associado
-
+        GList* temp = find_users_by_flight(pcatalog, flight_id);
+        num_passengers = g_list_length(temp);  // se find_users_by_flight retornar a lista com todos os users com este flight_id associado
+        g_list_free_full(temp, g_free);
+        
         delay = calc_departure_delay(schedule_departure, real_departure);
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
