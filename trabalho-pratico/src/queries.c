@@ -651,7 +651,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
 
 
     // tira o ultimo \n
-    output[strlen(output) - 1] = '\0';
+    if (flag == 2) output[strlen(output) - 1] = '\0';
 
     free(active_status);
     return output;
@@ -701,7 +701,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
                 strcat(output, line);
             }
         // tira o ultimo \n
-        output[strlen(output) - 1] = '\0';
+        if (flag == 2) output[strlen(output) - 1] = '\0';
         
         free(active_status);
         return output;
@@ -827,7 +827,7 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats, int fl
         strcat(output, line);
         }
         // tira os 1 ultimos \n
-        output[strlen(output) - 1] = '\0';
+        if (flag == 2) output[strlen(output) - 1] = '\0';
     
 
     return output;
@@ -856,14 +856,14 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
         char line[200];
 
         if (flag == 1) sprintf(line, "%s;%d\n", get_airport_name(curr_airport),  get_mediana(curr_airport));
-        if (flag == 2) sprintf(line, "--- %d ---\norigin: %s\ndelay: %d\n\n",reg_num ,get_airport_name(curr_airport),  get_mediana(curr_airport));
+        if (flag == 2) sprintf(line, "--- %d ---\nname: %s\nmedian: %d\n\n",reg_num ,get_airport_name(curr_airport),  get_mediana(curr_airport));
         reg_num++;
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
         }
-        output[strlen(output) - 1] = '\0';
+        if (flag == 2) output[strlen(output) - 1] = '\0';
     
     return output;
 }
@@ -920,6 +920,6 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
         strcat(output, line);
         }
 
-    output[strlen(output) - 1] = '\0';
+    if (flag == 2) output[strlen(output) - 1] = '\0';
     return output;
 }
