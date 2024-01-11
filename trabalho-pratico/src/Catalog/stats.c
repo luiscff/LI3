@@ -5,6 +5,7 @@
 #include <string.h>
 #include "Catalog/stats.h"
 
+
 typedef struct stats {
     GHashTable *hotel_hash;
     GList *user_name;
@@ -16,6 +17,7 @@ typedef struct hotel
    char* hotel_id;
    int sum_rating;
    int num_reservations;
+   GList* reservations;
 }HOTEL;
 
 typedef struct user_name{
@@ -33,6 +35,7 @@ typedef struct airportS{
 
 void free_hotel(HOTEL *hotel) {
     if (hotel->hotel_id) free(hotel->hotel_id);
+    if (hotel->reservations) g_list_free(hotel->reservations);
     if (hotel) free(hotel);
 }
 
@@ -73,12 +76,14 @@ void free_stats(STATS *catalog) {
 
 ///HOTEL
 
-HOTEL* create_hotel(char* hotel_id, int rating){
+HOTEL* create_hotel(char* hotel_id, int rating,RESERVATION* reservation){
     HOTEL* hotel = malloc(sizeof(HOTEL));
     if(hotel){
         hotel->hotel_id = hotel_id;
         hotel->sum_rating = rating;
         hotel->num_reservations = 1;
+        hotel->reservations = NULL;
+        hotel->reservations = g_list_append(hotel->reservations,reservation);
     }
     return hotel;
 
@@ -88,19 +93,24 @@ void insert_hotel(STATS *catalog, HOTEL *hotel, char* key) {
     g_hash_table_insert(catalog->hotel_hash, strdup(key), hotel);
 }
 
-void update_hotel (STATS *catalog, char* hotel_id, int rating){
-    HOTEL *curr = g_hash_table_lookup(catalog->hotel_hash,hotel_id);
+void update_hotel(STATS *catalog, char *hotel_id, int rating, RESERVATION *reservation) {
+    HOTEL *curr = g_hash_table_lookup(catalog->hotel_hash, hotel_id);
     curr->sum_rating += rating;
+    curr->reservations = g_list_append(curr->reservations, reservation);
     curr->num_reservations++;
+    // Append the reservation to the list and update the HOTEL structure
+   
 }
 
-void insert_or_update_hotel(STATS* catalog, char* hotel_id, int rating){
-    HOTEL* hotel = g_hash_table_lookup(catalog->hotel_hash,hotel_id);
+void insert_or_update_hotel(STATS* catalog, char* hotel_id, int rating,RESERVATION* reservation){
+    HOTEL* hotel = NULL;
+    hotel = g_hash_table_lookup(catalog->hotel_hash,hotel_id);
     if (hotel == NULL) {
-                            HOTEL* hotel = create_hotel(hotel_id,rating);
+                            HOTEL* hotel = create_hotel(hotel_id,rating,reservation);
                             insert_hotel(catalog,hotel,hotel_id);
                         }
-    else  update_hotel(catalog,hotel_id,rating);
+    else  update_hotel(catalog,hotel_id,rating,reservation);
+
 }
 
 GHashTable *get_hotel_hash(STATS *catalog) {
@@ -129,6 +139,12 @@ int get_hotel_num_reservations(HOTEL* hotel){
 HOTEL *get_hotel_by_hotel_id(STATS *catalog, const char *hotel_id) {
     HOTEL* res = g_hash_table_lookup(catalog->hotel_hash, hotel_id);
     return res;
+}
+
+GList *get_hotel_reservations_list(HOTEL* hotel) {
+    
+    GList* list = hotel->reservations;
+    return list;
 }
 
 

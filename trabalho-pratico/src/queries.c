@@ -452,9 +452,9 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
     return result;
 }
 
-//--------------
+//-------QUERIES-------
 
-char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id) {
+char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id,int flag) {
     char* aux = strdup(id);
     int entity = choose_entity(aux);
     if (entity == 1) {  // se for uma reserva
@@ -475,8 +475,8 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
-        sprintf(result, "%s;%s;%d;%s;%s;%s;%d;%.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
-
+        if(flag == 1) sprintf(result, "%s;%s;%d;%s;%s;%s;%d;%.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
+        if(flag == 2)sprintf(result, "--- 1 ---\nhotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
         // frees
         free(hotel_id);
         free(hotel_name);
@@ -513,8 +513,8 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
-        sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%d\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
-
+        if(flag==1) sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%d\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
+        if(flag==2) sprintf(result, "--- 1 ---\nairline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %d\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
         // frees
         free(airline);
         free(plain_model);
@@ -558,7 +558,9 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         // guarda os resultados todos numa string separados por ";" e retorna-a
         char* result = malloc(256 * sizeof(char));
-        sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        if(flag == 1) sprintf(result, "%s;%s;%d;%s;%s;%d;%d;%.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        if(flag == 2) sprintf(result, "--- 1 ---\nname: %s\nsex: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
+        
 
         // frees
         free(name);
@@ -573,199 +575,8 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
     return NULL;
 }
 
-char* query1F(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, PASSENGERS_CATALOG* pcatalog, char* id) {
-    char* result = malloc(256 * sizeof(char));
-    int entity = choose_entity(id);
 
-    if (entity == 1) {  // se for uma reserva
-        char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
-        if (query1Result == NULL) {
-            free(result);
-            return NULL;
-        }
-        char* aux = strdup(query1Result);
-        char* hotel_id = malloc(30);
-        char* hotel_name = malloc(50);
-        int hotel_stars = 0;
-        char* begin_date = malloc(20);
-        char* end_date = malloc(20);
-        char* includes_breakfast = malloc(10);
-        int num_nights = 0;
-        double total_price = 0;
-
-        char* token = strtok(aux, ";");
-        if (token != NULL) {
-            strcpy(hotel_id, token);
-            token = strtok(NULL, ";");
-            if (token != NULL) {
-                strcpy(hotel_name, token);
-                token = strtok(NULL, ";");
-                if (token != NULL) {
-                    hotel_stars = atoi(token);
-                    token = strtok(NULL, ";");
-                    if (token != NULL) {
-                        strcpy(begin_date, token);
-                        token = strtok(NULL, ";");
-                        if (token != NULL) {
-                            strcpy(end_date, token);
-                            token = strtok(NULL, ";");
-                            if (token != NULL) {
-                                strcpy(includes_breakfast, token);
-                                ;
-                                token = strtok(NULL, ";");
-                                if (token != NULL) {
-                                    num_nights = atoi(token);
-                                    token = strtok(NULL, ";");
-                                    if (token != NULL) {
-                                        total_price = atof(token);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        sprintf(result, "--- 1 ---\nhotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f\n",
-                hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
-
-        free(hotel_id);
-        free(hotel_name);
-        free(begin_date);
-        free(end_date);
-        free(includes_breakfast);
-        free(aux);
-
-        return result;
-    }
-
-    if (entity == 2) {  // se for um voo
-        char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
-        if (query1Result == NULL) {
-            free(result);
-            return NULL;
-        }
-        char* aux = strdup(query1Result);
-
-        char* airline = malloc(30);
-        char* plane_model = malloc(30);
-        char* origin = malloc(30);
-        char* destination = malloc(30);
-        char* schedule_departure = malloc(20);
-        char* schedule_arrival = malloc(20);
-        int num_passengers = 0;
-        int delay = 0;
-
-        char* token = strtok(aux, ";");
-
-        if (token != NULL) {
-            strcpy(airline, token);
-            token = strtok(NULL, ";");
-            if (token != NULL) {
-                strcpy(plane_model, token);
-                token = strtok(NULL, ";");
-                if (token != NULL) {
-                    strcpy(origin, token);
-                    token = strtok(NULL, ";");
-                    if (token != NULL) {
-                        strcpy(destination, token);
-                        token = strtok(NULL, ";");
-                        if (token != NULL) {
-                            strcpy(schedule_departure, token);
-                            token = strtok(NULL, ";");
-                            if (token != NULL) {
-                                strcpy(schedule_arrival, token);
-                                token = strtok(NULL, ";");
-                                if (token != NULL) {
-                                    num_passengers = atoi(token);
-                                    token = strtok(NULL, ";");
-                                    if (token != NULL) {
-                                        delay = atoi(token);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        sprintf(result, "--- 1 ---\nairline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %d\n",
-                airline, plane_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
-        free(airline);
-        free(plane_model);
-        free(origin);
-        free(destination);
-        free(schedule_departure);
-        free(schedule_arrival);
-        free(aux);
-
-        return result;
-    }
-
-    if (entity == 3) {  // se for um utilizador
-        char* query1Result = query1(ucatalog, fcatalog, rcatalog, pcatalog, id);
-        if (query1Result == NULL) {
-            free(result);
-            return NULL;
-        }
-        char* aux = strdup(query1Result);
-
-        char* name = malloc(30);
-        char* gender = malloc(5);
-        int age = 0;
-        char* country_code = malloc(30);
-        char* passport = malloc(30);
-        int num_flight = 0;
-        int num_reservations = 0;
-        double total_gasto = 0;
-
-        char* token = strtok(aux, ";");
-        if (token != NULL) {
-            strcpy(name, token);
-            token = strtok(NULL, ";");
-            if (token != NULL) {
-                strcpy(gender, token);
-                token = strtok(NULL, ";");
-                if (token != NULL) {
-                    age = atoi(token);
-                    token = strtok(NULL, ";");
-                    if (token != NULL) {
-                        strcpy(country_code, token);
-                        token = strtok(NULL, ";");
-                        if (token != NULL) {
-                            strcpy(passport, token);
-                            token = strtok(NULL, ";");
-                            if (token != NULL) {
-                                num_flight = atoi(token);
-                                token = strtok(NULL, ";");
-                                if (token != NULL) {
-                                    num_reservations = atoi(token);
-                                    token = strtok(NULL, ";");
-                                    if (token != NULL) {
-                                        total_gasto = atof(token);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        sprintf(result, "--- 1 ---\nname: %s\nsex: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
-        free(name);
-        free(gender);
-        free(country_code);
-        free(passport);
-        free(aux);
-
-        return result;
-    }
-    free(result);
-    return " ";
-}
-
+//QUERY 2 SEM RECEBER TOKEN ESPECIFICO
 char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USERS_CATALOG* ucatalog, PASSENGERS_CATALOG* pcatalog, char* token, int flag) {  
     USER* user = get_user_by_id(ucatalog, token);
     if (user == NULL) {
@@ -823,35 +634,21 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
 
     GList* sorted_list = g_list_sort(aux_list, sort_function_q2_nocat);
     int tamanho = g_list_length(sorted_list);
-
- if (flag == 1) { // 2 normal
+    int reg_num = 1;
     // escreve no output as linhas correspondentes as reservations
     for (size_t i = 0; i < tamanho; i++) {
         char line[200];  // linha atual
         AUX_Q2* curr_aux = g_list_nth_data(sorted_list, i);
 
-        sprintf(line, "%s;%s;%s\n", curr_aux->id, curr_aux->date, curr_aux->type);
-
+        if (flag == 1) sprintf(line, "%s;%s;%s\n", curr_aux->id, curr_aux->date, curr_aux->type);
+        if (flag == 2) sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n\n", reg_num, curr_aux->id, curr_aux->date, curr_aux->type);
+        reg_num++;
         // realloc para aumentar o tamanho da string output
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
     }
-}
-     if (flag == 2) {  // 2F
-            int reg_num = 1;
-            for (size_t i = 0; i < tamanho; i++) {
-                char line[200];  // linha atual
-                AUX_Q2* curr_aux = g_list_nth_data(sorted_list, i);
 
-                sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n", reg_num, curr_aux->id, curr_aux->date, curr_aux->type);
-                reg_num++;
-                // realloc para aumentar o tamanho da string output
-                output = realloc(output, strlen(output) + strlen(line) + 1);
-                // concatena a linha atual à string de output
-                strcat(output, line);
-            }
-        }
 
     // tira o ultimo \n
     output[strlen(output) - 1] = '\0';
@@ -860,6 +657,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
     return output;
 }
 
+//QUERY 2 A RECEBER TOKEN ESPECIFICO
 char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USERS_CATALOG* ucatalog, PASSENGERS_CATALOG* pcatalog, char* token, char* catalog, int flag) {
     USER* user = get_user_by_id(ucatalog, token);
     if (user == NULL) {
@@ -887,35 +685,21 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
         
         GList* sorted = g_list_sort(aux, sort_function_q2);
         int tamanho = g_list_length(sorted);
-
-        if (flag == 1) {  // 2 normal
+        int reg_num = 1;
 
             for (size_t i = 0; i < tamanho; i++) {
                 char line[200];  // linha atual
                 FLIGHT* curr_flight = g_list_nth_data(sorted, i);
 
-                sprintf(line, "%s;%s\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
-
-                // realloc para aumentar o tamanho da string output
-                output = realloc(output, strlen(output) + strlen(line) + 1);
-                // concatena a linha atual à string de output
-                strcat(output, line);
-            }
-        }
-        if (flag == 2) {  // 2F
-            int reg_num = 1;
-            for (size_t i = 0; i < tamanho; i++) {
-                char line[200];  // linha atual
-                FLIGHT* curr_flight = g_list_nth_data(sorted, i);
-
-                sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
+                if (flag == 1) sprintf(line, "%s;%s\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
+                if (flag == 2) sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
                 reg_num++;
+
                 // realloc para aumentar o tamanho da string output
                 output = realloc(output, strlen(output) + strlen(line) + 1);
                 // concatena a linha atual à string de output
                 strcat(output, line);
             }
-        }
         // tira o ultimo \n
         output[strlen(output) - 1] = '\0';
         
@@ -938,36 +722,23 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
 
         GList* sorted = g_list_sort(aux, sort_function_q4);
         int tamanho = g_list_length(sorted);
+        int reg_num = 1;
 
-        if (flag == 1) {  // 2 normal
             for (size_t i = 0; i < tamanho; i++) {
                 char line[200];  // linha atual
                 RESERVATION* curr_res = g_list_nth_data(sorted, i);
 
-                sprintf(line, "%s;%s\n", get_reservation_id(curr_res), get_begin_date(curr_res));
-
-                // realloc para aumentar o tamanho da string output
-                output = realloc(output, strlen(output) + strlen(line) + 1);
-                // concatena a linha atual à string de output
-                strcat(output, line);
-            }
-        }
-        if (flag == 2) {  // 2F
-            int reg_num = 1;
-            for (size_t i = 0; i < tamanho; i++) {
-                char line[200];  // linha atual
-                RESERVATION* curr_res = g_list_nth_data(sorted, i);
-
-                sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, get_reservation_id(curr_res), get_begin_date(curr_res));
+                if (flag == 1) sprintf(line, "%s;%s\n", get_reservation_id(curr_res), get_begin_date(curr_res));
+                if (flag == 2) sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, get_reservation_id(curr_res), get_begin_date(curr_res));
                 reg_num++;
+
                 // realloc para aumentar o tamanho da string output
                 output = realloc(output, strlen(output) + strlen(line) + 1);
                 // concatena a linha atual à string de output
                 strcat(output, line);
             }
-        }
+
         // tira o ultimo \n
-        output[strlen(output) - 1] = '\0';
         
         free(active_status);
         return output;
@@ -977,7 +748,8 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
     return NULL;
 }
 
-char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
+// QUERY 3
+char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats,int flag) {
     int res = 0;
     double total = 0;
     GHashTable *hotel_hash = get_hotel_hash(stats);
@@ -994,22 +766,24 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
     double resultado = total / res;
     // guarda o resultado numa string e retorna-a
     char* output = malloc(256 * sizeof(char));
-    sprintf(output, "%.3f\n", resultado);
+    if (flag == 1) sprintf(output, "%.3f\n", resultado);
+    if (flag == 2) sprintf(output, "--- 1 ---\nrating: %.3f\n", resultado);
     return output;
 }
 
-char* query3F(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
-    char* output = malloc(20);
-    char* r = query3(rcatalog, hotel_id,stats);
-    if (r == NULL) {
-        return NULL;
-    }
-    char* result = r;
-    sprintf(output, "--- 1 ---\nrating: %s", result);
-    return output;
-}
+// QUERY 4
+char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats, int flag) {
+    
+   // GHashTable* hotel_hash = get_hotel_hash(stats);
+    //HOTEL* curr_hotel = g_hash_table_lookup(hotel_hash,hotel_id);
+    
+   /* printf ("AQUI HOTEL_ID : %s" ,hotel_id);
+    char* hotel_id_get = get_hotel_id_hash(curr_hotel);
+    printf("\n NA QUERIES CREATE: %s\n",hotel_id_get);*/
 
-char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, int flag) {
+    //GList* hotel_reservations = get_hotel_reservations_list(curr_hotel);
+    //printf ("QUANDO CHEGA : %d\n ", g_list_length(hotel_reservations));
+
     gpointer key, value;
     GList* aux = NULL;
     GHashTableIter iter;
@@ -1026,49 +800,35 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, int flag) {
             }
         }
     }
-
     GList* sorted = g_list_sort(aux, sort_function_q4);
-    int tamanho = g_list_length(sorted);
+    //int tamanho = g_list_length(hotel_reservations);
+    int tamanho2=g_list_length(aux);
+
+    //421
+
     char* output = malloc(1);
     output[0] = '\0';  // Começa com uma string vazia
+    int reg_num = 1;
 
-    if (flag == 1) {  // query4
 
-        for (size_t i = 0; i < tamanho; i++) {
-            double total_price = 0;
-            char line[200];  // linha atual
-            RESERVATION* curr_res = g_list_nth_data(sorted, i);
-            total_price = calc_total_price(curr_res);
+    for (size_t i = 0; i < tamanho2; i++) {
+        double total_price = 0;
+        char line[200];  // linha atual
+        RESERVATION* curr_res = g_list_nth_data(sorted, i);
+        total_price = calc_total_price(curr_res);
 
-            sprintf(line, "%s;%s;%s;%s;%d;%.3f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        if (flag == 1) sprintf(line, "%s;%s;%s;%s;%d;%.3f\n", get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nbegin_date: %s\nend_date: %s\nuser_id: %s\nrating: %d\ntotal_price: %.3f\n\n", reg_num, get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
+        reg_num++;
 
-            // realloc para aumentar o tamanho da string output
-            output = realloc(output, strlen(output) + strlen(line) + 1);
-            // concatena a linha atual à string de output
-            strcat(output, line);
+        // realloc para aumentar o tamanho da string output
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
         }
-    }
-
-    if (flag == 2) {  // query4F
-        int reg_num = 1;
-        for (size_t i = 0; i < tamanho; i++) {
-            double total_price = 0;
-
-            char line[200];  // linha atual
-            RESERVATION* curr_res = g_list_nth_data(sorted, i);
-            total_price = calc_total_price(curr_res);
-
-            sprintf(line, "--- %d ---\nid: %s\nbegin_date: %s\nend_date: %s\nuser_id: %s\nrating: %d\ntotal_price: %.3f\n\n", reg_num, get_reservation_id(curr_res), get_begin_date(curr_res), get_end_date(curr_res), get_user_id(curr_res), get_rating(curr_res), total_price);
-            reg_num++;
-            // realloc para aumentar o tamanho da string output
-            output = realloc(output, strlen(output) + strlen(line) + 1);
-            // concatena a linha atual à string de output
-            strcat(output, line);
-        }
-
         // tira os 1 ultimos \n
         output[strlen(output) - 1] = '\0';
-    }
+    
 
     return output;
 }
@@ -1076,7 +836,7 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, int flag) {
 
 
 
-// Função principal para calcular e listar os top N aeroportos
+// // QUERY 7 - Função principal para calcular e listar os top N aeroportosg
 char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
     GHashTable* airportS_hash = get_airportS_hash(stats);
     int top_n = atoi(token);
@@ -1108,7 +868,7 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
     return output;
 }
 
-
+// QUERY 9
 char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
     char* prefix = strdup(token);
     GList* users = get_user_name_list(stats);
@@ -1146,34 +906,19 @@ char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
     int tamanho_aux = g_list_length(aux);
     GList* sorted = g_list_sort(aux, sort_function_q9);
 
-    if (flag == 1) { //9
+    int reg_num =1;
 
     for (size_t i = 0; i < tamanho_aux; i++) {
         USER_NAME* curr_user = g_list_nth_data(sorted, i);
         char line[200];
-        sprintf(line, "%s;%s\n", get_user_name_id(curr_user), get_user_name_name(curr_user));
+        if (flag == 1) sprintf(line, "%s;%s\n", get_user_name_id(curr_user), get_user_name_name(curr_user));
+        if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num, get_user_name_id(curr_user), get_user_name_name(curr_user));
+        reg_num++;
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
         }
-    }
-
-    if (flag == 2) {  // 9F
-    int reg_num = 1;
-    for (size_t i = 0; i < tamanho_aux; i++) {
-        char line[200];  // linha atual
-        USER_NAME* curr_user = g_list_nth_data(sorted, i);
-
-        sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num, get_user_name_id(curr_user), get_user_name_name(curr_user));
-        reg_num++;
-        output = realloc(output, strlen(output) + strlen(line) + 1); // realloc para aumentar o tamanho da string output
-        strcat(output, line); // concatena a linha atual à string de output
-            
-            }
-        }
-        output[strlen(output) - 1] = '\0';  // tira o ultimo \n
-        return output; //free(active_status);
 
     output[strlen(output) - 1] = '\0';
     return output;

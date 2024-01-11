@@ -1,6 +1,7 @@
 #ifndef STATS_H
 #define STATS_H
 
+#include "Entities/reservation.h"
 #include "glib.h"
 
 typedef struct stats STATS;
@@ -10,11 +11,12 @@ typedef struct airportS AIRPORTS;
 
 STATS* create_stats_catalog();
 void free_stats(STATS *catalog);
-void insert_or_update_hotel(STATS* catalog, char* hotel_id, int rating);
+void insert_or_update_hotel(STATS* catalog, char* hotel_id, int rating,RESERVATION* reservation);
 GHashTable *get_hotel_hash(STATS *catalog) ;
 char* get_hotel_id_hash(HOTEL* hotel);
 int get_hotel_sum_rating(HOTEL* hotel);
 int get_hotel_num_reservations(HOTEL* hotel);
+GList *get_hotel_reservations_list(HOTEL* hotel);
 
 USER_NAME* create_user_name(const char* name, const char* user_id, const char* status);
 

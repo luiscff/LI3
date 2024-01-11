@@ -444,6 +444,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
     }
 
     if (fieldIndex == 15) {
+       
         char *begin_date = strdup(get_begin_date(reservation));
         char *end_date = strdup(get_end_date(reservation));
         if(isDate1BeforeDate2(end_date,begin_date)==true){
@@ -457,6 +458,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
 
         //adiciona o total gasto ao respetivo user no users_catalog
         double price_reservation = calc_total_price(reservation);
+
         add_total_spent(user, price_reservation);
 
         // adiciona mais uma reserva ao respetivo user no users_catalog
@@ -465,8 +467,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
         // adiciona ou da update as informaçoes de um hotel
         char *hotel_id = strdup(get_hotel_id(reservation));
         int hotel_rating = get_rating(reservation);
-        
-        insert_or_update_hotel(stats,hotel_id, hotel_rating);
+        insert_or_update_hotel(stats,hotel_id, hotel_rating,reservation);
 
         free(hotel_id);
 
@@ -476,11 +477,10 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
         free(begin_date);
         free(end_date);
 
-
+        
     } else {
         writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
     }
-
     free(lineCopy);
 }
 
