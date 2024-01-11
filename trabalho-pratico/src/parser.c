@@ -356,10 +356,12 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
             writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
             flag=1;
         }
-        //char* flight_id = fix_flight_id(get_flight_id2(passenger));
-        FLIGHT *flight = get_flight_by_id(flightCatalog, get_flight_id2(passenger));
-        if (flight==NULL&& flag==0) writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv"); 
-        //add_flight(user, flight_id);
+
+        int flight_id = get_flight_id2(passenger);
+        FLIGHT *flight = get_flight_by_id(flightCatalog,flight_id );
+        if (flight==NULL && flag==0) writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv"); 
+        char* flight_id_char = fix_flight_id(flight_id);
+        add_flight(user, flight_id_char);
 
         free(user_id);
 

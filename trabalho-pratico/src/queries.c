@@ -785,6 +785,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
 
     GList* aux_list = NULL; 
     // percorre a lista de flights e adiciona novas entidades à aux_list
+    if (flights == NULL) printf ("\nABA\n");
     while (flights != NULL) {
         char* flight_id = flights->data;
         FLIGHT* flight = get_flight_by_id(fcatalog, atoi(flight_id));
@@ -993,7 +994,7 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats) {
     double resultado = total / res;
     // guarda o resultado numa string e retorna-a
     char* output = malloc(256 * sizeof(char));
-    sprintf(output, "%.3f", resultado);
+    sprintf(output, "%.3f\n", resultado);
     return output;
 }
 
@@ -1076,7 +1077,7 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, int flag) {
 
 
 // Função principal para calcular e listar os top N aeroportos
-char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats) {
+char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
     GHashTable* airportS_hash = get_airportS_hash(stats);
     int top_n = atoi(token);
     // Calcular os atrasos para cada voo
@@ -1087,19 +1088,22 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats) {
     output[0] = '\0'; 
     GList* sorted = g_list_sort(airportS_list,sort_function_by_mediana);
     int tamanho = g_list_length(sorted);
+    int reg_num = 1;
 
     
-    for (size_t i = 0; i < top_n && top_n < tamanho ; i++) {
+    for (size_t i = 0; i < top_n && i < tamanho ; i++) {
         AIRPORTS* curr_airport = g_list_nth_data(sorted, i);
-        GList* curr_list = get_airport_delay_list(curr_airport);
-        if (curr_list == NULL) printf ("\n THATS IT");
         char line[200];
-        sprintf(line, "%s;%d\n", get_airport_name(curr_airport),  get_mediana(curr_airport));
+
+        if (flag == 1) sprintf(line, "%s;%d\n", get_airport_name(curr_airport),  get_mediana(curr_airport));
+        if (flag == 2) sprintf(line, "--- %d ---\norigin: %s\ndelay: %d\n\n",reg_num ,get_airport_name(curr_airport),  get_mediana(curr_airport));
+        reg_num++;
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
         }
+        output[strlen(output) - 1] = '\0';
     
     return output;
 }
