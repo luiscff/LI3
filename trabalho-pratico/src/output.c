@@ -49,7 +49,7 @@ void writeToErrorFileFlight(char *line, const char *filename) {
         fprintf(file, "%s", token);
         token = strtok(NULL, ",");
         if (token != NULL) {
-            fprintf(file, ";");
+            fprintf(file, ",");
         }
     }
     fclose(file);
