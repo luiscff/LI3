@@ -775,16 +775,6 @@ char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats,int fl
 // QUERY 4
 char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats, int flag) {
     
-   // GHashTable* hotel_hash = get_hotel_hash(stats);
-    //HOTEL* curr_hotel = g_hash_table_lookup(hotel_hash,hotel_id);
-    
-   /* printf ("AQUI HOTEL_ID : %s" ,hotel_id);
-    char* hotel_id_get = get_hotel_id_hash(curr_hotel);
-    printf("\n NA QUERIES CREATE: %s\n",hotel_id_get);*/
-
-    //GList* hotel_reservations = get_hotel_reservations_list(curr_hotel);
-    //printf ("QUANDO CHEGA : %d\n ", g_list_length(hotel_reservations));
-
     gpointer key, value;
     GList* aux = NULL;
     GHashTableIter iter;
@@ -801,18 +791,16 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats, int fl
             }
         }
     }
-    GList* sorted = g_list_sort(aux, sort_function_q4);
-    //int tamanho = g_list_length(hotel_reservations);
-    int tamanho2=g_list_length(aux);
 
-    //421
+    GList* sorted = g_list_sort(aux, sort_function_q4);
+    int tamanho = g_list_length(sorted);
 
     char* output = malloc(1);
     output[0] = '\0';  // Começa com uma string vazia
     int reg_num = 1;
 
 
-    for (size_t i = 0; i < tamanho2; i++) {
+    for (size_t i = 0; i < tamanho; i++) {
         double total_price = 0;
         char line[200];  // linha atual
         RESERVATION* curr_res = g_list_nth_data(sorted, i);
