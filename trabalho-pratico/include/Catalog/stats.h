@@ -2,6 +2,7 @@
 #define STATS_H
 
 #include "Entities/reservation.h"
+#include "Entities/flight.h"
 #include "glib.h"
 
 typedef struct stats STATS;
@@ -32,10 +33,11 @@ const char *get_user_name_status(const USER_NAME *user);
 void insert_airportS(STATS *catalog, AIRPORTS *airportS,const char* key);
 
 void add_delay_to_airportS(AIRPORTS* airportS, int delay);
+void add_flight_to_airportS(AIRPORTS* airportS, FLIGHT* flight);
+GList* get_flights_list(AIRPORTS* airportS);
+AIRPORTS* create_airportS(const char* origin, int delay,FLIGHT* flight);
 
-AIRPORTS* create_airportS(const char* origin, int delay);
-
-void insert_or_update_airport(STATS* stats, const char* origin, int delay);
+void insert_or_update_airport(STATS* stats, const char* origin, int delay,FLIGHT* flight);
 
 GHashTable *get_airportS_hash(STATS *catalog);
 char* get_airport_name(const AIRPORTS* airportS);

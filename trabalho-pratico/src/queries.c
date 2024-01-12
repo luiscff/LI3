@@ -78,15 +78,7 @@ char* extractDate(const char* inputString) {
     }
 }
 
-char* fix_flight_id(int num) {
-    char* str = malloc(11);  // Allocate space for 10 digits and the null terminator
-    if (str == NULL) {
-        printf("Memory allocation failed\n");
-        return NULL;
-    }
-    sprintf(str, "%010d", num);  // Format the integer with leading zeros
-    return str;
-}
+
 
 int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
     const AUX_Q2* aux1 = a;
@@ -822,7 +814,108 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats, int fl
     return output;
 }
 
+// QUERY 5
 
+
+int sort_function_q5(gconstpointer a, gconstpointer b) {
+    const FLIGHT* flight1 = a;
+    const FLIGHT* flight2 = b;
+
+    // ordenadas por data de início (da mais recente para a mais antiga).
+    char* date1 = strdup(get_schedule_departure_date(flight1));
+    char* date2 = strdup(get_schedule_departure_date(flight2));
+    char* airport1= strdup(get_origin(flight1));
+    char* airport2 = strdup(get_origin(flight2));
+
+    int year1, month1, day1, hour1, min1, sec1;
+    sscanf(date1, "%d/%d/%d %d:%d:%d", &year1, &month1, &day1, &hour1, &min1, &sec1);
+
+    int year2, month2, day2, hour2, min2, sec2;
+    sscanf(date2, "%d/%d/%d %d:%d:%d", &year2, &month2, &day2, &hour2, &min2, &sec2);
+
+    // Comparando anos
+    if (year1 > year2) {
+        return -1;
+    } else if (year1 < year2) {
+        return 1;
+    }
+
+    // Comparando meses
+    if (month1 > month2) {
+        return -1;
+    } else if (month1 < month2) {
+        return 1;
+    }
+
+    // Comparando dias
+    if (day1 > day2) {
+        return -1;
+    } else if (day1 < day2) {
+        return 1;
+    }
+
+    // Comparando horas
+    if (hour1 > hour2) {
+        return -1;
+    } else if (hour1 < hour2) {
+        return 1;
+    }
+
+    // Comparando minutos
+    if (min1 > min2) {
+        return -1;
+    } else if (min1 < min2) {
+        return 1;
+    }
+
+    // Comparando segundos
+    if (sec1 > sec2) {
+        return -1;
+    } else if (sec1 < sec2) {
+        return 1;
+    }
+
+    // compara os ids (strings) como num dicionario
+    if (strcmp(airport1, airport2) < 0) {
+        return -1;
+    } else if (strcmp(airport1, airport2) > 0) {
+        return 1;
+    }
+    printf("ERRO no sort da query4: as reservas têm a mesma data e o mesmo id\n");
+    return 0;
+}
+
+
+
+char* query5(FLIGHTS_CATALOG* fcatalog, char* token,char* dataI,char*dataF,STATS* stats,int flag) {
+
+    GHashTable* airportS_hash = get_airportS_hash(stats);
+    AIRPORTS* airportS = g_hash_table_lookup(airportS_hash,token);
+    GList* flights_list = get_flights_list(airportS);
+    GList* sorted = g_list_sort(flights_list, sort_function_q5);
+    char* output = malloc(1);
+    output[0] = '\0'; 
+    int tamanho = g_list_length(sorted);
+    int reg_num = 1;
+    for (size_t i = 0; i < tamanho ; i++) {
+        FLIGHT* curr_flight = g_list_nth_data(sorted, i);
+        char line[200];
+        char* sch_dep = strdup(get_schedule_departure_date(curr_flight));
+        char* sch_arr = strdup(get_schedule_arrival_date(curr_flight));
+        if (isDateTime1BeforeDateTime2(dataI,sch_dep) == true && isDateTime1BeforeDateTime2(sch_arr,dataF)== true){
+            if (flag == 1) sprintf(line,"%s;%s;%s;%s;%s\n",fix_flight_id(get_flight_id(curr_flight)),sch_dep,get_destination(curr_flight),get_airline(curr_flight),get_plain_model(curr_flight));
+            if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nschedule_departure_date: %s\ndestination: %s\nairline: %s\nplane_model: %s\n\n",reg_num ,fix_flight_id(get_flight_id(curr_flight)),sch_dep,get_destination(curr_flight),get_airline(curr_flight),get_plain_model(curr_flight));
+            reg_num++;
+        }
+        // realloc to increase the size of the output string
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+        }
+        if (flag == 2) output[strlen(output) - 1] = '\0';
+
+    return output;
+}
 
 
 // // QUERY 7 - Função principal para calcular e listar os top N aeroportosg

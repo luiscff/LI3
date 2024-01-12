@@ -30,7 +30,13 @@ typedef struct airportS{
     char* origin;
     GList* delays;
     int mediana;
+    GList* flights;
 }AIRPORTS;
+
+
+typedef struct query5{
+    GList* delays;
+}QUERY5;
 
 
 void free_hotel(HOTEL *hotel) {
@@ -42,6 +48,7 @@ void free_hotel(HOTEL *hotel) {
 void free_airportS(AIRPORTS *airportS) {
     if (airportS->origin) free(airportS->origin);
     if (airportS->delays) g_list_free(airportS->delays);
+    if (airportS->flights) g_list_free(airportS->flights);
     if (airportS) free(airportS);
 }
 
@@ -193,24 +200,40 @@ void add_delay_to_airportS(AIRPORTS* airportS, int delay){
     airportS->delays = g_list_append(airportS->delays,GINT_TO_POINTER(delay));
 }
 
-AIRPORTS* create_airportS(const char* origin, int delay){
+
+void add_flight_to_airportS(AIRPORTS* airportS, FLIGHT* flight){
+    airportS->flights = g_list_append(airportS->flights,flight);
+}
+
+
+GList* get_flights_list(AIRPORTS* airportS){
+    return airportS->flights;
+}
+
+AIRPORTS* create_airportS(const char* origin, int delay,FLIGHT* flight){
     AIRPORTS* airportS = malloc(sizeof(AIRPORTS));
     if(airportS){
         airportS->origin = strdup(origin);
         airportS->delays = NULL;
-        airportS->delays = g_list_append(airportS->delays,GINT_TO_POINTER(delay));
+        add_delay_to_airportS(airportS,delay);
+        airportS->flights=NULL;
+        add_flight_to_airportS(airportS,flight);
         airportS->mediana=0;
     }
     return airportS;
 }
 
-void insert_or_update_airport(STATS* stats, const char* origin, int delay){
+void insert_or_update_airport(STATS* stats, const char* origin, int delay,FLIGHT* flight){
     AIRPORTS* airportS = g_hash_table_lookup(stats->airports_hash, origin);
     if (airportS == NULL) {
-        AIRPORTS* new_airportS = create_airportS(origin,delay);
+        AIRPORTS* new_airportS = create_airportS(origin,delay,flight);
         insert_airportS(stats,new_airportS, origin);
     }
-    else add_delay_to_airportS(airportS,delay);
+    else {
+            add_delay_to_airportS(airportS,delay);
+            if (get_flight_id(flight) == 70 || get_flight_id(flight) == 938|| get_flight_id(flight) == 487||get_flight_id(flight) == 398) printf ("\n ESTA AQUI %d : %s \nDEPARTURE:%s\nARRIVAL: %s\n\n",get_flight_id(flight), get_origin(flight),get_schedule_departure_date(flight),get_schedule_arrival_date(flight));
+            add_flight_to_airportS(airportS,flight);
+         }
 }
 
 GHashTable *get_airportS_hash(STATS *catalog) {

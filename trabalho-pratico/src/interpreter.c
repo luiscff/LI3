@@ -36,11 +36,8 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                 printf("Executando query 2 com tokens: %s %s\n",nextToken,nextToken2);
                 char *result = query2_cat(f_catalog, r_catalog, u_catalog,p_catalog, nextToken, nextToken2,1);
                 create_result_file("Resultados", lineNumber, result);
-
                 free(result);}
 
-
-           
         } else if (strcmp(token, "3") == 0) {// query3 e escrita numa linha no ficheiro
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3 com token: %s\n",nextToken);
@@ -56,7 +53,15 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             free(result);
 
         } else if (strcmp(token, "5") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " \"");
+            char *nextTokenT = strtok(NULL, "");
+            char nextToken2[20], nextToken3[20];
+            sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"",nextToken2,nextToken3);
+            printf("Executando query 5 com tokens: %s %s %s\n",nextToken,nextToken2,nextToken3);
+            char *result = query5(f_catalog,nextToken,nextToken2,nextToken3,stats,1);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
+            
         } else if (strcmp(token, "6") == 0) {
             // ignora
         } else if (strcmp(token, "7") == 0) {
@@ -116,7 +121,15 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             create_result_file("Resultados", lineNumber, result);
             free(result);
         } else if (strcmp(token, "5F") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " \"");
+            char *nextTokenT = strtok(NULL, "");
+            char nextToken2[20], nextToken3[20];
+            sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"",nextToken2,nextToken3);
+            printf("Executando query 5F com tokens: %s %s %s\n",nextToken,nextToken2,nextToken3);
+            char *result = query5(f_catalog,nextToken,nextToken2,nextToken3,stats,2);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
+            
         } else if (strcmp(token, "6F") == 0) {
             // ignora
         } else if (strcmp(token, "7F") == 0) {
