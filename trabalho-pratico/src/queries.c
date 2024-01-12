@@ -739,6 +739,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
             }
 
         // tira o ultimo \n
+        if (flag == 2) output[strlen(output) - 1] = '\0';
         
         free(active_status);
         return output;
