@@ -166,6 +166,7 @@ bool isValidPricePerNight(const char *str) {
 }
 
 bool isValidInclude_Breakfast(const char *str) {  // strcasecmp is case insensitive
+    if (strlen(str)==0) str ="";
     return (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
 }
 

@@ -15,7 +15,7 @@
 
 // função responsável por tratar dos casos da include_breakfast, feita para aceitar tanto os chars f, como t, como os valores 0 ou 1
 bool isTrueOrFalse(const char *str) {
-    if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0)
+    if (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0 || strlen(str)==0)
         return false;
     else if (strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0)
         return true;
