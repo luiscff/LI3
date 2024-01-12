@@ -141,8 +141,8 @@ bool isValidOriginAndDestination(const char *str) {
 
 // reservations
 bool isValidHotelStars(const char *str) {
-    int stars = atoi(str);
-    return (stars >= 1 && stars <= 5);
+    double stars = atof(str);
+    return (stars >= 1 && stars <= 5 && (stars-(int)stars) == 0);
 }
 
 bool isValidCityTax(const char *str) {
