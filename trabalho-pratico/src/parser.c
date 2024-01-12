@@ -289,6 +289,7 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
             free(schedule_arrival_date);
             free(real_departure_date);
             free(real_arrival_date);
+            free(lineCopy);
             return;
         }
 
@@ -309,6 +310,7 @@ void parseLine_flight(char *line, void *catalog, STATS* stats) {
     } else {
         writeToErrorFileFlight(line, "Resultados/flights_errors.csv");
         free(lineCopy);
+        return;
     }
     free(lineCopy);
 }
@@ -324,9 +326,7 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
     PASSENGER *passenger = create_passenger();
 
     token = strtok(lineCopy, ";");
-    int flag;
     while (token != NULL) {
-        flag = 0;
         if (isValidField_passenger(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
@@ -354,12 +354,19 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
         if (user==NULL)
         {
             writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
-            flag=1;
+            free(lineCopy);
+            return;
         }
 
         int flight_id = get_flight_id2(passenger);
         FLIGHT *flight = get_flight_by_id(flightCatalog,flight_id );
-        if (flight==NULL && flag==0) writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv"); 
+
+        if (flight==NULL){
+            writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv"); 
+            free(lineCopy);
+            return;
+        }
+         
         char* flight_id_char = fix_flight_id(flight_id);
         add_flight(user, flight_id_char);
 
@@ -447,14 +454,22 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
        
         char *begin_date = strdup(get_begin_date(reservation));
         char *end_date = strdup(get_end_date(reservation));
+
         if(isDate1BeforeDate2(end_date,begin_date)==true){
             writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
+            free(lineCopy);
             return;
         }
         //vai buscar o user associado a esta reserva ao users_catalog
         char *user_id = strdup(get_user_id(reservation));
         USER *user = get_user_by_id(usersCatalog, user_id);
         free(user_id);
+        if (user == NULL){
+            writeToErrorFileReservation(line, "Resultados/reservations_errors.csv");
+            free(lineCopy);
+            return;
+        };
+
 
         //adiciona o total gasto ao respetivo user no users_catalog
         double price_reservation = calc_total_price(reservation);
