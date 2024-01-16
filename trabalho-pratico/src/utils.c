@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 
-
+#define current_date "2023/10/01"
 char* fix_flight_id(int num) {
     char* str = malloc(11);  // Allocate space for 10 digits and the null terminator
     if (str == NULL) {
@@ -122,4 +123,57 @@ bool isDate1BeforeDate2(const char *date1, const char *date2) {
         return false; // A data 2 é menor
     }  
     return true; // As datas são iguais
+}
+
+int isNumber(char s[]) {
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (isdigit(s[i]) == 0)
+            return 0;
+    }
+    return 1;
+}
+char* convert_to_upper_case(char* str) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        str[i] = toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int choose_entity(char* id) {
+    int entity = 0;
+    if (strncmp(id, "Book", 4) == 0)
+        // Se o ID começar por Book, é uma reserva
+        entity = 1;
+    else if (isNumber(id) == true)
+        // Se o ID for um número, é um voo
+        entity = 2;
+    else
+        // Se não for nenhum dos anteriores, é um utilizador
+        entity = 3;
+
+    // free(id_aux);
+    return entity;
+}
+
+char* bool_to_string(bool boolean) {
+    if (boolean == true)
+        return "True";
+    else
+        return "False";
+}
+
+int calc_idade(char* birth_date) {
+    int ano_nascimento, mes_nascimento, dia_nascimento;
+    int ano_atual, mes_atual, dia_atual;
+
+    sscanf(birth_date, "%d/%d/%d", &ano_nascimento, &mes_nascimento, &dia_nascimento);
+    sscanf(current_date, "%d/%d/%d", &ano_atual, &mes_atual, &dia_atual);
+
+    int idade = ano_atual - ano_nascimento;
+
+    if (mes_atual < mes_nascimento || (mes_atual == mes_nascimento && dia_atual < dia_nascimento)) {
+        idade--;
+    }  // Ajustar a idade caso ainda nao tenha feito anos nesse mesmo ano
+    return idade;
 }

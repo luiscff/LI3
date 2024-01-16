@@ -63,7 +63,13 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             free(result);
             
         } else if (strcmp(token, "6") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " ");
+            char *nextToken2 = strtok(NULL, " ");
+            printf("Executando query 6 com token: %s %s\n",nextToken,nextToken2);
+            char *result = query6(f_catalog,nextToken,nextToken2,stats,1);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
+            
         } else if (strcmp(token, "7") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
@@ -131,7 +137,12 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             free(result);
             
         } else if (strcmp(token, "6F") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " ");
+            char *nextToken2 = strtok(NULL, " ");
+            printf("Executando query 6F com token: %s %s\n",nextToken,nextToken2);
+            char *result = query6(f_catalog,nextToken,nextToken2,stats,2);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "7F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);

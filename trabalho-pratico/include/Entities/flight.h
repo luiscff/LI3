@@ -37,5 +37,7 @@ void set_pilot(FLIGHT *f, const char *pilot);
 void set_copilot(FLIGHT *f, const char *copilot);
 void set_notes(FLIGHT *f, const char *notes);
 int calc_departure_delay(char* schedule_departure, char* real_departure);
+int get_passageiros(FLIGHT* flight);
+void add_passageiro(FLIGHT *flight);
 
 #endif

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "utils.h"
 
 typedef struct flight {
     gpointer flight_id;  // identificador do voo (se for 0 é inválido) || futura key
@@ -20,6 +21,7 @@ typedef struct flight {
     char *pilot;
     char *copilot;
     char *notes;
+    int passageiros;
 } FLIGHT;
 
 FLIGHT *create_flight() {
@@ -36,6 +38,7 @@ FLIGHT *create_flight() {
     new_flight->pilot = NULL;
     new_flight->copilot = NULL;
     new_flight->notes = NULL;
+    new_flight->passageiros = 0;
     return new_flight;
 }
 
@@ -98,7 +101,7 @@ void set_total_seats(FLIGHT *f, int total_seats) {
 
 void set_origin(FLIGHT *f, const char *origin) {
     if (f->origin) free(f->origin);
-    f->origin = strdup(origin);
+    f->origin = strdup(convert_to_upper_case(strdup((origin))));
 }
 void set_destination(FLIGHT *f, const char *destination) {
     if (f->destination) free(f->destination);
@@ -164,4 +167,14 @@ int calc_departure_delay(char *schedule_departure, char *real_departure) {
     delay = difftime(real_departure_time, schedule_departure_time);
 
     return (int) delay;
+}
+//STATS
+
+int get_passageiros(FLIGHT* flight){
+    return flight->passageiros;
+}
+
+void add_passageiro(FLIGHT *flight){
+    flight->passageiros++;
+    printf("\n VOO: %d COUNTER : %d", get_origin(flight),get_passageiros(flight));
 }

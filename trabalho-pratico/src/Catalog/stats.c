@@ -10,6 +10,7 @@ typedef struct stats {
     GHashTable *hotel_hash;
     GList *user_name;
     GHashTable *airports_hash;
+    GHashTable * flight_passangers;
 } STATS;
 
 typedef struct hotel
@@ -33,11 +34,11 @@ typedef struct airportS{
     GList* flights;
 }AIRPORTS;
 
-
-typedef struct query5{
-    GList* delays;
-}QUERY5;
-
+typedef struct flight_pass
+{
+   char* flight_id;
+   int passageiros;
+}FLIGHT_PASS;
 
 void free_hotel(HOTEL *hotel) {
     if (hotel->hotel_id) free(hotel->hotel_id);
@@ -52,7 +53,9 @@ void free_airportS(AIRPORTS *airportS) {
     if (airportS) free(airportS);
 }
 
-
+void free_passangers(FLIGHT_PASS *flight_pass) {
+    if (flight_pass) free(flight_pass);
+}
 
 STATS* create_stats_catalog() {
     STATS *new_catalog = malloc(sizeof(STATS));
@@ -62,6 +65,10 @@ STATS* create_stats_catalog() {
     new_catalog->user_name = NULL;
     new_catalog->airports_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_airportS);
+
+    new_catalog->flight_passangers = g_hash_table_new_full(g_str_hash, g_str_equal, free,
+                                                 (GDestroyNotify)free_passangers);
+
     return new_catalog;
 }
 
@@ -231,7 +238,7 @@ void insert_or_update_airport(STATS* stats, const char* origin, int delay,FLIGHT
     }
     else {
             add_delay_to_airportS(airportS,delay);
-            if (get_flight_id(flight) == 70 || get_flight_id(flight) == 938|| get_flight_id(flight) == 487||get_flight_id(flight) == 398) printf ("\n ESTA AQUI %d : %s \nDEPARTURE:%s\nARRIVAL: %s\n\n",get_flight_id(flight), get_origin(flight),get_schedule_departure_date(flight),get_schedule_arrival_date(flight));
+            //if (get_flight_id(flight) == 70 || get_flight_id(flight) == 938|| get_flight_id(flight) == 487||get_flight_id(flight) == 398) printf ("\n ESTA AQUI %d : %s \nDEPARTURE:%s\nARRIVAL: %s\n\n",get_flight_id(flight), get_origin(flight),get_schedule_departure_date(flight),get_schedule_arrival_date(flight));
             add_flight_to_airportS(airportS,flight);
          }
 }
@@ -302,7 +309,25 @@ int get_mediana(const AIRPORTS* airportS){
 
 
 
+///PASSANGERS : struct que vai guardar todos os ids dos passageiros de um voo
+
+FLIGHT_PASS* create_flight_pass(const char* flight_id){
+    FLIGHT_PASS* flight_pass = malloc(sizeof(FLIGHT_PASS));
+    if(flight_pass){
+        flight_pass->flight_id = strdup(flight_id);
+        flight_pass->passageiros = 1;
+    }
+    return flight_pass;
+}
 
 
-
-
+void insert_or_update_pass(STATS* stats,const char* flight_id){
+    FLIGHT_PASS* curr = g_hash_table_lookup(stats->flight_passangers,flight_id);
+    if (curr == NULL) {
+        create_flight_pass(flight_id);
+        g_hash_table_insert(stats->flight_passangers, strdup(flight_id), curr);
+        printf("\nCREATED\n");
+    }
+    else {curr->passageiros++;
+            printf("\nUPDATED\n");}
+}

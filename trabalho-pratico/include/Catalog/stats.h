@@ -46,6 +46,8 @@ GList* get_airport_delay_list (const AIRPORTS* airportS);
 void calculate_and_set_median_for_all(GList* airport_list);
 int get_mediana(const AIRPORTS* airportS);
 
+void insert_or_update_pass(STATS* stats,const char* flight_id);
+
 
 
 #endif // STATS_H

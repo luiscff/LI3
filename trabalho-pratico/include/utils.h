@@ -6,4 +6,15 @@ char* fix_flight_id(int num);
 bool isDateTime1BeforeDateTime2(const char* date1, const char* date2);
 bool isDate1BeforeDate2(const char *date1, const char *date2);
 
+int isNumber(char s[]);
+char* convert_to_upper_case(char* str);
+
+int choose_entity(char* id);
+
+char* bool_to_string(bool boolean);
+
+int calc_idade(char* birth_date);
+
+
+
 #endif

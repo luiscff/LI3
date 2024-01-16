@@ -9,55 +9,6 @@
 #include "queries.h"
 #include "utils.h"
 
-#define current_date "2023/10/01"
-
-// aux query 1
-
-int isNumber(char s[]) {
-    for (int i = 0; s[i] != '\0'; i++) {
-        if (isdigit(s[i]) == 0)
-            return 0;
-    }
-    return 1;
-}
-
-int choose_entity(char* id) {
-    int entity = 0;
-    if (strncmp(id, "Book", 4) == 0)
-        // Se o ID começar por Book, é uma reserva
-        entity = 1;
-    else if (isNumber(id) == TRUE)
-        // Se o ID for um número, é um voo
-        entity = 2;
-    else
-        // Se não for nenhum dos anteriores, é um utilizador
-        entity = 3;
-
-    // free(id_aux);
-    return entity;
-}
-
-char* bool_to_string(bool boolean) {
-    if (boolean == true)
-        return "True";
-    else
-        return "False";
-}
-
-int calc_idade(char* birth_date) {
-    int ano_nascimento, mes_nascimento, dia_nascimento;
-    int ano_atual, mes_atual, dia_atual;
-
-    sscanf(birth_date, "%d/%d/%d", &ano_nascimento, &mes_nascimento, &dia_nascimento);
-    sscanf(current_date, "%d/%d/%d", &ano_atual, &mes_atual, &dia_atual);
-
-    int idade = ano_atual - ano_nascimento;
-
-    if (mes_atual < mes_nascimento || (mes_atual == mes_nascimento && dia_atual < dia_nascimento)) {
-        idade--;
-    }  // Ajustar a idade caso ainda nao tenha feito anos nesse mesmo ano
-    return idade;
-}
 // aux q2
 
 typedef struct aux_q2 {
@@ -902,6 +853,8 @@ char* query5(FLIGHTS_CATALOG* fcatalog, char* token,char* dataI,char*dataF,STATS
         char line[200];
         char* sch_dep = strdup(get_schedule_departure_date(curr_flight));
         char* sch_arr = strdup(get_schedule_arrival_date(curr_flight));
+        if (get_flight_id(curr_flight) == 208) printf ("\n%d\n",isDateTime1BeforeDateTime2(dataI,sch_dep) == true && isDateTime1BeforeDateTime2(sch_arr,dataF)==true);
+            
         if (isDateTime1BeforeDateTime2(dataI,sch_dep) == true && isDateTime1BeforeDateTime2(sch_arr,dataF)== true){
             if (flag == 1) sprintf(line,"%s;%s;%s;%s;%s\n",fix_flight_id(get_flight_id(curr_flight)),sch_dep,get_destination(curr_flight),get_airline(curr_flight),get_plain_model(curr_flight));
             if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nschedule_departure_date: %s\ndestination: %s\nairline: %s\nplane_model: %s\n\n",reg_num ,fix_flight_id(get_flight_id(curr_flight)),sch_dep,get_destination(curr_flight),get_airline(curr_flight),get_plain_model(curr_flight));
@@ -917,6 +870,106 @@ char* query5(FLIGHTS_CATALOG* fcatalog, char* token,char* dataI,char*dataF,STATS
     return output;
 }
 
+
+
+//Q6
+int in_year(int anoAlvo, char* data){
+    int ano, mes, dia, hora, min, sec;
+    sscanf(data, "%d/%d/%d %d:%d:%d", &ano, &mes, &dia, &hora, &min, &sec);
+    return anoAlvo == ano;
+}
+
+typedef struct query6{
+    char* airport;
+    int passageiros;
+}Q6;
+
+Q6* create_q6_aux(const char* airport,int passageiros){
+    Q6* curr = malloc(sizeof(Q6));
+    curr->airport=strdup(airport);
+    curr->passageiros=passageiros;
+    return curr;
+}
+void insert_or_update_q6 (GHashTable* curr,char* airport,int passageiros){
+    Q6* aux = g_hash_table_lookup(curr, airport);
+    if (aux == NULL) {Q6* new_aux = create_q6_aux(airport,passageiros);
+                      g_hash_table_insert(curr,airport,new_aux);
+                     }
+    else {       
+        aux->passageiros+=passageiros;
+    }
+
+}
+
+int sort_function_q6(gconstpointer a, gconstpointer b) {
+    const Q6* airport1 = (const Q6*)a;
+    const Q6* airport2 = (const Q6*)b;
+
+    // Compare com base no número de passageiros
+    if (airport1->passageiros > airport2->passageiros) {
+        return -1;
+    } else if (airport1->passageiros < airport2->passageiros) {
+        return 1;
+    } else 
+        return strcmp(airport1->airport,airport2->airport) ;
+}
+
+char* query6(FLIGHTS_CATALOG* fcatalog,char* ano, char* top_n,STATS*stats,int flag) {
+    int ano_alvo = atoi(ano);
+    int teste = 0;
+    
+    GList* airportS_list = g_hash_table_get_values(get_airportS_hash(stats));
+    int tamanho = g_list_length(airportS_list);
+    printf ("\n1 : %d\n",tamanho);
+    GHashTable* q6_aux = g_hash_table_new_full(g_str_hash, g_str_equal, free,NULL);
+
+
+    for(int i = 0; i<tamanho; i++){
+        AIRPORTS* airportS = g_list_nth_data(airportS_list,i);
+        GList *flights = get_flights_list(airportS);
+        int tamanho2 = g_list_length(flights);
+        printf ("\nAiport %s : %d\n",get_airport_name(airportS),tamanho2);
+            
+            for(int j = 0; j < tamanho2; j++){
+                FLIGHT* flight = g_list_nth_data(flights,j);
+                char* sch_dep = strdup (get_schedule_departure_date(flight));
+
+                if(in_year(ano_alvo,sch_dep) == 1) {
+                   // logica que vai buscar o numero de passageiros de um voo e acrescenta ao de um aeroporto
+                    int curr_pass = get_passageiros(flight);
+                    char* airport =  strdup(get_origin(flight));
+                    insert_or_update_q6(q6_aux,airport,curr_pass);
+                    }
+    }
+}
+
+
+    GList* q6_aux_list = g_hash_table_get_values(q6_aux);
+    GList* sorted = g_list_sort(q6_aux_list,sort_function_q6);
+
+    if (sorted != NULL) printf("\n ABABA \n");
+    int tamanho_f = g_list_length(sorted);
+    int reg_num = 1;
+    char* output = malloc(1);
+    output[0] = '\0';
+
+    for (size_t h = 0; h < atoi(top_n) && h < tamanho_f ; h++) {
+        Q6* curr_airport = g_list_nth_data(sorted, h);
+        char line[200];
+
+        if (flag == 1) sprintf(line, "%s;%d\n", curr_airport->airport,curr_airport->passageiros);
+        if (flag == 2) sprintf(line, "--- %d ---\nname: %s\npassengers: %d\n\n",reg_num,curr_airport->airport, curr_airport->passageiros);
+        reg_num++;
+        // realloc to increase the size of the output string
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+        // concatena a linha atual à string de output
+        strcat(output, line);
+        }
+        if (flag == 2) output[strlen(output) - 1] = '\0';
+
+printf ("\nTESTE : %d\n", teste);
+return output;
+}
 
 // // QUERY 7 - Função principal para calcular e listar os top N aeroportosg
 char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
