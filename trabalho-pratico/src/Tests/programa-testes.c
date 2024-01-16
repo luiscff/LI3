@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
 #include <time.h>
 
 #include "Catalog/flights_catalog.h"
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
-#include "Catalog/users_catalog.h"
 #include "Catalog/stats.h"
+#include "Catalog/users_catalog.h"
 #include "interpreter-testes.h"
 #include "parser.h"
 
@@ -47,7 +48,10 @@ int compareFiles(const char *expectedResultsFolderPath, const char *actualResult
 
 int main(int argc, char const *argv[]) {
     printf("Starting...\n\n");
+
+    // Start time
     clock_t start = clock();
+
 
     if (argc != 4) {
         printf("Usage: %s <Dataset_Folder_Path> <Input_File_Path> <Expected_Results_Folder_Path\n", argv[0]);
@@ -59,7 +63,7 @@ int main(int argc, char const *argv[]) {
     const char *expectedResultsFolderPath = argv[3];
 
     // Cria o catálogo de estatísticas
-    STATS* stats = create_stats_catalog();
+    STATS *stats = create_stats_catalog();
     // Cria o catálogo de utilizadores
     USERS_CATALOG *users_catalog = create_users_catalog();
     // Cria o catálogo de voos
@@ -89,10 +93,17 @@ int main(int argc, char const *argv[]) {
     free_reservations_catalog(reservations_catalog);
     free_passengers_catalog(passengers_catalog);
 
+    // End time
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Tempo de execução geral: %f segundos\n\n", time_spent);
 
+    // Obtém o uso de recursos
+    struct rusage usage;
+    getrusage(RUSAGE_SELF, &usage);
+
+    // Imprime a memória máxima usada
+    printf("Memória máxima usada: %ld kilobytes\n\n", usage.ru_maxrss);
 
     // Compara os resultados com os resultados esperados
     printf("Comparando resultados...\n\n");
