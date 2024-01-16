@@ -2,8 +2,7 @@
 // campo a campo, entre outros.
 // TODO Lidar graciosamente com eventuais erros do utilizador (e.g., passar texto
 // para uma query de top N, indicar uma pasta inválida para o dataset, . . . ).
-//TODO paginação para outputs longos
-
+// TODO paginação para outputs longos
 
 #include "interactive.h"
 
@@ -13,6 +12,13 @@ void imprimeMenuFinal() {
     printf("\n");
     printf("0 - Terminar o programa\n");
     printf("1 - Executar outra query\n");
+}
+
+void imprimeMenuFlag() {
+    printf("\n");
+    printf("Deseja adicionar a flag -F ao comando?\n");
+    printf("0 - Não\n");
+    printf("1 - Sim\n");
 }
 
 void imprimeMenuPrincipal() {
@@ -44,20 +50,39 @@ void imprimeMenuPrincipal() {
 void interactiveMode(const char *folderPathDataset, void *users_catalog, void *flights_catalog, void *reservations_catalog, void *passengers_catalog, void *stats) {
     parseFiles(folderPathDataset, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
 
-    // cria um ficheiro chamado input.txt
-    FILE *fp = fopen("input.txt", "w");
-    char *inputPath = "input.txt";
-    FILE *fpOutput;
+    FILE *fpOutput; //esta fora do ciclo para no futuro podermos "retornar" o ficheiro como output em vez de imprimir no terminal
 
     int opcao = -1;
+    int flag = -1;
     char queryInfo[256];
     char output[256];
-    while (opcao != 0) {
-        // imprime o menu principal
-        imprimeMenuPrincipal();
 
-        scanf("%d", &opcao);
+    while (opcao != 0) {
+
+        // cria um ficheiro chamado input.txt
+        FILE *fp = fopen("input.txt", "w"); // esta dentro do ciclo para limpar o ficheiro a cada iteração (execuntando uma query de cada vez)
+        char *inputPath = "input.txt";
+
+        opcao = -1;
+        while (true) {
+            // imprime o menu principal
+            imprimeMenuPrincipal();
+
+            scanf("%d", &opcao);
+            if (opcao >= 0 && opcao <= 10) break;
+            printf("Opção inválida\n");
+        }
+
         if (opcao == 0) break;
+
+        while (true) {
+            // imprime o menu da flag
+            imprimeMenuFlag();
+
+            scanf("%d", &flag);
+            if (flag == 0 || flag == 1) break;
+            printf("Opção inválida\n");
+        }
 
         printf("Digite as informações da query:\n");
         scanf("%s", queryInfo);
@@ -66,7 +91,11 @@ void interactiveMode(const char *folderPathDataset, void *users_catalog, void *f
         rewind(fp);
 
         // escreve a opção e as informações da query no ficheiro input.txt
-        fprintf(fp, "%d %s\n", opcao, queryInfo);
+        if (flag == 1) {
+            fprintf(fp, "%dF %s\n", opcao, queryInfo);
+        } else {
+            fprintf(fp, "%d %s\n", opcao, queryInfo);
+        }
 
         // Dá rewind no ficheiro para o parser ler desde o início
         rewind(fp);
@@ -88,13 +117,19 @@ void interactiveMode(const char *folderPathDataset, void *users_catalog, void *f
             printf("Error opening output file\n");
         }
 
-        // imprime o menu final
-        imprimeMenuFinal();
+        while (true) {
+            // imprime o menu final
+            imprimeMenuFinal();
 
-        scanf("%d", &opcao);
+            scanf("%d", &opcao);
+            if (opcao == 0 || opcao == 1) break;
+            printf("Opção inválida\n");
+        }
+
+        // limpa o ficheiro de input
+        if (fp != NULL) fclose(fp);
     }
 
-    if (fp != NULL) fclose(fp);
     if (fpOutput != NULL) fclose(fpOutput);
     return;
 }
