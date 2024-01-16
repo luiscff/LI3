@@ -390,8 +390,8 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
     free(lineCopy);
 }
 
-// função responsável por fazer o parse do ficheiro .csv inteiro, onde abre o ficheiro e chama as funções que leem cada linha do ficheiro para fazer o parse da linha
-void parseCSV(const char *filepath, int token, void *catalog, void *users_catalog, void *flights_catalog, STATS* stats) {
+// função responsável por fazer o parse de um ficheiro .csv inteiro, onde abre o ficheiro e chama as funções que leem cada linha do ficheiro para fazer o parse da linha
+void parseCSV(const char *filepath, int flag, void *catalog, void *users_catalog, void *flights_catalog, STATS* stats) {
     FILE *file = fopen(filepath, "r");
     if (file == NULL) {
         fprintf(stderr, "Could not open file %s\n", filepath);
@@ -414,26 +414,61 @@ void parseCSV(const char *filepath, int token, void *catalog, void *users_catalo
         len = 0;
     }
 
-    if (token == 1)
+    if (flag == 1)
         while ((read = getline(&line, &len, file)) != -1) {
             parseLine_user(line, catalog, stats);
         }
 
-    if (token == 2)
+    if (flag == 2)
         while ((read = getline(&line, &len, file)) != -1) {
             parseLine_flight(line, catalog,stats);
         }
 
-    if (token == 3)
+    if (flag == 3)
         while ((read = getline(&line, &len, file)) != -1) {
             parseLine_passenger(line, catalog, usersCatalog, flightsCatalog, stats);
         }
 
-    if (token == 4)
+    if (flag == 4)
         while ((read = getline(&line, &len, file)) != -1) {
             parseLine_reservation(line, catalog, usersCatalog,stats);
         }
 
     free(line);
     fclose(file);
+}
+
+// função responsável por fazer o parse de todos os ficheiros .csv do dataset, chamando a função parseCSV para cada um dos ficheiros
+void parseFiles (const char* folderPathDataset, void *users_catalog, void *flights_catalog, void *reservations_catalog, void *passengers_catalog, void *stats) {
+    char filePath[MAX_PATH_SIZE];
+    
+    // faz o parse do ficheiro de utilizadores
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "/users.csv");
+
+    parseCSV(filePath, 1, users_catalog, NULL, NULL,stats);
+
+    
+
+    // faz o parse do ficheiro de voos
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "/flights.csv");
+
+    parseCSV(filePath, 2, flights_catalog, NULL, NULL,stats);
+
+    
+
+    // faz o parse do ficheiro de reservas
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "/reservations.csv");
+
+    parseCSV(filePath, 4, reservations_catalog, users_catalog, NULL,stats);
+
+    
+
+    // faz o parse do ficheiro de passageiros
+    strcpy(filePath, folderPathDataset);
+    strcat(filePath, "/passengers.csv");
+
+    parseCSV(filePath, 3, passengers_catalog, users_catalog,flights_catalog, stats);
 }

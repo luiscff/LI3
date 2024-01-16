@@ -2,76 +2,58 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <wordexp.h>
 
 #include "Catalog/flights_catalog.h"
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/reservations_catalog.h"
+#include "Catalog/stats.h"
 #include "Catalog/users_catalog.h"
-#include "Catalog/stats.h"
-#include "interpreter.h"
-#include "parser.h"
-#include "Catalog/stats.h"
-
-
+#include "batch.h"
+#include "interactive.h"
 
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
 
-    if (argc != 3) {
-        printf("Usage: %s <DatasetFolderPath> <InputFilePath>\n", argv[0]);
-        return 1;
-    }
-
-    const char *folderPathDataset = argv[1];
-    const char *inputPath = argv[2];
-
-    char filePath[MAX_PATH_SIZE];
-    STATS* stats = create_stats_catalog();
-
+    // Cria o catálogo de estatísticas
+    STATS *stats = create_stats_catalog();
     // Cria o catálogo de utilizadores
     USERS_CATALOG *users_catalog = create_users_catalog();
-
-    // faz o parse do ficheiro de utilizadores
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "/users.csv");
-
-    parseCSV(filePath, 1, users_catalog, NULL, NULL,stats);
-
     // Cria o catálogo de voos
     FLIGHTS_CATALOG *flights_catalog = create_flights_catalog();
-
-    // faz o parse do ficheiro de voos
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "/flights.csv");
-
-    parseCSV(filePath, 2, flights_catalog, NULL, NULL,stats);
-
     // Cria o catálogo de reservas
     RESERVATIONS_CATALOG *reservations_catalog = create_reservations_catalog();
-
-    // faz o parse do ficheiro de reservas
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "/reservations.csv");
-
-    parseCSV(filePath, 4, reservations_catalog, users_catalog, NULL,stats);
-
     // Cria o catálogo de passageiros
     PASSENGERS_CATALOG *passengers_catalog = create_passengers_catalog();
 
-    // faz o parse do ficheiro de passageiros
-    strcpy(filePath, folderPathDataset);
-    strcat(filePath, "/passengers.csv");
+    if (argc == 1) {
+        printf("Inicializando o modo Interativo...\n");
 
-    parseCSV(filePath, 3, passengers_catalog, users_catalog,flights_catalog, stats);
+        char folderPathDataset[MAX_PATH_SIZE];
+        printf("Introduza o caminho para a pasta onde está o dataset:\n");
 
-    // Faz o parse do ficheiro de input
-    if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats)) {
-        printf("Error parsing input file\n");
-        // Libera a memória antes de retornar
-        free_users_catalog(users_catalog);
-        free_flights_catalog(flights_catalog);
-        free_reservations_catalog(reservations_catalog);
-        free_passengers_catalog(passengers_catalog);
+        fgets(folderPathDataset, MAX_PATH_SIZE, stdin);
+        // Remove o caractere de nova linha no final da string
+        folderPathDataset[strcspn(folderPathDataset, "\n")] = 0;
+
+        // Expande o ~ para o diretório home do usuário (solução para um bug que acontecia quando se usava o caminho relativo)
+        wordexp_t p;
+        wordexp(folderPathDataset, &p, 0);
+        strcpy(folderPathDataset, p.we_wordv[0]);
+        wordfree(&p);
+
+        interactiveMode(folderPathDataset, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
+        
+        return 0;
+    } else if (argc == 3) {
+        printf("Inicializando o modo Batch...\n");
+
+        batchMode(argv[1], argv[2], users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
+
+        return 0;
+    } else {
+        printf("Command for Batch Mode: %s <DatasetFolderPath> <InputFilePath>\n", argv[0]);
+        printf("Command for Interactive Mode: %s\n", argv[0]);
         return 1;
     }
 
