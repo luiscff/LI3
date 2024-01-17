@@ -921,18 +921,7 @@ char* query7(char* token,STATS* stats,int flag) {
     return output;
 }
 
-typedef struct {
-    int year;
-    int month;
-    int day;
-} Date;
 
-// Função para converter uma string no formato YYYY/MM/DD para uma estrutura Date
-Date convertStringToDate(const char *dateStr) {
-    Date date;
-    sscanf(dateStr, "%d/%d/%d", &date.year, &date.month, &date.day);
-    return date;
-}
 
 // Função para calcular a diferença em noites entre duas datas dentro de um intervalo
 int calculate_nights_between_dates(const char *start_date1, const char *end_date1, const char *start_date_l, const char *end_date_l) {
