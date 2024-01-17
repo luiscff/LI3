@@ -105,7 +105,7 @@ void set_origin(FLIGHT *f, const char *origin) {
 }
 void set_destination(FLIGHT *f, const char *destination) {
     if (f->destination) free(f->destination);
-    f->destination = strdup(destination);
+    f->destination = strdup(convert_to_upper_case(strdup((destination))));
 }
 
 void set_schedule_departure_date(FLIGHT *f, const char *schedule_departure_date) {

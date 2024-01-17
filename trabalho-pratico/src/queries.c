@@ -937,8 +937,10 @@ char* query6(FLIGHTS_CATALOG* fcatalog,char* ano, char* top_n,STATS*stats,int fl
                 if(in_year(ano_alvo,sch_dep) == 1) {
                    // logica que vai buscar o numero de passageiros de um voo e acrescenta ao de um aeroporto
                     int curr_pass = get_passageiros(flight);
-                    char* airport =  strdup(get_origin(flight));
-                    insert_or_update_q6(q6_aux,airport,curr_pass);
+                    char* airport_o =  strdup(get_origin(flight));
+                    char* airport_d = strdup(get_destination(flight));
+                    insert_or_update_q6(q6_aux,airport_o,curr_pass);
+                    insert_or_update_q6(q6_aux,airport_d,curr_pass);
                     }
     }
 }
