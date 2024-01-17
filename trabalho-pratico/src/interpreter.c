@@ -83,9 +83,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char nextToken2[20], nextToken3[20];
             sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"",nextToken2,nextToken3);
             printf("Executando query 8 com tokens: %s %s %s\n",nextToken,nextToken2,nextToken3);
-            char *result = query8(nextToken,nextToken2,nextToken3,stats,1);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query8(nextToken,nextToken2,nextToken3,stats,1);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
         } else if (strcmp(token, "9") == 0) {
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
