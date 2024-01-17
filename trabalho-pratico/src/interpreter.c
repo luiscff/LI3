@@ -41,7 +41,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "3") == 0) {// query3 e escrita numa linha no ficheiro
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3 com token: %s\n",nextToken);
-            char *result = query3(r_catalog,nextToken,stats,1);
+            char *result = query3(nextToken,stats,1);
             create_result_file("Resultados", lineNumber, result);
             if (result != NULL) free(result);
 
@@ -58,7 +58,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char nextToken2[20], nextToken3[20];
             sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"",nextToken2,nextToken3);
             printf("Executando query 5 com tokens: %s %s %s\n",nextToken,nextToken2,nextToken3);
-            char *result = query5(f_catalog,nextToken,nextToken2,nextToken3,stats,1);
+            char *result = query5(nextToken,nextToken2,nextToken3,stats,1);
             create_result_file("Resultados", lineNumber, result);
             free(result);
             
@@ -66,19 +66,26 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
             printf("Executando query 6 com token: %s %s\n",nextToken,nextToken2);
-            char *result = query6(f_catalog,nextToken,nextToken2,stats,1);
+            char *result = query6(nextToken,nextToken2,stats,1);
             create_result_file("Resultados", lineNumber, result);
             free(result);
             
         } else if (strcmp(token, "7") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
-            char *result = query7(f_catalog,nextToken,stats,1);
+            char *result = query7(nextToken,stats,1);
             create_result_file("Resultados", lineNumber, result);
             free(result);
 
         } else if (strcmp(token, "8") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " \"");
+            char *nextTokenT = strtok(NULL, "");
+            char nextToken2[20], nextToken3[20];
+            sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"",nextToken2,nextToken3);
+            printf("Executando query 8 com tokens: %s %s %s\n",nextToken,nextToken2,nextToken3);
+            char *result = query8(nextToken,nextToken2,nextToken3,stats,1);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "9") == 0) {
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
@@ -89,9 +96,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                   removeAspas(tokenF);
             }
             printf("Executando query 9 com token: %s\n",tokenF);
-            char *result = query9(u_catalog,tokenF, stats, 1);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query9(tokenF, stats, 1);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
             
         } else if (strcmp(token, "10") == 0) {
             // ignora
@@ -123,7 +130,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "3F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3F com token: %s\n",nextToken);
-            char *result = query3(r_catalog, nextToken,stats,2);
+            char *result = query3(nextToken,stats,2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
 
@@ -139,7 +146,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char nextToken2[20], nextToken3[20];
             sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"",nextToken2,nextToken3);
             printf("Executando query 5F com tokens: %s %s %s\n",nextToken,nextToken2,nextToken3);
-            char *result = query5(f_catalog,nextToken,nextToken2,nextToken3,stats,2);
+            char *result = query5(nextToken,nextToken2,nextToken3,stats,2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
             
@@ -147,13 +154,13 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
             printf("Executando query 6F com token: %s %s\n",nextToken,nextToken2);
-            char *result = query6(f_catalog,nextToken,nextToken2,stats,2);
+            char *result = query6(nextToken,nextToken2,stats,2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
         } else if (strcmp(token, "7F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
-            char *result = query7(f_catalog,nextToken,stats,2);
+            char *result = query7(nextToken,stats,2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
         } else if (strcmp(token, "8F") == 0) {
@@ -168,9 +175,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                   removeAspas(tokenF);
             }
             printf("Executando query 9F com token: %s\n",tokenF);
-            char *result = query9(u_catalog,tokenF, stats, 2);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query9(tokenF, stats, 2);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
         } else if (strcmp(token, "10F") == 0) {
             // ignora
         }

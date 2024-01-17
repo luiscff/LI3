@@ -134,7 +134,6 @@ int sort_function_q2(gconstpointer a, gconstpointer b) {
     return 0;
 }
 
-// aux 3
 
 // aux 4
 int sort_function_q4(gconstpointer a, gconstpointer b) {
@@ -184,6 +183,75 @@ int sort_function_q4(gconstpointer a, gconstpointer b) {
         return 1;
     }
 
+    printf("ERRO no sort da query4: as reservas têm a mesma data e o mesmo id\n");
+    return 0;
+}
+
+//aux q5
+int sort_function_q5(gconstpointer a, gconstpointer b) {
+    const FLIGHT* flight1 = a;
+    const FLIGHT* flight2 = b;
+
+    // ordenadas por data de início (da mais recente para a mais antiga).
+    char* date1 = strdup(get_schedule_departure_date(flight1));
+    char* date2 = strdup(get_schedule_departure_date(flight2));
+    char* airport1= strdup(get_origin(flight1));
+    char* airport2 = strdup(get_origin(flight2));
+
+    int year1, month1, day1, hour1, min1, sec1;
+    sscanf(date1, "%d/%d/%d %d:%d:%d", &year1, &month1, &day1, &hour1, &min1, &sec1);
+
+    int year2, month2, day2, hour2, min2, sec2;
+    sscanf(date2, "%d/%d/%d %d:%d:%d", &year2, &month2, &day2, &hour2, &min2, &sec2);
+
+    // Comparando anos
+    if (year1 > year2) {
+        return -1;
+    } else if (year1 < year2) {
+        return 1;
+    }
+
+    // Comparando meses
+    if (month1 > month2) {
+        return -1;
+    } else if (month1 < month2) {
+        return 1;
+    }
+
+    // Comparando dias
+    if (day1 > day2) {
+        return -1;
+    } else if (day1 < day2) {
+        return 1;
+    }
+
+    // Comparando horas
+    if (hour1 > hour2) {
+        return -1;
+    } else if (hour1 < hour2) {
+        return 1;
+    }
+
+    // Comparando minutos
+    if (min1 > min2) {
+        return -1;
+    } else if (min1 < min2) {
+        return 1;
+    }
+
+    // Comparando segundos
+    if (sec1 > sec2) {
+        return -1;
+    } else if (sec1 < sec2) {
+        return 1;
+    }
+
+    // compara os ids (strings) como num dicionario
+    if (strcmp(airport1, airport2) < 0) {
+        return -1;
+    } else if (strcmp(airport1, airport2) > 0) {
+        return 1;
+    }
     printf("ERRO no sort da query4: as reservas têm a mesma data e o mesmo id\n");
     return 0;
 }
@@ -609,7 +677,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
 }
 
 // QUERY 3
-char* query3(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats,int flag) {
+char* query3(char* hotel_id, STATS* stats,int flag) {
     int res = 0;
     double total = 0;
     GHashTable *hotel_hash = get_hotel_hash(stats);
@@ -684,77 +752,9 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id,STATS* stats, int fl
 // QUERY 5
 
 
-int sort_function_q5(gconstpointer a, gconstpointer b) {
-    const FLIGHT* flight1 = a;
-    const FLIGHT* flight2 = b;
-
-    // ordenadas por data de início (da mais recente para a mais antiga).
-    char* date1 = strdup(get_schedule_departure_date(flight1));
-    char* date2 = strdup(get_schedule_departure_date(flight2));
-    char* airport1= strdup(get_origin(flight1));
-    char* airport2 = strdup(get_origin(flight2));
-
-    int year1, month1, day1, hour1, min1, sec1;
-    sscanf(date1, "%d/%d/%d %d:%d:%d", &year1, &month1, &day1, &hour1, &min1, &sec1);
-
-    int year2, month2, day2, hour2, min2, sec2;
-    sscanf(date2, "%d/%d/%d %d:%d:%d", &year2, &month2, &day2, &hour2, &min2, &sec2);
-
-    // Comparando anos
-    if (year1 > year2) {
-        return -1;
-    } else if (year1 < year2) {
-        return 1;
-    }
-
-    // Comparando meses
-    if (month1 > month2) {
-        return -1;
-    } else if (month1 < month2) {
-        return 1;
-    }
-
-    // Comparando dias
-    if (day1 > day2) {
-        return -1;
-    } else if (day1 < day2) {
-        return 1;
-    }
-
-    // Comparando horas
-    if (hour1 > hour2) {
-        return -1;
-    } else if (hour1 < hour2) {
-        return 1;
-    }
-
-    // Comparando minutos
-    if (min1 > min2) {
-        return -1;
-    } else if (min1 < min2) {
-        return 1;
-    }
-
-    // Comparando segundos
-    if (sec1 > sec2) {
-        return -1;
-    } else if (sec1 < sec2) {
-        return 1;
-    }
-
-    // compara os ids (strings) como num dicionario
-    if (strcmp(airport1, airport2) < 0) {
-        return -1;
-    } else if (strcmp(airport1, airport2) > 0) {
-        return 1;
-    }
-    printf("ERRO no sort da query4: as reservas têm a mesma data e o mesmo id\n");
-    return 0;
-}
 
 
-
-char* query5(FLIGHTS_CATALOG* fcatalog, char* token,char* dataI,char*dataF,STATS* stats,int flag) {
+char* query5(char* token,char* dataI,char*dataF,STATS* stats,int flag) {
 
     GHashTable* airportS_hash = get_airportS_hash(stats);
     AIRPORTS* airportS = g_hash_table_lookup(airportS_hash,token);
@@ -830,7 +830,7 @@ int sort_function_q6(gconstpointer a, gconstpointer b) {
         return strcmp(airport1->airport,airport2->airport) ;
 }
 
-char* query6(FLIGHTS_CATALOG* fcatalog,char* ano, char* top_n,STATS*stats,int flag) {
+char* query6(char* ano, char* top_n,STATS*stats,int flag) {
     int ano_alvo = atoi(ano);
     int teste = 0;
     
@@ -890,7 +890,7 @@ return output;
 }
 
 // // QUERY 7 - Função principal para calcular e listar os top N aeroportosg
-char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
+char* query7(char* token,STATS* stats,int flag) {
     GHashTable* airportS_hash = get_airportS_hash(stats);
     int top_n = atoi(token);
     // Calcular os atrasos para cada voo
@@ -921,8 +921,79 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
     return output;
 }
 
+typedef struct {
+    int year;
+    int month;
+    int day;
+} Date;
+
+// Função para converter uma string no formato YYYY/MM/DD para uma estrutura Date
+Date convertStringToDate(const char *dateStr) {
+    Date date;
+    sscanf(dateStr, "%d/%d/%d", &date.year, &date.month, &date.day);
+    return date;
+}
+
+// Função para calcular a diferença em noites entre duas datas dentro de um intervalo
+int calculate_nights_between_dates(const char *start_date1, const char *end_date1, const char *start_date_l, const char *end_date_l) {
+    char *start_used;
+    char *end_used;//TODO:ver melhor logica
+
+    if (isDate1BeforeDate2(end_date_l, start_date1) == 1 || isDate1BeforeDate2(end_date1, start_date_l) == 1) {
+        return 0;
+    }
+
+    if (isDate1BeforeDate2(start_date1, start_date_l) == 1) {
+        start_used = strdup(start_date_l);
+    } else {
+        start_used = strdup(start_date1);
+    }
+
+    if (isDate1BeforeDate2(end_date1, end_date_l) == 1) {
+        end_used = strdup(end_date1);
+    } else {
+        end_used = strdup(end_date_l);
+    }
+
+    int nights = calc_nights(start_used, end_used);
+
+    free(start_used);
+    free(end_used);
+
+    return nights;
+}
+
+
+
+
+// QUERY 8
+char* query8(char* token,char*dataI, char*dataF, STATS* stats,int flag) {
+    GHashTable* hotel_hash = get_hotel_hash(stats);
+    HOTEL* hotel = g_hash_table_lookup(hotel_hash,token);
+    GList* reservations_list = get_hotel_reservations_list(hotel);
+    int tamanho = get_hotel_num_reservations(hotel);
+    int revenue = 0;
+
+    for (int i = 0; i < tamanho; ++i) {
+        RESERVATION* curr_res = g_list_nth_data(reservations_list,i);
+        printf("\n%s",get_hotel_id(curr_res));
+        char* res_begin = strdup(get_begin_date(curr_res));
+        char* res_end = strdup(get_end_date(curr_res));
+        int ppn = get_price_per_night(curr_res);
+        int nights = calculate_nights_between_dates(res_begin,res_end,dataI,dataF);
+        printf("\n NOITES: %d\n",nights);
+        printf ("%d\n",ppn);
+        revenue += nights ;
+    }
+
+    char* output = malloc(256 * sizeof(char));
+    if (flag == 1) sprintf(output, "%d\n", revenue);
+    if (flag == 2) sprintf(output, "--- 1 ---\nrevenue: %d\n", revenue);
+    return output;
+}
+
 // QUERY 9
-char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
+char* query9(char* token,STATS* stats,int flag) {
     char* prefix = strdup(token);
     char* key = malloc(2);
     key[0] = prefix[0];

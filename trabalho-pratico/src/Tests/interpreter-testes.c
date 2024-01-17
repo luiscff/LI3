@@ -48,7 +48,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "3") == 0) {// query3 e escrita numa linha no ficheiro
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3 com token: %s\n",nextToken);
-            char *result = query3(r_catalog,nextToken,stats,1);
+            char *result = query3(nextToken,stats,1);
             create_result_file("Resultados", lineNumber, result);
             if (result != NULL) free(result);
 
@@ -66,7 +66,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "7") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
-            char *result = query7(f_catalog,nextToken,stats,1);
+            char *result = query7(nextToken,stats,1);
             create_result_file("Resultados", lineNumber, result);
             free(result);
 
@@ -82,7 +82,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
                   removeAspas(tokenF);
             }
             printf("Executando query 9 com token: %s\n",tokenF);
-            char *result = query9(u_catalog,tokenF, stats, 1);
+            char *result = query9(tokenF, stats, 1);
             create_result_file("Resultados", lineNumber, result);
             free(result);
             
@@ -116,7 +116,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "3F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 3F com token: %s\n",nextToken);
-            char *result = query3(r_catalog, nextToken,stats,2);
+            char *result = query3(nextToken,stats,2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
 
@@ -133,7 +133,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
         } else if (strcmp(token, "7F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
-            char *result = query7(f_catalog,nextToken,stats,2);
+            char *result = query7(nextToken,stats,2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
         } else if (strcmp(token, "8F") == 0) {
@@ -148,7 +148,7 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
                   removeAspas(tokenF);
             }
             printf("Executando query 9F com token: %s\n",tokenF);
-            char *result = query9(u_catalog,tokenF, stats, 2);
+            char *result = query9(tokenF, stats, 2);
             create_result_file("Resultados", lineNumber, result);
             free(result);
             
