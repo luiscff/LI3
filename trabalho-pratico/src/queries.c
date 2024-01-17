@@ -261,114 +261,28 @@ int sort_function_by_mediana(gconstpointer a, gconstpointer b) {
     // When mediana values are equal, use the airport name as a tiebreaker
     return strcmp(get_airport_name(airport1), get_airport_name(airport2));
 }
-
-
 // aux 9
-int verificaPrefixo(const char* string, const char* prefixo) {
-    size_t tamanhoPrefixo = strlen(prefixo);
-
-    // Compara os primeiros 'tamanhoPrefixo' caracteres
-    int resultadoComparacao = strncmp(string, prefixo, tamanhoPrefixo);
-
-    // Se resultadoComparacao for 0, significa que o prefixo foi encontrado
-    return (resultadoComparacao == 0);
-}
-
-void convert_to_lower_case(char* str) {
-    if (str == NULL) {
-        printf("String is NULL\n");
-        return;
-    }
-    setlocale(LC_ALL, "");                // set the locale to the user's default locale
-    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
-    wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
-    if (wstr == NULL) {
-        printf("Failed to allocate memory\n");
-        return;
-    }
-    mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
-
-    for (size_t i = 0; i < len; i++) {
-        wstr[i] = towlower(wstr[i]);  // convert to lowercase
-    }
-
-    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
-    free(wstr);
-}
-
-void remove_accents(char* str) {
-    setlocale(LC_ALL, "");                // set the locale to the user's default locale
-    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
-    wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
-    mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
-
-    for (size_t i = 0; i < len; i++) {
-        switch (wstr[i]) {
-            case L'ã':
-            case L'á':
-            case L'à':
-            case L'â':
-                wstr[i] = L'a';
-                break;
-            case L'é':
-            case L'è':
-            case L'ê':
-                wstr[i] = L'e';
-                break;
-            case L'í':
-            case L'ì':
-            case L'î':
-                wstr[i] = L'i';
-                break;
-            case L'ó':
-            case L'ò':
-            case L'ô':
-                wstr[i] = L'o';
-                break;
-            case L'ú':
-            case L'ù':
-            case L'û':
-                wstr[i] = L'u';
-                break;
-            case L'ç':
-                wstr[i] = L'c';
-                break;
-        }
-    }
-
-    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
-    free(wstr);
-}
-
 int sort_function_q9(gconstpointer a, gconstpointer b) {
     // formato das structs recebidas (a e b): id;name;status
-
-    const USER_NAME* user = (const USER_NAME*)a;
-    const USER_NAME* user2 = (const USER_NAME*)b;
-
+    const USER* user = (const USER*)a;
+    const USER* user2 = (const USER*)b;
     // saca os 2 tokens da string a
-
-    char* id1 = strdup(get_user_name_id(user));
-    char* name1 = strdup(get_user_name_name(user));
+    char* id1 = strdup(get_id(user));
+    char* name1 = strdup(get_name(user));
     // saca os 2 tokens da string b
-
-    char* id2 = strdup(get_user_name_id(user2));
-    char* name2 = strdup(get_user_name_name(user2));
-
+    char* id2 = strdup(get_id(user2));
+    char* name2 = strdup(get_name(user2));
     // se os nomes tiverem "-" mudar para " "
-
     for (int i = 0; name1[i] != '\0'; i++) {
         if (name1[i] == '-') {
             name1[i] = ' ';
         }
     }
-
     for (int i = 0; name2[i] != '\0'; i++) {
         if (name2[i] == '-') {
             name2[i] = ' ';
         }
     }
-
     // converter para minusculas e retirar acentos
     convert_to_lower_case(id1);
     convert_to_lower_case(id2);
@@ -394,6 +308,8 @@ int sort_function_q9(gconstpointer a, gconstpointer b) {
 
     return result;
 }
+
+
 
 //-------QUERIES-------
 
@@ -920,7 +836,7 @@ char* query6(FLIGHTS_CATALOG* fcatalog,char* ano, char* top_n,STATS*stats,int fl
     
     GList* airportS_list = g_hash_table_get_values(get_airportS_hash(stats));
     int tamanho = g_list_length(airportS_list);
-    printf ("\n1 : %d\n",tamanho);
+    //printf ("\n1 : %d\n",tamanho);
     GHashTable* q6_aux = g_hash_table_new_full(g_str_hash, g_str_equal, free,NULL);
 
 
@@ -928,11 +844,11 @@ char* query6(FLIGHTS_CATALOG* fcatalog,char* ano, char* top_n,STATS*stats,int fl
         AIRPORTS* airportS = g_list_nth_data(airportS_list,i);
         GList *flights = get_flights_list(airportS);
         int tamanho2 = g_list_length(flights);
-        printf ("\nAiport %s : %d\n",get_airport_name(airportS),tamanho2);
+        //printf ("\nAiport %s : %d\n",get_airport_name(airportS),tamanho2);
             
             for(int j = 0; j < tamanho2; j++){
                 FLIGHT* flight = g_list_nth_data(flights,j);
-                char* sch_dep = strdup (get_schedule_departure_date(flight));
+                char* sch_dep = strdup (get_schedule_departure_date(flight));   
 
                 if(in_year(ano_alvo,sch_dep) == 1) {
                    // logica que vai buscar o numero de passageiros de um voo e acrescenta ao de um aeroporto
@@ -949,7 +865,7 @@ char* query6(FLIGHTS_CATALOG* fcatalog,char* ano, char* top_n,STATS*stats,int fl
     GList* q6_aux_list = g_hash_table_get_values(q6_aux);
     GList* sorted = g_list_sort(q6_aux_list,sort_function_q6);
 
-    if (sorted != NULL) printf("\n ABABA \n");
+    
     int tamanho_f = g_list_length(sorted);
     int reg_num = 1;
     char* output = malloc(1);
@@ -1008,53 +924,41 @@ char* query7(FLIGHTS_CATALOG* fcatalog, char* token,STATS* stats,int flag) {
 // QUERY 9
 char* query9(USERS_CATALOG* ucatalog, char* token,STATS* stats,int flag) {
     char* prefix = strdup(token);
-    GList* users = get_user_name_list(stats);
-    GList* aux = NULL;
-    int tamanho = g_list_length(users);
+    char* key = malloc(2);
+    key[0] = prefix[0];
+    key[1] = -'\0';
+    GHashTable* dictionary = get_dictionary_hash(stats);
+    DICTIONARY* page = g_hash_table_lookup(dictionary,key);
+    if(page == NULL){
+        printf("NO USER FOUND WITH THAT PREFIX\n");
+        return NULL;
+    }
+
+    GList* page_users = get_dictionary_values(page);
+    GList* sorted = g_list_sort(page_users,sort_function_q9); // dar fix a q9
+
+    char* output = malloc(1);
+    output[0] = '\0'; 
+    int tamanho = g_list_length(sorted);
+    int reg_num = 1;
+
 
     for (size_t i = 0; i < tamanho; i++) {
-        USER_NAME* user = g_list_nth_data(users, i);
-        
-        
-        if (strcasecmp(get_user_name_status(user), "inactive") != 0) {  // se o user não for "inactive"
-            char* id = strdup(get_user_name_id(user));
-            if (id == NULL) {
-                printf("Error: failed to allocate memory on id\n");
-                free(prefix);
-                return NULL;
-            }
-
-            char* name = strdup(get_user_name_name(user));
-
-
-            if (name == NULL) {
-                printf("Error: failed to allocate memory on name\n");
-                free(id);
-                free(prefix);
-                return NULL;
-            }
-            if (verificaPrefixo(name, prefix)) {  // se tiver o prefixo, adiciona à lista
-                aux = g_list_append(aux, user);  // dá append à lista
-            }
-        }
-    }
-    char* output = malloc(1);
-    output[0] = '\0';  // começa com uma string vazia
-    int tamanho_aux = g_list_length(aux);
-    GList* sorted = g_list_sort(aux, sort_function_q9);
-
-    int reg_num =1;
-
-    for (size_t i = 0; i < tamanho_aux; i++) {
-        USER_NAME* curr_user = g_list_nth_data(sorted, i);
+        USER* curr_user = g_list_nth_data(sorted, i);
+        char* user_name = strdup(get_name(curr_user));
+        char* user_id = strdup(get_id(curr_user));
+        char* user_status = strdup(get_active_status(curr_user));
         char line[200];
-        if (flag == 1) sprintf(line, "%s;%s\n", get_user_name_id(curr_user), get_user_name_name(curr_user));
-        if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num, get_user_name_id(curr_user), get_user_name_name(curr_user));
+        
+        if((verificaPrefixo(user_name,prefix) == 1)&& strcmp(user_status,"active")==0) {
+        if (flag == 1) sprintf(line, "%s;%s\n",user_name,user_id) ;
+        if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num,user_name,user_id) ;
         reg_num++;
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
         // concatena a linha atual à string de output
         strcat(output, line);
+        }
         }
 
     if (flag == 2) output[strlen(output) - 1] = '\0';

@@ -6,11 +6,12 @@
 #include "Catalog/stats.h"
 
 
+
 typedef struct stats {
     GHashTable *hotel_hash;
-    GList *user_name;
+    GHashTable *dictionary_hash;
     GHashTable *airports_hash;
-    GHashTable * flight_passangers;
+    GHashTable *flight_passangers;
 } STATS;
 
 typedef struct hotel
@@ -21,11 +22,6 @@ typedef struct hotel
    GList* reservations;
 }HOTEL;
 
-typedef struct user_name{
-    char* name;
-    char* id;
-    char* status;
-}USER_NAME;
 
 typedef struct airportS{
     char* origin;
@@ -40,6 +36,11 @@ typedef struct flight_pass
    int passageiros;
 }FLIGHT_PASS;
 
+
+typedef struct dictionary{
+    char* letter;
+    GList* users;
+}DICTIONARY;
 void free_hotel(HOTEL *hotel) {
     if (hotel->hotel_id) free(hotel->hotel_id);
     if (hotel->reservations) g_list_free(hotel->reservations);
@@ -57,12 +58,23 @@ void free_passangers(FLIGHT_PASS *flight_pass) {
     if (flight_pass) free(flight_pass);
 }
 
+void free_dictionary(DICTIONARY* dictionary) {
+    if (dictionary) {
+        if (dictionary->letter) free(dictionary->letter);
+        if (dictionary->users) free(dictionary->users);
+        free(dictionary);
+    }
+}
+
+
+
 STATS* create_stats_catalog() {
     STATS *new_catalog = malloc(sizeof(STATS));
 
     new_catalog->hotel_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_hotel);
-    new_catalog->user_name = NULL;
+    new_catalog->dictionary_hash=  g_hash_table_new_full(g_str_hash, g_str_equal, free,
+                                                 (GDestroyNotify)free_dictionary);
     new_catalog->airports_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_airportS);
 
@@ -72,18 +84,12 @@ STATS* create_stats_catalog() {
     return new_catalog;
 }
 
-void free_user_name(USER_NAME *user_name) {
-    if (user_name) {
-        if (user_name->name) free(user_name->name);
-        if (user_name->id) free(user_name->id);
-        if (user_name->status) free(user_name->status);
-        free(user_name);
-    }
-}
+
 
 void free_stats(STATS *catalog) {
     g_hash_table_destroy(catalog->hotel_hash);
-    g_list_free_full(catalog->user_name, (GDestroyNotify)free_user_name);
+    g_hash_table_destroy(catalog->dictionary_hash);
+    g_hash_table_destroy(catalog->flight_passangers);
     g_hash_table_destroy(catalog->airports_hash);
     free(catalog);
 }
@@ -162,38 +168,44 @@ GList *get_hotel_reservations_list(HOTEL* hotel) {
 }
 
 
-//USER_NAME
+//Dictiniorary
 
-USER_NAME* create_user_name(const char* name, const char* user_id, const char* status){
-    USER_NAME* user_name = malloc(sizeof(USER_NAME));
-    if(user_name){
-        user_name->name =strdup(name);
-        user_name->id = strdup(user_id);
-        user_name->status = strdup(status);
+
+DICTIONARY* create_page(const char* letter, USER* user){
+    DICTIONARY* dictionary = malloc(sizeof(DICTIONARY));
+    if(dictionary){
+        dictionary->letter =strdup(letter);
+        dictionary->users=NULL;
+        dictionary->users = g_list_append(dictionary->users,user);
     }
-    return user_name;
+    return dictionary;
 }
 
-void insert_user_name(STATS *catalog, USER_NAME *user_name) {
-    catalog->user_name = g_list_append(catalog->user_name, user_name);
+void insert_page(STATS *catalog, char* letter,DICTIONARY *dictionary) {
+    g_hash_table_insert(catalog->dictionary_hash , letter,dictionary);
 }
 
 
 
-GList *get_user_name_list(STATS *catalog) {
-    return catalog->user_name;
+GHashTable *get_dictionary_hash(STATS *catalog) {
+    return catalog->dictionary_hash;
 }
 
-const char *get_user_name_name(const USER_NAME *user) {
-    return user->name;
+GList *get_dictionary_values(const DICTIONARY* dictionary) {
+    return dictionary->users;
 }
 
-const char *get_user_name_id(const USER_NAME *user) {
-    return user->id;
-}
+void insert_or_update_dictionary(STATS* catalog, char* letter, USER* user){
+    DICTIONARY* curr = g_hash_table_lookup(catalog->dictionary_hash,letter);
+    if (curr == NULL) {
+                        DICTIONARY* new_page= create_page(letter,user);
+                        insert_page(catalog,letter,new_page);
 
-const char *get_user_name_status(const USER_NAME *user) {
-    return user->status;
+    }
+    else {
+        curr->users = g_list_append(curr->users,user);
+    }
+
 }
 
         

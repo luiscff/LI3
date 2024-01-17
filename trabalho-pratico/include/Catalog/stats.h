@@ -3,11 +3,12 @@
 
 #include "Entities/reservation.h"
 #include "Entities/flight.h"
+#include "Entities/user.h"
 #include "glib.h"
 
 typedef struct stats STATS;
 typedef struct hotel HOTEL;
-typedef struct user_name USER_NAME;
+typedef struct dictionary DICTIONARY;
 typedef struct airportS AIRPORTS;
 
 STATS* create_stats_catalog();
@@ -19,17 +20,16 @@ int get_hotel_sum_rating(HOTEL* hotel);
 int get_hotel_num_reservations(HOTEL* hotel);
 GList *get_hotel_reservations_list(HOTEL* hotel);
 
-USER_NAME* create_user_name(const char* name, const char* user_id, const char* status);
+//DICTIONARY
 
-void insert_user_name(STATS *catalog, USER_NAME *user_name);
-GList *get_user_name_list(STATS *catalog);
+void insert_or_update_dictionary(STATS* catalog, char* letter, USER* user);
+GHashTable *get_dictionary_hash(STATS *catalog);
 
-const char *get_user_name_name(const USER_NAME *user);
+GList *get_dictionary_values(const DICTIONARY* dictionary);
 
-const char *get_user_name_id(const USER_NAME *user);
 
-const char *get_user_name_status(const USER_NAME *user);
 
+//AIRPORTS
 void insert_airportS(STATS *catalog, AIRPORTS *airportS,const char* key);
 
 void add_delay_to_airportS(AIRPORTS* airportS, int delay);

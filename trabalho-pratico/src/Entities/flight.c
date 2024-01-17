@@ -176,5 +176,4 @@ int get_passageiros(FLIGHT* flight){
 
 void add_passageiro(FLIGHT *flight){
     flight->passageiros++;
-    printf("\n VOO: %d COUNTER : %d", get_origin(flight),get_passageiros(flight));
 }

@@ -7,6 +7,7 @@
 #include "Catalog/users_catalog.h"
 #include "Catalog/passengers_catalog.h"
 #include "Catalog/flights_catalog.h"
+#include "utils.h"
 
 int inputParserTestes(const char *inputPath, USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog, RESERVATIONS_CATALOG *reservations_catalog, PASSENGERS_CATALOG *passengers_catalog, STATS* stats);
 

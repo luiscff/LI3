@@ -89,8 +89,14 @@ void parseLine_user(char *line, void *catalog,STATS* stats) {
 
         //adiciona conjunto nome e id as stats
 
-        USER_NAME* user_name = create_user_name(get_name(user), get_id(user), get_active_status(user));
-        insert_user_name(stats,user_name);
+        char* user_name = strdup(get_name(user));
+        remove_accents(user_name);
+        char* letter = malloc(sizeof(2));
+
+        letter[0] = user_name[0];
+        letter[1] = '\0';
+
+        insert_or_update_dictionary(stats,letter,user);
 
         // adiciona o user ao catálogo        
         insert_user(usersCatalog, user, get_id(user));

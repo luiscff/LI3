@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
+#include <locale.h>
+#include <wchar.h>
+#include <wctype.h>
 
 #define current_date "2023/10/01"
 char* fix_flight_id(int num) {
@@ -176,4 +178,93 @@ int calc_idade(char* birth_date) {
         idade--;
     }  // Ajustar a idade caso ainda nao tenha feito anos nesse mesmo ano
     return idade;
+}
+
+
+
+int verificaPrefixo(const char* string, const char* prefixo) {
+    size_t tamanhoPrefixo = strlen(prefixo);
+
+    // Compara os primeiros 'tamanhoPrefixo' caracteres
+    int resultadoComparacao = strncmp(string, prefixo, tamanhoPrefixo);
+
+    // Se resultadoComparacao for 0, significa que o prefixo foi encontrado
+    return (resultadoComparacao == 0);
+}
+
+void convert_to_lower_case(char* str) {
+    if (str == NULL) {
+        printf("String is NULL\n");
+        return;
+    }
+    setlocale(LC_ALL, "");                // set the locale to the user's default locale
+    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
+    wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
+    if (wstr == NULL) {
+        printf("Failed to allocate memory\n");
+        return;
+    }
+    mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
+
+    for (size_t i = 0; i < len; i++) {
+        wstr[i] = towlower(wstr[i]);  // convert to lowercase
+    }
+
+    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
+    free(wstr);
+}
+
+void remove_accents(char* str) {
+    setlocale(LC_ALL, "");                // set the locale to the user's default locale
+    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
+    wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
+    mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
+
+    for (size_t i = 0; i < len; i++) {
+        switch (wstr[i]) {
+            case L'ã':
+            case L'á':
+            case L'à':
+            case L'â':
+                wstr[i] = L'a';
+                break;
+            case L'é':
+            case L'è':
+            case L'ê':
+                wstr[i] = L'e';
+                break;
+            case L'í':
+            case L'ì':
+            case L'î':
+                wstr[i] = L'i';
+                break;
+            case L'ó':
+            case L'ò':
+            case L'ô':
+                wstr[i] = L'o';
+                break;
+            case L'ú':
+            case L'ù':
+            case L'û':
+                wstr[i] = L'u';
+                break;
+            case L'ç':
+                wstr[i] = L'c';
+                break;
+        }
+    }
+
+    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
+    free(wstr);
+}
+
+void removeAspas(char *str) {
+    int len = strlen(str);
+
+    // Verificar se a string tem pelo menos duas aspas
+    if (len >= 2 && str[0] == '"' && str[len - 1] == '"') {
+        // Remover as aspas
+        memmove(str, str + 1, len - 2);
+        str[len - 2] = '\0';  // Adicionar o caractere nulo no final da string
+    }
 }
