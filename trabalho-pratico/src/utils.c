@@ -217,6 +217,13 @@ void convert_to_lower_case(char* str) {
 void remove_accents(char* str) {
     setlocale(LC_ALL, "");                // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
+
+    // Check if str is a valid multibyte string
+    if (len == (size_t)-1) {
+        printf("Invalid multibyte string.\n");
+        return;
+    }
+    
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 
