@@ -265,6 +265,7 @@ void removeAspas(char *str) {
     if (len >= 2 && str[0] == '"' && str[len - 1] == '"') {
         // Remover as aspas
         memmove(str, str + 1, len - 2);
-        str[len - 2] = '\0';  // Adicionar o caractere nulo no final da string
+        len = strlen(str);  // Recalcular o comprimento da string
+        str[len] = '\0';  // Adicionar o caractere nulo no final da string
     }
 }

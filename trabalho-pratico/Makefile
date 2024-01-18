@@ -48,6 +48,10 @@ leaks: programa-principal
 	valgrind --leak-check=full ./programa-principal ~/Desktop/dataset/data_clean ~/Desktop/dataset/input.txt
 	make clean_objs
 
+errors: programa-principal
+	valgrind -s --leak-check=full --show-leak-kinds=all --track-origins=yes ./programa-principal ~/Desktop/dataset/data_clean ~/Desktop/dataset/input.txt
+	make clean_objs
+	
 clean:
 	rm -f programa-principal programa-testes
 	make clean_objs
