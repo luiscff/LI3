@@ -90,12 +90,17 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
 
         char *user_name = strdup(get_name(user));
         remove_accents(user_name);
-        char *letter = malloc(2 * sizeof(char));
+        char *letter = malloc(2 * sizeof(wchar_t));
+        char *user_name_no_accents = strdup(user_name);
 
-        letter[0] = user_name[0];
+        remove_accents(user_name_no_accents);
+        letter[0] = user_name_no_accents[0];
         letter[1] = '\0';
 
         insert_or_update_dictionary(stats, strdup(letter), user);
+        printf("LETTER : %s\n",letter);
+        
+
 
         // adiciona o user ao catálogo
         insert_user(usersCatalog, user, get_id(user));
@@ -103,6 +108,7 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
         // frees
         free(user_name);
         free(letter);
+        free(user_name_no_accents);
     } else {
         writeToErrorFileUser(line, "Resultados/users_errors.csv");
     }

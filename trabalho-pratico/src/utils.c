@@ -214,6 +214,7 @@ void convert_to_lower_case(char* str) {
     free(wstr);
 }
 
+
 void remove_accents(char* str) {
     setlocale(LC_ALL, "");                // set the locale to the user's default locale
     size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
@@ -223,7 +224,7 @@ void remove_accents(char* str) {
         printf("Invalid multibyte string.\n");
         return;
     }
-    
+
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 
@@ -233,6 +234,7 @@ void remove_accents(char* str) {
             case L'á':
             case L'à':
             case L'â':
+            case L'ä':
                 wstr[i] = L'a';
                 break;
             case L'é':
@@ -248,6 +250,7 @@ void remove_accents(char* str) {
             case L'ó':
             case L'ò':
             case L'ô':
+            case L'ö':
                 wstr[i] = L'o';
                 break;
             case L'ú':
@@ -258,12 +261,37 @@ void remove_accents(char* str) {
             case L'ç':
                 wstr[i] = L'c';
                 break;
+            case L'Â':
+            case L'Á':
+            case L'Ä':
+                wstr[i] = L'A';
+                break;
+            case L'Ê':
+            case L'É':
+                wstr[i] = L'E';
+                break;
+            case L'Í':
+            case L'Î':
+                wstr[i] = L'I';
+                break;
+            case L'Ô':
+            case L'Ö':
+                wstr[i] = L'O';
+                break;
+            case L'Û':
+                wstr[i] = L'U';
+                break;
+            case L'Ç':
+                wstr[i] = L'C';
+                break;
         }
     }
 
     wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
     free(wstr);
 }
+
+
 
 void removeAspas(char *str) {
     int len = strlen(str);

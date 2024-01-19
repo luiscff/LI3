@@ -839,8 +839,11 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
                 char* airport_d = strdup(get_destination(flight));
                 insert_or_update_q6(q6_aux, airport_o, curr_pass);
                 insert_or_update_q6(q6_aux, airport_d, curr_pass);
+
             }
+        
         }
+        
     }
 
     GList* q6_aux_list = g_hash_table_get_values(q6_aux);
@@ -896,6 +899,7 @@ char* query7(char* token, STATS* stats, int flag) {
         strcat(output, line);
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
+    
 
     return output;
 }
@@ -983,8 +987,8 @@ char* query9(char* token, STATS* stats, int flag) {
         char* user_status = strdup(get_active_status(curr_user));
         char line[200];
 
-        if ((verificaPrefixo(user_name, prefix) == 1) && strcmp(user_status, "active") == 0) {
-            if (flag == 1) sprintf(line, "%s;%s\n", user_name, user_id);
+        if ((verificaPrefixo(g_strdup(user_name), prefix) == 1) && strcmp(g_strdup(user_status), "active") == 0) {
+            if (flag == 1) sprintf(line, "%s;%s\n", g_strdup(user_name), g_strdup(user_id));
             if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nname: %s\n\n", reg_num, user_name, user_id);
             reg_num++;
             // realloc to increase the size of the output string
@@ -992,6 +996,9 @@ char* query9(char* token, STATS* stats, int flag) {
             // concatena a linha atual à string de output
             strcat(output, line);
         }
+        free(user_name);
+        free(user_id);
+        free(user_status);
     }
 
     if (flag == 2) output[strlen(output) - 1] = '\0';
