@@ -1001,6 +1001,9 @@ char* query9(char* token, STATS* stats, int flag) {
         free(user_status);
     }
 
-    if (flag == 2) output[strlen(output) - 1] = '\0';
+    if (flag == 2 && strlen(output) > 0) {
+        output[strlen(output) - 1] = '\0';  // Avoid buffer overflow
+    }
+    free(key);
     return output;
 }

@@ -171,41 +171,44 @@ GList *get_hotel_reservations_list(HOTEL* hotel) {
 //Dictiniorary
 
 
-DICTIONARY* create_page(const char* letter, USER* user){
+DICTIONARY* create_page(const char* letter, USER* user) {
     DICTIONARY* dictionary = malloc(sizeof(DICTIONARY));
-    if(dictionary){
-        dictionary->letter =strdup(letter);
-        dictionary->users=NULL;
-        dictionary->users = g_list_append(dictionary->users,user);
+    if (dictionary) {
+        dictionary->letter = (letter != NULL) ? strdup(letter) : NULL;
+        dictionary->users = (user != NULL) ? g_list_append(NULL, user) : NULL;
     }
     return dictionary;
 }
 
-void insert_page(STATS *catalog, char* letter,DICTIONARY *dictionary) {
-    g_hash_table_insert(catalog->dictionary_hash , letter,dictionary);
+void insert_page(STATS* catalog, char* letter, DICTIONARY* dictionary) {
+    if (dictionary != NULL && letter != NULL) {
+        g_hash_table_insert(catalog->dictionary_hash, strdup(letter), dictionary);
+    }
 }
 
-
-
-GHashTable *get_dictionary_hash(STATS *catalog) {
-    return catalog->dictionary_hash;
+GHashTable* get_dictionary_hash(STATS* catalog) {
+    return (catalog != NULL) ? catalog->dictionary_hash : NULL;
 }
 
-GList *get_dictionary_values(const DICTIONARY* dictionary) {
-    return dictionary->users;
+GList* get_dictionary_values(const DICTIONARY* dictionary) {
+    return (dictionary != NULL) ? dictionary->users : NULL;
 }
 
-void insert_or_update_dictionary(STATS* catalog, char* letter, USER* user){
-    DICTIONARY* curr = g_hash_table_lookup(catalog->dictionary_hash,letter);
+void insert_or_update_dictionary(STATS* catalog, char* letter, USER* user) {
+    if (catalog == NULL || letter == NULL || user == NULL) {
+        // Handle invalid input parameters
+        return;
+    }
+
+    DICTIONARY* curr = g_hash_table_lookup(catalog->dictionary_hash, letter);
+
     if (curr == NULL) {
-                        DICTIONARY* new_page= create_page(letter,user);
-                        insert_page(catalog,letter,new_page);
-
+        DICTIONARY* new_page = create_page(letter, user);
+        insert_page(catalog, letter, new_page);
+    } else {
+        curr->users = g_list_append(curr->users, user);
+        printf("UPDATED\n");
     }
-    else {
-        curr->users = g_list_append(curr->users,user);
-    }
-
 }
 
         

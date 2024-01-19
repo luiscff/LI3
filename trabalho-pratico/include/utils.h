@@ -18,7 +18,7 @@ int calc_idade(char* birth_date);
 int verificaPrefixo(const char* string, const char* prefixo);
 
 void convert_to_lower_case(char* str);
-void remove_accents(char* str);
+char* remove_accents(const char* str);
 void removeAspas(char *str);
 
 

@@ -91,13 +91,14 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
         char *user_name = strdup(get_name(user));
         remove_accents(user_name);
         char *letter = malloc(2 * sizeof(wchar_t));
-        char *user_name_no_accents = strdup(user_name);
+        char *user_name_no_accents = remove_accents(strdup(user_name));
 
-        remove_accents(user_name_no_accents);
+        
         letter[0] = user_name_no_accents[0];
         letter[1] = '\0';
 
         insert_or_update_dictionary(stats, strdup(letter), user);
+        printf("NAME : %s\n",user_name_no_accents);
         printf("LETTER : %s\n",letter);
         
 

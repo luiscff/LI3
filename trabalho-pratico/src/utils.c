@@ -215,81 +215,88 @@ void convert_to_lower_case(char* str) {
 }
 
 
-void remove_accents(char* str) {
-    setlocale(LC_ALL, "");                // set the locale to the user's default locale
-    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
 
-    // Check if str is a valid multibyte string
+
+char* remove_accents(const char* str) {
+    setlocale(LC_ALL, "");  // set the locale to the user's default locale
+
+    size_t len = mbstowcs(NULL, str, 0); // get the number of wide characters
     if (len == (size_t)-1) {
         printf("Invalid multibyte string.\n");
-        return;
+        return NULL;  // Return NULL to indicate an error
     }
 
     wchar_t* wstr = malloc((len + 1) * sizeof(wchar_t));
+    if (wstr == NULL) {
+        perror("Memory allocation failed");
+        return NULL;  // Return NULL to indicate an error
+    }
+    printf("STRING USADA: %s\n",str);
+
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 
     for (size_t i = 0; i < len; i++) {
         switch (wstr[i]) {
-            case L'ã':
-            case L'á':
-            case L'à':
-            case L'â':
-            case L'ä':
+            case L'ã': case L'á': case L'à': case L'â': case L'ä':
                 wstr[i] = L'a';
                 break;
-            case L'é':
-            case L'è':
-            case L'ê':
+            case L'é': case L'è': case L'ê':
                 wstr[i] = L'e';
                 break;
-            case L'í':
-            case L'ì':
-            case L'î':
+            case L'í': case L'ì': case L'î':
                 wstr[i] = L'i';
                 break;
-            case L'ó':
-            case L'ò':
-            case L'ô':
-            case L'ö':
+            case L'ó': case L'ò': case L'ô': case L'ö':
                 wstr[i] = L'o';
                 break;
-            case L'ú':
-            case L'ù':
-            case L'û':
+            case L'ú': case L'ù': case L'û':
                 wstr[i] = L'u';
                 break;
             case L'ç':
                 wstr[i] = L'c';
                 break;
-            case L'Â':
-            case L'Á':
-            case L'Ä':
+            case L'Â': case L'Á': case L'À': case L'Ä':
                 wstr[i] = L'A';
                 break;
-            case L'Ê':
-            case L'É':
+            case L'Ê': case L'É': case L'È':
                 wstr[i] = L'E';
                 break;
-            case L'Í':
-            case L'Î':
+            case L'Í': case L'Ì': case L'Î':
                 wstr[i] = L'I';
                 break;
-            case L'Ô':
-            case L'Ö':
+            case L'Ô': case L'Ö': case L'Ó': case L'Ò':
                 wstr[i] = L'O';
                 break;
-            case L'Û':
+            case L'Û': case L'Ú': case L'Ù':
                 wstr[i] = L'U';
                 break;
             case L'Ç':
                 wstr[i] = L'C';
                 break;
+            default:
+                break;
         }
     }
 
-    wcstombs(str, wstr, len + 1);  // convert the wide string back to a multibyte string
+    len = wcstombs(NULL, wstr, 0);  // calculate the length of the resulting multibyte string
+    if (len == (size_t)-1) {
+        printf("Error converting wide string to multibyte string.\n");
+        free(wstr);
+        return NULL;  // Return NULL to indicate an error
+    }
+
+    char* res = malloc(len + 1);  // allocate memory for the resulting multibyte string
+    if (res == NULL) {
+        perror("Memory allocation failed");
+        free(wstr);
+        return NULL;  // Return NULL to indicate an error
+    }
+
+    wcstombs(res, wstr, len + 1);  // convert the wide string back to a multibyte string
     free(wstr);
+    return res;
 }
+
 
 
 
