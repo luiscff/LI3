@@ -90,10 +90,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "9") == 0) {
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
-            char *tokenF = malloc(strlen(nextToken) + (nextToken2 ? strlen(nextToken2) : 0) + 2);  // +2 for the space and null terminator
-            if (tokenF == NULL) {
-                // handle error
-            }
+            char *tokenF = malloc(strlen(nextToken) + (nextToken2 ? strlen(nextToken2) : 0) + 2);  // +2 (espaço e '\0')
             strcpy(tokenF, nextToken);
             if (nextToken2 != NULL) {
                 strcat(tokenF, " ");

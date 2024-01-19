@@ -95,7 +95,7 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
         letter[0] = user_name[0];
         letter[1] = '\0';
 
-        insert_or_update_dictionary(stats, letter, user);
+        insert_or_update_dictionary(stats, strdup(letter), user);
 
         // adiciona o user ao catálogo
         insert_user(usersCatalog, user, get_id(user));
