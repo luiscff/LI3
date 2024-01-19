@@ -101,10 +101,10 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                 removeAspas(tokenF);
             }
             printf("Executando query 9 com token: %s\n", tokenF);
-            // char *result = query9(tokenF, stats, 1);
-            // create_result_file("Resultados", lineNumber, result);
-            // free(result);
-            // free (tokenF);
+            char *result = query9(tokenF, stats, 1);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
+            free (tokenF);
 
         } else if (strcmp(token, "10") == 0) {
             // ignora
@@ -183,10 +183,10 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                 removeAspas(tokenF);
             }
             printf("Executando query 9F com token: %s\n", tokenF);
-            // char *result = query9(tokenF, stats, 2);
-            // create_result_file("Resultados", lineNumber, result);
-            // free(result);
-            // free (tokenF);
+            char *result = query9(tokenF, stats, 2);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
+            free (tokenF);
         } else if (strcmp(token, "10F") == 0) {
             // ignora
         }
