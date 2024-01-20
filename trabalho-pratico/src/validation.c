@@ -19,17 +19,18 @@
 //=========== VALIDATION IN-PARSER =============
 // geral
 bool isValidNotNull(const char *str) {
-    return (str != NULL);
+    return (str != NULL && strcmp(str, "\0") != 0);
 }
 // verifica se uma string é apenas composta por digitos
 bool isdigitAll (const char *string)
-{
+{   if (strlen(string)==0) return isValidNotNull(string);
     for (int i = 0; string[i]!= '\0'; i++)
     {
         if (!isdigit(string[i]))
         {
             return false;
         }
+
     }
     return true;
 }
@@ -141,7 +142,7 @@ bool isValidOriginAndDestination(const char *str) {
 
 // reservations
 bool isValidHotelStars(const char *str) {
-    double stars = atof(str);
+    double stars = atoi(str);
     return (stars >= 1 && stars <= 5 && (stars-(int)stars) == 0);
 }
 
@@ -165,9 +166,8 @@ bool isValidPricePerNight(const char *str) {
     return (price > 0);
 }
 
-bool isValidInclude_Breakfast(const char *str) {  // strcasecmp is case insensitive
-    if (strlen(str)==0) str ="";
-    return (strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
+bool isValidInclude_Breakfast(const char *str) {
+    return (strlen(str) == 0 || strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
 }
 
 
@@ -279,7 +279,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 4:  // hotel_name
             return isValidNotNull(value);
         case 5:  // hotel_stars
-            return isValidHotelStars(value);
+            return (isValidHotelStars(value)&& isdigitAll(value));
         case 6:  // city_tax
             return isValidCityTax(value);
         case 7:  // address
@@ -289,7 +289,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 9:  // end_date
             return isValidDate(value);
         case 10:  // price_per_night
-            return true;
+            return isdigitAll(value);
         case 11:  // include_breakfast
             return isValidInclude_Breakfast(value);
         case 12:  // room_details

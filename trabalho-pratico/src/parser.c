@@ -287,6 +287,30 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
     free(lineCopy);
 }
 
+
+char *custom_strtok(char *str, const char *delim) {
+    static char *lastToken = NULL;
+
+    if (str != NULL) {
+        lastToken = str;
+    }
+
+    if (lastToken == NULL || *lastToken == '\0') {
+        return NULL;
+    }
+
+    char *tokenStart = lastToken;
+    while (*lastToken != '\0' && strchr(delim, *lastToken) == NULL) {
+        lastToken++;
+    }
+
+    if (*lastToken != '\0') {
+        *lastToken = '\0';
+        lastToken++;
+    }
+
+    return tokenStart;
+}
 // função responsável por fazer o parse de cada linha das reservations, separando em tokens e colocando em cada campo o token o valor respetivo, ou, em caso de falha, vai escrever no ficheiro de erros dos reservations
 void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalog, STATS *stats) {
     RESERVATIONS_CATALOG *reservationsCatalog = (RESERVATIONS_CATALOG *)catalog;
@@ -298,8 +322,8 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
     // Cria uma nova reserva
     RESERVATION *reservation = create_reservation();
 
-    token = strtok(lineCopy, ";");
-    while (token != NULL) {
+    token = custom_strtok(lineCopy, ";");
+    while (fieldIndex<15) {
         if (isValidField_reservation(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:
@@ -351,7 +375,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
             free_reservation(reservation);  // Adicione esta linha
             return;
         }
-        token = strtok(NULL, ";");
+        token = custom_strtok(NULL, ";");
         fieldIndex++;
     }
 

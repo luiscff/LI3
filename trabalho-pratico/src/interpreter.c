@@ -88,6 +88,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             // create_result_file("Resultados", lineNumber, result);
             // free(result);
         } else if (strcmp(token, "9") == 0) {
+            /*
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
             char *tokenF = malloc(strlen(nextToken) + (nextToken2 ? strlen(nextToken2) : 0) + 2);  // +2 (espaço e '\0')
@@ -102,7 +103,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             create_result_file("Resultados", lineNumber, result);
             free(result);
             free (tokenF);
-
+*/
         } else if (strcmp(token, "10") == 0) {
             // ignora
         } else if (strcmp(token, "1F") == 0) {  // execução da query1 com a segunda formatação
