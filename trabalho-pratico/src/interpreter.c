@@ -88,7 +88,7 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
             // create_result_file("Resultados", lineNumber, result);
             // free(result);
         } else if (strcmp(token, "9") == 0) {
-            /*
+            
             char *nextToken = strtok(NULL, " ");
             char *nextToken2 = strtok(NULL, " ");
             char *tokenF = malloc(strlen(nextToken) + (nextToken2 ? strlen(nextToken2) : 0) + 2);  // +2 (espaço e '\0')
@@ -99,11 +99,11 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                 removeAspas(tokenF);
             }
             printf("Executando query 9 com token: %s\n", tokenF);
-            char *result = query9(tokenF, stats, 1);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query9(tokenF, stats, 1);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
             free (tokenF);
-*/
+
         } else if (strcmp(token, "10") == 0) {
             // ignora
         } else if (strcmp(token, "1F") == 0) {  // execução da query1 com a segunda formatação
@@ -181,9 +181,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
                 removeAspas(tokenF);
             }
             printf("Executando query 9F com token: %s\n", tokenF);
-            char *result = query9(tokenF, stats, 2);
-            create_result_file("Resultados", lineNumber, result);
-            free(result);
+            //char *result = query9(tokenF, stats, 2);
+            //create_result_file("Resultados", lineNumber, result);
+            //free(result);
             free (tokenF);
         } else if (strcmp(token, "10F") == 0) {
             // ignora
