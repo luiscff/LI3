@@ -12,6 +12,22 @@
 #include "batch.h"
 #include "interactive.h"
 
+
+
+void end_program(USERS_CATALOG *users_catalog,FLIGHTS_CATALOG *flights_catalog,RESERVATIONS_CATALOG *reservations_catalog,PASSENGERS_CATALOG *passengers_catalog,STATS* stats){
+    printf("Freeing memory...\n");
+    printf("Users\n");
+    free_users_catalog(users_catalog);
+    printf("Flights\n");
+    free_flights_catalog(flights_catalog);
+    printf("Reservations\n");
+    free_reservations_catalog(reservations_catalog);
+    printf("Passengers\n");
+    free_passengers_catalog(passengers_catalog);
+    printf("Stats\n");
+    free_stats(stats);
+}
+
 int main(int argc, char const *argv[]) {
     clock_t start = clock();
 
@@ -44,13 +60,12 @@ int main(int argc, char const *argv[]) {
 
         interactiveMode(folderPathDataset, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
         
-        return 0;
     } else if (argc == 3) {
         printf("Inicializando o modo Batch...\n");
 
         batchMode(argv[1], argv[2], users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
 
-        return 0;
+
     } else {
         printf("Command for Batch Mode: %s <DatasetFolderPath> <InputFilePath>\n", argv[0]);
         printf("Command for Interactive Mode: %s\n", argv[0]);
@@ -58,18 +73,7 @@ int main(int argc, char const *argv[]) {
     }
 
     // Libera a memória no final do programa
-    printf("Freeing memory...\n");
-    printf("Users\n");
-    free_users_catalog(users_catalog);
-    printf("Flights\n");
-    free_flights_catalog(flights_catalog);
-    printf("Reservations\n");
-    free_reservations_catalog(reservations_catalog);
-    printf("Passengers\n");
-    free_passengers_catalog(passengers_catalog);
-    printf("Stats\n");
-    free_stats(stats);
-
+    end_program(users_catalog,flights_catalog,reservations_catalog,passengers_catalog,stats);
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time spent: %f seconds\n", time_spent);

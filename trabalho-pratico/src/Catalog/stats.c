@@ -103,7 +103,7 @@ void free_stats(STATS *catalog) {
 HOTEL* create_hotel(char* hotel_id, int rating,RESERVATION* reservation){
     HOTEL* hotel = calloc(1, sizeof(HOTEL)); 
     if(hotel){
-        hotel->hotel_id = hotel_id;
+        hotel->hotel_id = strdup(hotel_id);
         hotel->sum_rating = rating;
         hotel->num_reservations = 1;
         hotel->reservations = NULL;

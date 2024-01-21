@@ -89,7 +89,7 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
         // adiciona conjunto nome e id as stats
 
         char *user_name = strdup(get_name(user));
-        remove_accents(user_name);
+        //remove_accents(user_name);
         //char *letter = malloc(2 * sizeof(wchar_t));
         //char *user_name_no_accents = remove_accents(strdup(user_name));
 
@@ -107,7 +107,7 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
         insert_user(usersCatalog, user, get_id(user));
 
         // frees
-        //free(user_name);
+        free(user_name);
         //free(letter);
         //free(user_name_no_accents);
     } else {
@@ -258,6 +258,8 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
         USER *user = get_user_by_id(usersCatalog, user_id);
         if (user == NULL) {
             writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
+            free(user_id);
+            free_passenger(passenger);
             free(lineCopy);
             return;
         }
@@ -267,6 +269,8 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
 
         if (flight == NULL) {
             writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
+            free(user_id);
+            free_passenger(passenger);
             free(lineCopy);
             return;
         }
@@ -281,11 +285,12 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
 
         // adiciona o passageiro ao catálogo
         insert_passenger(passengersCatalog, passenger);
+
     } else {
         writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
     }
 
-    free(lineCopy);
+    free(lineCopy); // Release the memory allocated by strdup
 }
 
 
