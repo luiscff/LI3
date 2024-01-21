@@ -231,7 +231,6 @@ char* remove_accents(const char* str) {
         perror("Memory allocation failed");
         return NULL;  // Return NULL to indicate an error
     }
-    printf("STRING USADA: %s\n",str);
 
     mbstowcs(wstr, str, len + 1);  // convert the string to a wide string
 

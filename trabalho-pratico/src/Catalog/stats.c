@@ -42,9 +42,11 @@ typedef struct dictionary{
     GList* users;
 }DICTIONARY;
 void free_hotel(HOTEL *hotel) {
-    if (hotel->hotel_id) free(hotel->hotel_id);
-    if (hotel->reservations) g_list_free(hotel->reservations);
-    if (hotel) free(hotel);
+    if (hotel) {
+        if (hotel->hotel_id) free(hotel->hotel_id);
+        if (hotel->reservations) g_list_free(hotel->reservations);
+        free(hotel);
+    }
 }
 
 void free_airportS(AIRPORTS *airportS) {
@@ -61,7 +63,7 @@ void free_passangers(FLIGHT_PASS *flight_pass) {
 void free_dictionary(DICTIONARY* dictionary) {
     if (dictionary) {
         if (dictionary->letter) free(dictionary->letter);
-        if (dictionary->users) free(dictionary->users);
+        if (dictionary->users) g_list_free(dictionary->users);
         free(dictionary);
     }
 }
@@ -69,7 +71,7 @@ void free_dictionary(DICTIONARY* dictionary) {
 
 
 STATS* create_stats_catalog() {
-    STATS *new_catalog = malloc(sizeof(STATS));
+    STATS *new_catalog = calloc(1, sizeof(STATS)); 
 
     new_catalog->hotel_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_hotel);
@@ -87,17 +89,19 @@ STATS* create_stats_catalog() {
 
 
 void free_stats(STATS *catalog) {
-    g_hash_table_destroy(catalog->hotel_hash);
-    g_hash_table_destroy(catalog->dictionary_hash);
-    g_hash_table_destroy(catalog->flight_passangers);
-    g_hash_table_destroy(catalog->airports_hash);
-    free(catalog);
+    if (catalog) {
+        g_hash_table_destroy(catalog->hotel_hash);
+        g_hash_table_destroy(catalog->dictionary_hash);
+        g_hash_table_destroy(catalog->flight_passangers);
+        g_hash_table_destroy(catalog->airports_hash);
+        free(catalog);
+    }
 }
 
 ///HOTEL
 
 HOTEL* create_hotel(char* hotel_id, int rating,RESERVATION* reservation){
-    HOTEL* hotel = malloc(sizeof(HOTEL));
+    HOTEL* hotel = calloc(1, sizeof(HOTEL)); 
     if(hotel){
         hotel->hotel_id = hotel_id;
         hotel->sum_rating = rating;
@@ -172,7 +176,7 @@ GList *get_hotel_reservations_list(HOTEL* hotel) {
 
 
 DICTIONARY* create_page(const char* letter, USER* user) {
-    DICTIONARY* dictionary = malloc(sizeof(DICTIONARY));
+    DICTIONARY* dictionary = calloc(1, sizeof(DICTIONARY)); ;
     if (dictionary) {
         dictionary->letter = (letter != NULL) ? strdup(letter) : NULL;
         dictionary->users = (user != NULL) ? g_list_append(NULL, user) : NULL;
@@ -233,7 +237,7 @@ GList* get_flights_list(AIRPORTS* airportS){
 }
 
 AIRPORTS* create_airportS(const char* origin, int delay,FLIGHT* flight){
-    AIRPORTS* airportS = malloc(sizeof(AIRPORTS));
+    AIRPORTS* airportS = calloc(1, sizeof(AIRPORTS)); 
     if(airportS){
         airportS->origin = strdup(origin);
         airportS->delays = NULL;
@@ -327,7 +331,7 @@ int get_mediana(const AIRPORTS* airportS){
 ///PASSANGERS : struct que vai guardar todos os ids dos passageiros de um voo
 
 FLIGHT_PASS* create_flight_pass(const char* flight_id){
-    FLIGHT_PASS* flight_pass = malloc(sizeof(FLIGHT_PASS));
+    FLIGHT_PASS* flight_pass = calloc(1, sizeof(FLIGHT_PASS)); 
     if(flight_pass){
         flight_pass->flight_id = strdup(flight_id);
         flight_pass->passageiros = 1;
@@ -341,8 +345,7 @@ void insert_or_update_pass(STATS* stats,const char* flight_id){
     if (curr == NULL) {
         create_flight_pass(flight_id);
         g_hash_table_insert(stats->flight_passangers, strdup(flight_id), curr);
-        printf("\nCREATED\n");
     }
     else {curr->passageiros++;
-            printf("\nUPDATED\n");}
+}
 }

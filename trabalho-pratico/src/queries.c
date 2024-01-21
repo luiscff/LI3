@@ -36,33 +36,14 @@ int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
     char* date1 = strdup(aux1->date);
     char* date2 = strdup(aux2->date);
 
-    int ano1, mes1, dia1;
-    sscanf(date1, "%d/%d/%d", &ano1, &mes1, &dia1);
+    int result = strcmp(date2, date1);
 
-    int ano2, mes2, dia2;
-    sscanf(date2, "%d/%d/%d", &ano2, &mes2, &dia2);
+    free(date1);
+    free(date2);
 
-    // compara anos
-    if (ano1 > ano2) {
-        return -1;
-    } else if (ano1 < ano2) {
-        return 1;
+    if (result != 0) {
+        return result;
     }
-
-    // compara meses
-    if (mes1 > mes2) {
-        return -1;
-    } else if (mes1 < mes2) {
-        return 1;
-    }
-
-    // compara dias
-    if (dia1 > dia2) {
-        return -1;
-    } else if (dia1 < dia2) {
-        return 1;
-    }
-
     // quando as datas são iguais
     // o identificador da reserva é o critério de desempate (de forma crescente).
     char* id1 = strdup(aux1->id);
@@ -70,119 +51,69 @@ int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
 
     // compara os ids (strings) como num dicionario
     if (strcmp(id1, id2) < 0) {
-        return -1;
+        result = -1;
     } else if (strcmp(id1, id2) > 0) {
-        return 1;
+        result = 1;
     }
+    free(id1);
+    free(id2);
 
-    printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
-    return 0;
+    if (result == 0)printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
+    return result;
 }
 
 int sort_function_q2(gconstpointer a, gconstpointer b) {
     const FLIGHT* flight1 = a;
     const FLIGHT* flight2 = b;
 
-    // ordenadas por data de início (da mais recente para a mais antiga).
-    char* date1 = strdup(extractDate(get_schedule_departure_date(flight1)));
-    char* date2 = strdup(extractDate(get_schedule_departure_date(flight2)));
+    char* date1 = extractDate(get_schedule_departure_date(flight1));
+    char* date2 = extractDate(get_schedule_departure_date(flight2));
 
-    int ano1, mes1, dia1;
-    sscanf(date1, "%d/%d/%d", &ano1, &mes1, &dia1);
+    int result = strcmp(date2, date1);
 
-    int ano2, mes2, dia2;
-    sscanf(date2, "%d/%d/%d", &ano2, &mes2, &dia2);
+    free(date1);
+    free(date2);
 
-    // compara anos
-    if (ano1 > ano2) {
-        return -1;
-    } else if (ano1 < ano2) {
-        return 1;
+    if (result != 0) {
+        return result;
     }
 
-    // compara meses
-    if (mes1 > mes2) {
-        return -1;
-    } else if (mes1 < mes2) {
-        return 1;
-    }
-
-    // compara dias
-    if (dia1 > dia2) {
-        return -1;
-    } else if (dia1 < dia2) {
-        return 1;
-    }
-
-    // quando as datas são iguais
-    // o identificador da reserva é o critério de desempate (de forma crescente).
-    int id1 = get_flight_id(flight1);
-    int id2 = get_flight_id(flight2);
-
-    // compara os ids (strings) como num dicionario
-    if (id1 < id2) {
-        return -1;
-    } else if (id1 > id2) {
-        return 1;
-    }
-
-    printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
-    return 0;
+    // If dates are equal, compare flight IDs
+    return get_flight_id(flight1) - get_flight_id(flight2);
 }
+
 
 // aux 4
 int sort_function_q4(gconstpointer a, gconstpointer b) {
     const RESERVATION* res1 = a;
     const RESERVATION* res2 = b;
 
-    // ordenadas por data de início (da mais recente para a mais antiga).
     char* date1 = strdup(get_begin_date(res1));
     char* date2 = strdup(get_begin_date(res2));
 
-    int ano1, mes1, dia1;
-    sscanf(date1, "%d/%d/%d", &ano1, &mes1, &dia1);
+    int result = strcmp(date2, date1);
 
-    int ano2, mes2, dia2;
-    sscanf(date2, "%d/%d/%d", &ano2, &mes2, &dia2);
+    free(date1);
+    free(date2);
 
-    // compara anos
-    if (ano1 > ano2) {
-        return -1;
-    } else if (ano1 < ano2) {
-        return 1;
+    if (result != 0) {
+        return result;
     }
 
-    // compara meses
-    if (mes1 > mes2) {
-        return -1;
-    } else if (mes1 < mes2) {
-        return 1;
-    }
-
-    // compara dias
-    if (dia1 > dia2) {
-        return -1;
-    } else if (dia1 < dia2) {
-        return 1;
-    }
-
-    // quando as datas são iguais
-    // o identificador da reserva é o critério de desempate (de forma crescente).
-    char* id1 = strdup(get_reservation_id(res1));
-    char* id2 = strdup(get_reservation_id(res2));
-
-    // compara os ids (strings) como num dicionario
-    if (strcmp(id1, id2) < 0) {
-        return -1;
-    } else if (strcmp(id1, id2) > 0) {
-        return 1;
-    }
-
-    printf("ERRO no sort da query4: as reservas têm a mesma data e o mesmo id\n");
-    return 0;
+    // If dates are equal, compare reservation IDs
+    return strcmp(get_reservation_id(res1), get_reservation_id(res2));
 }
 
 // aux q5
+
+void free_strings(char* date1, char* date2, char* airport1, char* airport2) {
+    free(date1);
+    free(date2);
+    free(airport1);
+    free(airport2);
+}
+
+
 int sort_function_q5(gconstpointer a, gconstpointer b) {
     const FLIGHT* flight1 = a;
     const FLIGHT* flight2 = b;
@@ -190,65 +121,17 @@ int sort_function_q5(gconstpointer a, gconstpointer b) {
     // ordenadas por data de início (da mais recente para a mais antiga).
     char* date1 = strdup(get_schedule_departure_date(flight1));
     char* date2 = strdup(get_schedule_departure_date(flight2));
-    char* airport1 = strdup(get_origin(flight1));
-    char* airport2 = strdup(get_origin(flight2));
+    int result = strcmp(date2, date1);
 
-    int year1, month1, day1, hour1, min1, sec1;
-    sscanf(date1, "%d/%d/%d %d:%d:%d", &year1, &month1, &day1, &hour1, &min1, &sec1);
+    free(date1);
+    free(date2);
 
-    int year2, month2, day2, hour2, min2, sec2;
-    sscanf(date2, "%d/%d/%d %d:%d:%d", &year2, &month2, &day2, &hour2, &min2, &sec2);
-
-    // Comparando anos
-    if (year1 > year2) {
-        return -1;
-    } else if (year1 < year2) {
-        return 1;
+    if (result != 0) {
+        return result;
     }
 
-    // Comparando meses
-    if (month1 > month2) {
-        return -1;
-    } else if (month1 < month2) {
-        return 1;
-    }
-
-    // Comparando dias
-    if (day1 > day2) {
-        return -1;
-    } else if (day1 < day2) {
-        return 1;
-    }
-
-    // Comparando horas
-    if (hour1 > hour2) {
-        return -1;
-    } else if (hour1 < hour2) {
-        return 1;
-    }
-
-    // Comparando minutos
-    if (min1 > min2) {
-        return -1;
-    } else if (min1 < min2) {
-        return 1;
-    }
-
-    // Comparando segundos
-    if (sec1 > sec2) {
-        return -1;
-    } else if (sec1 < sec2) {
-        return 1;
-    }
-
-    // compara os ids (strings) como num dicionario
-    if (strcmp(airport1, airport2) < 0) {
-        return -1;
-    } else if (strcmp(airport1, airport2) > 0) {
-        return 1;
-    }
-    printf("ERRO no sort da query4: as reservas têm a mesma data e o mesmo id\n");
-    return 0;
+    // If dates are equal, compare reservation IDs
+    return get_flight_id(flight1)- get_flight_id(flight2);
 }
 
 // aux q7
@@ -399,6 +282,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         if (flag == 1) sprintf(result, "%s;%s;%d;%s;%s;%s;%d;%.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
         if (flag == 2) sprintf(result, "--- 1 ---\nhotel_id: %s\nhotel_name: %s\nhotel_stars: %d\nbegin_date: %s\nend_date: %s\nincludes_breakfast: %s\nnights: %d\ntotal_price: %.3f\n", hotel_id, hotel_name, hotel_stars, begin_date, end_date, includes_breakfast, num_nights, total_price);
         // frees
+        free(aux);
         free(hotel_id);
         free(hotel_name);
         free(begin_date);
@@ -437,6 +321,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         if (flag == 1) sprintf(result, "%s;%s;%s;%s;%s;%s;%d;%d\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
         if (flag == 2) sprintf(result, "--- 1 ---\nairline: %s\nplane_model: %s\norigin: %s\ndestination: %s\nschedule_departure_date: %s\nschedule_arrival_date: %s\npassengers: %d\ndelay: %d\n", airline, plain_model, origin, destination, schedule_departure, schedule_arrival, num_passengers, delay);
         // frees
+        free(aux);
         free(airline);
         free(plain_model);
         free(origin);
@@ -483,6 +368,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         if (flag == 2) sprintf(result, "--- 1 ---\nname: %s\nsex: %s\nage: %d\ncountry_code: %s\npassport: %s\nnumber_of_flights: %d\nnumber_of_reservations: %d\ntotal_spent: %.3f\n", name, gender, age, country_code, passport, num_flight, num_reservations, total_gasto);
 
         // frees
+        free(aux);
         free(name);
         free(gender);
         free(birth_date);
@@ -491,6 +377,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         return result;
     }
+    free(aux);
     printf("Invalid ID on query1\n");
     return NULL;
 }
@@ -508,14 +395,13 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
     }
 
     char* output = malloc(1);
-    output[0] = '\0';  // Começa com uma string vazia
+    output[0] = '\0';  // Start with an empty string
 
     GList* flights = get_flights(user);
     GList* reservations = get_reservations(user);
 
     GList* aux_list = NULL;
-    // percorre a lista de flights e adiciona novas entidades à aux_list
-    if (flights == NULL) printf("\nABA\n");
+    // Process the list of flights and add new entities to aux_list
     while (flights != NULL) {
         char* flight_id = flights->data;
         FLIGHT* flight = get_flight_by_id(fcatalog, atoi(flight_id));
@@ -524,7 +410,6 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         char* type = strdup("flight");
 
         AUX_Q2* aux = malloc(sizeof(AUX_Q2));
-        // set_aux_id(aux, id);
         aux->id = id;
         aux->date = date;
         aux->type = type;
@@ -533,7 +418,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
 
         flights = flights->next;
     }
-    // percorre a lista de reservations e adiciona novas entidades à aux_list
+    // Process the list of reservations and add new entities to aux_list
     while (reservations != NULL) {
         char* reservation_id = reservations->data;
         RESERVATION* reservation = get_reservation_by_id(rcatalog, reservation_id);
@@ -554,23 +439,35 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
     GList* sorted_list = g_list_sort(aux_list, sort_function_q2_nocat);
     int tamanho = g_list_length(sorted_list);
     int reg_num = 1;
-    // escreve no output as linhas correspondentes as reservations
+    // Write to the output the lines corresponding to reservations
     for (size_t i = 0; i < tamanho; i++) {
-        char line[200];  // linha atual
+        char line[200];  // Current line
         AUX_Q2* curr_aux = g_list_nth_data(sorted_list, i);
 
         if (flag == 1) sprintf(line, "%s;%s;%s\n", curr_aux->id, curr_aux->date, curr_aux->type);
         if (flag == 2) sprintf(line, "--- %d ---\nid: %s\ndate: %s\ntype: %s\n\n", reg_num, curr_aux->id, curr_aux->date, curr_aux->type);
         reg_num++;
-        // realloc para aumentar o tamanho da string output
+        // Reallocate to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
-        // concatena a linha atual à string de output
+        // Concatenate the current line to the output string
         strcat(output, line);
+
+        // Free memory for AUX_Q2 structure
+        free(curr_aux->id);
+        free(curr_aux->date);
+        free(curr_aux->type);
+        free(curr_aux);
     }
 
-    // tira o ultimo \n
-    if (flag == 2) output[strlen(output) - 1] = '\0';
+    // Free memory for the sorted list
+    g_list_free(sorted_list);
 
+    // Remove the last newline character
+    if (flag == 2 && strlen(output) > 0 && output[strlen(output) - 1] == '\n') {
+        output[strlen(output) - 1] = '\0';
+    }
+
+    // Free other resources
     free(active_status);
     return output;
 }
@@ -784,6 +681,12 @@ typedef struct query6 {
     int passageiros;
 } Q6;
 
+void free_q6(void* data) {
+    Q6* q6 = (Q6*)data;
+        if (q6->airport) free(q6->airport);
+        free(q6);
+    }
+
 Q6* create_q6_aux(const char* airport, int passageiros) {
     Q6* curr = malloc(sizeof(Q6));
     curr->airport = strdup(airport);
@@ -820,7 +723,7 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     GList* airportS_list = g_hash_table_get_values(get_airportS_hash(stats));
     int tamanho = g_list_length(airportS_list);
     // printf ("\n1 : %d\n",tamanho);
-    GHashTable* q6_aux = g_hash_table_new_full(g_str_hash, g_str_equal, free, NULL);
+    GHashTable* q6_aux = g_hash_table_new_full(g_str_hash, g_str_equal, free,free_q6);
 
     for (int i = 0; i < tamanho; i++) {
         AIRPORTS* airportS = g_list_nth_data(airportS_list, i);

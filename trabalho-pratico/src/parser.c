@@ -272,11 +272,12 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
         }
 
         char *flight_id_char = fix_flight_id(flight_id);
-        add_flight(user, flight_id_char);
+        add_flight(user, strdup(flight_id_char));
 
         add_passageiro(flight);
 
         free(user_id);
+        free(flight_id_char);
 
         // adiciona o passageiro ao catálogo
         insert_passenger(passengersCatalog, passenger);
