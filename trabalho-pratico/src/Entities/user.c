@@ -210,8 +210,9 @@ void add_num_reservations(USER *user) {
 }
 
 // adiciona um voo à lista de voos do utilizador
-void add_flight(USER *user, const char *flight_id) {
+void add_flight(USER *user, char *flight_id) {
     user->flights = g_list_append(user->flights, strdup(flight_id));
+    free(flight_id);
 }
 
 // remove um voo da lista de voos do utilizador

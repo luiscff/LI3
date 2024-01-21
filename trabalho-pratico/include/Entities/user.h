@@ -53,7 +53,7 @@ void add_reservation(USER *user, const char *reservation_id);
 void remove_reservation(USER *user, const char *reservation_id);
 
 // adiciona um voo à lista de voos do utilizador
-void add_flight(USER *user, const char *flight_id);
+void add_flight(USER *user,char *flight_id);
 
 //remove um voo da lista de voos do utilizador
 void remove_flight(USER *user, const char *flight_id);
