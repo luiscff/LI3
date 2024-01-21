@@ -689,15 +689,16 @@ void free_q6(void* data) {
 
 Q6* create_q6_aux(const char* airport, int passageiros) {
     Q6* curr = malloc(sizeof(Q6));
-    curr->airport = strdup(airport);
+    curr->airport = strdup(airport);  // Duplicate only if necessary
     curr->passageiros = passageiros;
     return curr;
 }
-void insert_or_update_q6(GHashTable* curr, char* airport, int passageiros) {
+
+void insert_or_update_q6(GHashTable* curr, const char* airport, int passageiros) {
     Q6* aux = g_hash_table_lookup(curr, airport);
     if (aux == NULL) {
         Q6* new_aux = create_q6_aux(airport, passageiros);
-        g_hash_table_insert(curr, airport, new_aux);
+        g_hash_table_insert(curr, new_aux->airport, new_aux);
     } else {
         aux->passageiros += passageiros;
     }
@@ -740,10 +741,13 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
                 int curr_pass = get_passageiros(flight);
                 char* airport_o = strdup(get_origin(flight));
                 char* airport_d = strdup(get_destination(flight));
-                insert_or_update_q6(q6_aux, airport_o, curr_pass);
-                insert_or_update_q6(q6_aux, airport_d, curr_pass);
+                insert_or_update_q6(q6_aux, strdup(airport_o), curr_pass);
+                insert_or_update_q6(q6_aux, strdup(airport_d), curr_pass);
+                free(airport_o);
+                free(airport_d);
 
             }
+            free(sch_dep);
         
         }
         
