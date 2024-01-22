@@ -101,11 +101,11 @@ void set_total_seats(FLIGHT *f, int total_seats) {
 
 void set_origin(FLIGHT *f, const char *origin) {
     if (f->origin) free(f->origin);
-    f->origin = strdup(convert_to_upper_case(strdup((origin))));
+    f->origin = convert_to_upper_case(strdup((origin)));
 }
 void set_destination(FLIGHT *f, const char *destination) {
     if (f->destination) free(f->destination);
-    f->destination = strdup(convert_to_upper_case(strdup((destination))));
+    f->destination = convert_to_upper_case(strdup((destination)));
 }
 
 void set_schedule_departure_date(FLIGHT *f, const char *schedule_departure_date) {

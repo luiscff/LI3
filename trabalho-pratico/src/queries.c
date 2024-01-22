@@ -405,8 +405,8 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
     while (flights != NULL) {
         char* flight_id = flights->data;
         FLIGHT* flight = get_flight_by_id(fcatalog, atoi(flight_id));
-        char* id = strdup(fix_flight_id(get_flight_id(flight)));
-        char* date = strdup(extractDate(get_schedule_departure_date(flight)));
+        char* id = fix_flight_id(get_flight_id(flight));
+        char* date = extractDate(get_schedule_departure_date(flight));
         char* type = strdup("flight");
 
         AUX_Q2* aux = malloc(sizeof(AUX_Q2));
@@ -434,6 +434,7 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         aux_list = g_list_append(aux_list, aux);
 
         reservations = reservations->next;
+        
     }
 
     GList* sorted_list = g_list_sort(aux_list, sort_function_q2_nocat);
@@ -505,15 +506,20 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
         for (size_t i = 0; i < tamanho; i++) {
             char line[200];  // linha atual
             FLIGHT* curr_flight = g_list_nth_data(sorted, i);
+            char* flight_id_char = fix_flight_id(get_flight_id(curr_flight));
+            char* formated_date = extractDate(get_schedule_departure_date(curr_flight));
 
-            if (flag == 1) sprintf(line, "%s;%s\n", fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
-            if (flag == 2) sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, fix_flight_id(get_flight_id(curr_flight)), extractDate(get_schedule_departure_date(curr_flight)));
+            if (flag == 1) sprintf(line, "%s;%s\n", flight_id_char, formated_date);
+            if (flag == 2) sprintf(line, "--- %d ---\nid: %s\ndate: %s\n\n", reg_num, flight_id_char, formated_date);
             reg_num++;
 
             // realloc para aumentar o tamanho da string output
             output = realloc(output, strlen(output) + strlen(line) + 1);
             // concatena a linha atual à string de output
             strcat(output, line);
+            free(flight_id_char);
+            free(formated_date);
+            
         }
         // tira o ultimo \n
         if (flag == 2) output[strlen(output) - 1] = '\0';
@@ -627,7 +633,7 @@ char* query4(RESERVATIONS_CATALOG* rcatalog, char* hotel_id, STATS* stats, int f
     }
     // tira os 1 ultimos \n
     if (flag == 2) output[strlen(output) - 1] = '\0';
-
+    g_list_free(sorted);
     return output;
 }
 
@@ -655,15 +661,12 @@ char* query5(char* token, char* dataI, char* dataF, STATS* stats, int flag) {
             reg_num++;
         }
         // realloc to increase the size of the output string
-        char* new_output = realloc(output, strlen(output) + strlen(line) + 2);
-        if (new_output == NULL) {
-            printf("Erro ao realocar memória.\n");
-            free(output);
-            return NULL;
-        }
-        output = new_output;
+        output = realloc(output, strlen(output) + strlen(line) + 1);
+
         strcat(output, line);
+
     }
+    
     if (flag == 2 && strlen(output) > 0) output[strlen(output) - 1] = '\0';
 
     return output;
@@ -687,14 +690,14 @@ void free_q6(void* data) {
         free(q6);
     }
 
-Q6* create_q6_aux(const char* airport, int passageiros) {
+Q6* create_q6_aux(char* airport, int passageiros) {
     Q6* curr = malloc(sizeof(Q6));
-    curr->airport = strdup(airport);  // Duplicate only if necessary
+    curr->airport = airport;  // Duplicate only if necessary
     curr->passageiros = passageiros;
     return curr;
 }
 
-void insert_or_update_q6(GHashTable* curr, const char* airport, int passageiros) {
+void insert_or_update_q6(GHashTable* curr, char* airport, int passageiros) {
     Q6* aux = g_hash_table_lookup(curr, airport);
     if (aux == NULL) {
         Q6* new_aux = create_q6_aux(airport, passageiros);
@@ -741,11 +744,8 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
                 int curr_pass = get_passageiros(flight);
                 char* airport_o = strdup(get_origin(flight));
                 char* airport_d = strdup(get_destination(flight));
-                insert_or_update_q6(q6_aux, strdup(airport_o), curr_pass);
-                insert_or_update_q6(q6_aux, strdup(airport_d), curr_pass);
-                free(airport_o);
-                free(airport_d);
-
+                insert_or_update_q6(q6_aux, airport_o, curr_pass);
+                insert_or_update_q6(q6_aux, airport_d, curr_pass);
             }
             free(sch_dep);
         
@@ -774,8 +774,8 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
         strcat(output, line);
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
-
-    printf("\nTESTE : %d\n", teste);
+    //printf("\nTESTE : %d\n", teste);
+    g_list_free(sorted);
     return output;
 }
 

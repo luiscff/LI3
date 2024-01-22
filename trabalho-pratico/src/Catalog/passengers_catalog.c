@@ -44,6 +44,7 @@ GList *find_users_by_flight(PASSENGERS_CATALOG *catalog, int flight_id2) {
         if (get_flight_id2(passenger) == flight_id2) {
             char *copy = strdup(get_user_id2(passenger));
             users = g_list_prepend(users, copy);
+            free(copy);
         }
     }
     return users;
