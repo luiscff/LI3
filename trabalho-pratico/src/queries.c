@@ -692,7 +692,7 @@ void free_q6(void* data) {
 
 Q6* create_q6_aux(char* airport, int passageiros) {
     Q6* curr = malloc(sizeof(Q6));
-    curr->airport = airport;  // Duplicate only if necessary
+    curr->airport = strdup(airport);  // Duplicate only if necessary
     curr->passageiros = passageiros;
     return curr;
 }
@@ -746,6 +746,8 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
                 char* airport_d = strdup(get_destination(flight));
                 insert_or_update_q6(q6_aux, airport_o, curr_pass);
                 insert_or_update_q6(q6_aux, airport_d, curr_pass);
+                free(airport_o);
+                free(airport_d);
             }
             free(sch_dep);
         
@@ -775,7 +777,8 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
     //printf("\nTESTE : %d\n", teste);
-    g_list_free(sorted);
+    g_list_free_full(sorted,free_q6);
+    //TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
     return output;
 }
 
