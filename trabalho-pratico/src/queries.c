@@ -664,7 +664,8 @@ char* query5(char* token, char* dataI, char* dataF, STATS* stats, int flag) {
         output = realloc(output, strlen(output) + strlen(line) + 1);
 
         strcat(output, line);
-
+        free(sch_dep);
+        free(sch_arr);
     }
     
     if (flag == 2 && strlen(output) > 0) output[strlen(output) - 1] = '\0';
@@ -778,6 +779,7 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     if (flag == 2) output[strlen(output) - 1] = '\0';
     //printf("\nTESTE : %d\n", teste);
     g_list_free_full(sorted,free_q6);
+    g_list_free(airportS_list);
     //TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
     return output;
 }
