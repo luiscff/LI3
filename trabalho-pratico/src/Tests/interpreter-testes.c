@@ -60,9 +60,21 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
             free(result);
 
         } else if (strcmp(token, "5") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " \"");
+            char *nextTokenT = strtok(NULL, "");
+            char nextToken2[20], nextToken3[20];
+            sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"", nextToken2, nextToken3);
+            printf("Executando query 5 com tokens: %s %s %s\n", nextToken, nextToken2, nextToken3);
+            char *result = query5(nextToken, nextToken2, nextToken3, stats, 1);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "6") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " ");
+            char *nextToken2 = strtok(NULL, " ");
+            printf("Executando query 6 com token: %s %s\n", nextToken, nextToken2);
+            char *result = query6(nextToken, nextToken2, stats, 1);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "7") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);
@@ -127,9 +139,21 @@ int inputParserTestes(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_C
             create_result_file("Resultados", lineNumber, result);
             free(result);
         } else if (strcmp(token, "5F") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " \"");
+            char *nextTokenT = strtok(NULL, "");
+            char nextToken2[20], nextToken3[20];
+            sscanf(nextTokenT, "\"%[^\"]\" \"%[^\"]\"", nextToken2, nextToken3);
+            printf("Executando query 5F com tokens: %s %s %s\n", nextToken, nextToken2, nextToken3);
+            char *result = query5(nextToken, nextToken2, nextToken3, stats, 2);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "6F") == 0) {
-            // ignora
+            char *nextToken = strtok(NULL, " ");
+            char *nextToken2 = strtok(NULL, " ");
+            printf("Executando query 6F com token: %s %s\n", nextToken, nextToken2);
+            char *result = query6(nextToken, nextToken2, stats, 2);
+            create_result_file("Resultados", lineNumber, result);
+            free(result);
         } else if (strcmp(token, "7F") == 0) {
             char *nextToken = strtok(NULL, " ");
             printf("Executando query 7 com token: %s\n",nextToken);

@@ -11,7 +11,6 @@ typedef struct stats {
     GHashTable *hotel_hash;
     GHashTable *dictionary_hash;
     GHashTable *airports_hash;
-    GHashTable *flight_passangers;
 } STATS;
 
 typedef struct hotel
@@ -30,17 +29,13 @@ typedef struct airportS{
     GList* flights;
 }AIRPORTS;
 
-typedef struct flight_pass
-{
-   char* flight_id;
-   int passageiros;
-}FLIGHT_PASS;
-
 
 typedef struct dictionary{
     char* letter;
     GList* users;
 }DICTIONARY;
+
+
 void free_hotel(HOTEL *hotel) {
     if (hotel) {
         if (hotel->hotel_id) free(hotel->hotel_id);
@@ -56,9 +51,6 @@ void free_airportS(AIRPORTS *airportS) {
     if (airportS) free(airportS);
 }
 
-void free_passangers(FLIGHT_PASS *flight_pass) {
-    if (flight_pass) free(flight_pass);
-}
 
 void free_dictionary(DICTIONARY* dictionary) {
     if (dictionary) {
@@ -79,10 +71,6 @@ STATS* create_stats_catalog() {
                                                  (GDestroyNotify)free_dictionary);
     new_catalog->airports_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
                                                  (GDestroyNotify)free_airportS);
-
-    new_catalog->flight_passangers = g_hash_table_new_full(g_str_hash, g_str_equal, free,
-                                                 (GDestroyNotify)free_passangers);
-
     return new_catalog;
 }
 
@@ -92,7 +80,6 @@ void free_stats(STATS *catalog) {
     if (catalog) {
         g_hash_table_destroy(catalog->hotel_hash);
         g_hash_table_destroy(catalog->dictionary_hash);
-        g_hash_table_destroy(catalog->flight_passangers);
         g_hash_table_destroy(catalog->airports_hash);
         free(catalog);
     }
@@ -324,28 +311,4 @@ void calculate_and_set_median_for_all(GList* airport_list) {
 
 int get_mediana(const AIRPORTS* airportS){
     return airportS->mediana;
-}
-
-
-
-///PASSANGERS : struct que vai guardar todos os ids dos passageiros de um voo
-
-FLIGHT_PASS* create_flight_pass(const char* flight_id){
-    FLIGHT_PASS* flight_pass = calloc(1, sizeof(FLIGHT_PASS)); 
-    if(flight_pass){
-        flight_pass->flight_id = strdup(flight_id);
-        flight_pass->passageiros = 1;
-    }
-    return flight_pass;
-}
-
-
-void insert_or_update_pass(STATS* stats,const char* flight_id){
-    FLIGHT_PASS* curr = g_hash_table_lookup(stats->flight_passangers,flight_id);
-    if (curr == NULL) {
-        create_flight_pass(flight_id);
-        g_hash_table_insert(stats->flight_passangers, strdup(flight_id), curr);
-    }
-    else {curr->passageiros++;
-}
 }
