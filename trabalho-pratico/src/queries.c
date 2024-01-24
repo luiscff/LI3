@@ -265,6 +265,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         RESERVATION* reservation = get_reservation_by_id(rcatalog, aux);
         if (reservation == NULL) {
             printf("Reservation not found\n");
+            free(aux);
             return NULL;
         }
         char* hotel_id = strdup(get_hotel_id(reservation));
@@ -297,6 +298,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         FLIGHT* flight = get_flight_by_id(fcatalog, flight_id);
         if (flight == NULL) {
             printf("Flight not found\n");
+            free(aux);
             return NULL;
         }
         char* airline = strdup(get_airline(flight));
@@ -339,12 +341,15 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         USER* user = get_user_by_id(ucatalog, aux);
         if (user == NULL) {
             printf("User not found\n");
+            free(aux);
             return NULL;
         }
 
         // verifica se o user está ativo, se não estiver, não faz nada
         char* active_status = strdup(get_active_status(user));
         if (strcasecmp(active_status, "inactive") == 0) {
+            free(active_status);
+            free(aux);
             return NULL;
         }
         char* name = strdup(get_name(user));
@@ -369,6 +374,7 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
 
         // frees
         free(aux);
+        free(active_status);
         free(name);
         free(gender);
         free(birth_date);
@@ -687,7 +693,10 @@ typedef struct query6 {
 
 void free_q6(void* data) {
     Q6* q6 = (Q6*)data;
-        if (q6->airport) free(q6->airport);
+        if (q6->airport) {
+            free(q6->airport);
+            q6->airport = NULL;
+            }
         free(q6);
     }
 
@@ -702,7 +711,7 @@ void insert_or_update_q6(GHashTable* curr, char* airport, int passageiros) {
     Q6* aux = g_hash_table_lookup(curr, airport);
     if (aux == NULL) {
         Q6* new_aux = create_q6_aux(airport, passageiros);
-        g_hash_table_insert(curr, new_aux->airport, new_aux);
+        g_hash_table_insert(curr, strdup(new_aux->airport), new_aux);
     } else {
         aux->passageiros += passageiros;
     }
@@ -778,8 +787,8 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
     //printf("\nTESTE : %d\n", teste);
-    g_list_free_full(sorted,free_q6);
-    g_list_free(airportS_list);
+    g_hash_table_destroy(q6_aux);
+    g_list_free(sorted);
     //TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
     return output;
 }
