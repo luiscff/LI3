@@ -738,7 +738,6 @@ int sort_function_q6(gconstpointer a, gconstpointer b) {
 
 char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     int ano_alvo = atoi(ano);
-    int teste = 0;
 
     GList* airportS_list = g_hash_table_get_values(get_airportS_hash(stats));
     int tamanho = g_list_length(airportS_list);
@@ -749,7 +748,6 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
         AIRPORTS* airportS = g_list_nth_data(airportS_list, i);
         GList* flights = get_flights_list(airportS);
         int tamanho2 = g_list_length(flights);
-        // printf ("\nAiport %s : %d\n",get_airport_name(airportS),tamanho2);
 
         for (int j = 0; j < tamanho2; j++) {
             FLIGHT* flight = g_list_nth_data(flights, j);
@@ -792,10 +790,11 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
         strcat(output, line);
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
-    //printf("\nTESTE : %d\n", teste);
+
+    //TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
     g_hash_table_destroy(q6_aux);
     g_list_free(sorted);
-    //TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
+    
     return output;
 }
 
