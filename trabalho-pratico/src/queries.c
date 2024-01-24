@@ -363,7 +363,9 @@ char* query1(USERS_CATALOG* ucatalog, FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CA
         double total_gasto = 0;
 
         age = calc_idade(birth_date);
-        num_flight = g_list_length(find_flights_by_user(pcatalog, aux));  // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
+        GList* lista = find_flights_by_user(pcatalog, aux);
+        num_flight = g_list_length(lista);  // se find_flight_by_user retornar a lista com todos os flights com este user_id associado
+        g_list_free(lista);
         num_reservations = get_num_reservations(user);
         total_gasto = get_total_spent(user);
 
@@ -531,6 +533,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
         if (flag == 2) output[strlen(output) - 1] = '\0';
 
         free(active_status);
+        g_list_free(sorted);
         return output;
     }
 
@@ -567,6 +570,7 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
         if (flag == 2) output[strlen(output) - 1] = '\0';
 
         free(active_status);
+        g_list_free(sorted);
         return output;
     }
 
@@ -662,9 +666,11 @@ char* query5(char* token, char* dataI, char* dataF, STATS* stats, int flag) {
         if (get_flight_id(curr_flight) == 208) printf("\n%d\n", isDateTime1BeforeDateTime2(dataI, sch_dep) == true && isDateTime1BeforeDateTime2(sch_arr, dataF) == true);
 
         if (isDateTime1BeforeDateTime2(dataI, sch_dep) == true && isDateTime1BeforeDateTime2(sch_arr, dataF) == true) {
-            if (flag == 1) sprintf(line, "%s;%s;%s;%s;%s\n", fix_flight_id(get_flight_id(curr_flight)), sch_dep, get_destination(curr_flight), get_airline(curr_flight), get_plain_model(curr_flight));
-            if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nschedule_departure_date: %s\ndestination: %s\nairline: %s\nplane_model: %s\n\n", reg_num, fix_flight_id(get_flight_id(curr_flight)), sch_dep, get_destination(curr_flight), get_airline(curr_flight), get_plain_model(curr_flight));
+            char* flight_id = fix_flight_id(get_flight_id(curr_flight));
+            if (flag == 1) sprintf(line, "%s;%s;%s;%s;%s\n", flight_id, sch_dep, get_destination(curr_flight), get_airline(curr_flight), get_plain_model(curr_flight));
+            if (flag == 2) sprintf(line, "--- %d ---\nid: %s\nschedule_departure_date: %s\ndestination: %s\nairline: %s\nplane_model: %s\n\n", reg_num, flight_id, sch_dep, get_destination(curr_flight), get_airline(curr_flight), get_plain_model(curr_flight));
             reg_num++;
+            free(flight_id);
         }
         // realloc to increase the size of the output string
         output = realloc(output, strlen(output) + strlen(line) + 1);
@@ -793,7 +799,7 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     return output;
 }
 
-// // QUERY 7 - Função principal para calcular e listar os top N aeroportosg
+// // QUERY 7 - Função principal para calcular e listar os top N aeroportos
 char* query7(char* token, STATS* stats, int flag) {
     GHashTable* airportS_hash = get_airportS_hash(stats);
     int top_n = atoi(token);
@@ -821,7 +827,7 @@ char* query7(char* token, STATS* stats, int flag) {
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
     
-
+    g_list_free(sorted);
     return output;
 }
 

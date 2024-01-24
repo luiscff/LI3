@@ -12,10 +12,6 @@
 #define MAX_COUNTRY_CODE 2
 
 
-//=========== VALIDATION PÓS-PARSER=============
-// TODO O número de lugares de um voo (total_seats) não poderá ser inferior ao número de passageiros nesse voo TEM QUE SER DEPOIS DOS CATALOGS ESTAREM CARREGADOS
-
-
 //=========== VALIDATION IN-PARSER =============
 // geral
 bool isValidNotNull(const char *str) {
