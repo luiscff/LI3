@@ -1,11 +1,11 @@
 #include "utils.h"
 
 #include <ctype.h>
+#include <locale.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <locale.h>
 #include <wchar.h>
 #include <wctype.h>
 
@@ -22,8 +22,8 @@ char* fix_flight_id(int num) {
 
 bool isDateTime1BeforeDateTime2(const char* date1, const char* date2) {
     // Convertendo strings de datas para inteiros
-    char *begin = strdup(date1);
-    char *end = strdup(date2);
+    char* begin = strdup(date1);
+    char* end = strdup(date2);
 
     int year1, month1, day1, hours1, minutes1, seconds1;
     int year2, month2, day2, hours2, minutes2, seconds2;
@@ -33,7 +33,7 @@ bool isDateTime1BeforeDateTime2(const char* date1, const char* date2) {
         free(begin);
         free(end);
         printf("sscanf error\n");
-        return false; // As datas não estão no formato correto
+        return false;  // As datas não estão no formato correto
     }
 
     free(begin);
@@ -81,14 +81,13 @@ bool isDateTime1BeforeDateTime2(const char* date1, const char* date2) {
         return false;
     }
 
-    return true; // As datas são iguais
-
+    return true;  // As datas são iguais
 }
 
-bool isDate1BeforeDate2(const char *date1, const char *date2) {
+bool isDate1BeforeDate2(const char* date1, const char* date2) {
     // Convertendo strings de datas para inteiros
-    char *begin = strdup(date1);
-    char *end = strdup(date2);
+    char* begin = strdup(date1);
+    char* end = strdup(date2);
 
     int year1, month1, day1;
     int year2, month2, day2;
@@ -98,7 +97,7 @@ bool isDate1BeforeDate2(const char *date1, const char *date2) {
         free(begin);
         free(end);
         printf("sscanf error\n");
-        return false; // As datas não estão no formato correto
+        return false;  // As datas não estão no formato correto
     }
 
     free(begin);
@@ -120,11 +119,11 @@ bool isDate1BeforeDate2(const char *date1, const char *date2) {
 
     // Comparando dias
     if (day1 < day2) {
-        return true; // A data 1 é menor
+        return true;  // A data 1 é menor
     } else if (day1 > day2) {
-        return false; // A data 2 é menor
-    }  
-    return true; // As datas são iguais
+        return false;  // A data 2 é menor
+    }
+    return true;  // As datas são iguais
 }
 
 int isNumber(char s[]) {
@@ -180,8 +179,6 @@ int calc_idade(char* birth_date) {
     return idade;
 }
 
-
-
 int verificaPrefixo(const char* string, const char* prefixo) {
     size_t tamanhoPrefixo = strlen(prefixo);
 
@@ -214,13 +211,10 @@ void convert_to_lower_case(char* str) {
     free(wstr);
 }
 
-
-
-
 char* remove_accents(const char* str) {
     setlocale(LC_ALL, "");  // set the locale to the user's default locale
 
-    size_t len = mbstowcs(NULL, str, 0); // get the number of wide characters
+    size_t len = mbstowcs(NULL, str, 0);  // get the number of wide characters
     if (len == (size_t)-1) {
         printf("Invalid multibyte string.\n");
         return NULL;  // Return NULL to indicate an error
@@ -236,37 +230,62 @@ char* remove_accents(const char* str) {
 
     for (size_t i = 0; i < len; i++) {
         switch (wstr[i]) {
-            case L'ã': case L'á': case L'à': case L'â': case L'ä':
+            case L'ã':
+            case L'á':
+            case L'à':
+            case L'â':
+            case L'ä':
                 wstr[i] = L'a';
                 break;
-            case L'é': case L'è': case L'ê':
+            case L'é':
+            case L'è':
+            case L'ê':
                 wstr[i] = L'e';
                 break;
-            case L'í': case L'ì': case L'î':
+            case L'í':
+            case L'ì':
+            case L'î':
                 wstr[i] = L'i';
                 break;
-            case L'ó': case L'ò': case L'ô': case L'ö':
+            case L'ó':
+            case L'ò':
+            case L'ô':
+            case L'ö':
                 wstr[i] = L'o';
                 break;
-            case L'ú': case L'ù': case L'û':
+            case L'ú':
+            case L'ù':
+            case L'û':
                 wstr[i] = L'u';
                 break;
             case L'ç':
                 wstr[i] = L'c';
                 break;
-            case L'Â': case L'Á': case L'À': case L'Ä':
+            case L'Â':
+            case L'Á':
+            case L'À':
+            case L'Ä':
                 wstr[i] = L'A';
                 break;
-            case L'Ê': case L'É': case L'È':
+            case L'Ê':
+            case L'É':
+            case L'È':
                 wstr[i] = L'E';
                 break;
-            case L'Í': case L'Ì': case L'Î':
+            case L'Í':
+            case L'Ì':
+            case L'Î':
                 wstr[i] = L'I';
                 break;
-            case L'Ô': case L'Ö': case L'Ó': case L'Ò':
+            case L'Ô':
+            case L'Ö':
+            case L'Ó':
+            case L'Ò':
                 wstr[i] = L'O';
                 break;
-            case L'Û': case L'Ú': case L'Ù':
+            case L'Û':
+            case L'Ú':
+            case L'Ù':
                 wstr[i] = L'U';
                 break;
             case L'Ç':
@@ -296,10 +315,7 @@ char* remove_accents(const char* str) {
     return res;
 }
 
-
-
-
-void removeAspas(char *str) {
+void removeAspas(char* str) {
     int len = strlen(str);
 
     // Verificar se a string tem pelo menos duas aspas

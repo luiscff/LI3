@@ -89,27 +89,24 @@ void parseLine_user(char *line, void *catalog, STATS *stats) {
         // adiciona conjunto nome e id as stats
 
         char *user_name = strdup(get_name(user));
-        //remove_accents(user_name);
-        //char *letter = malloc(2 * sizeof(wchar_t));
-        //char *user_name_no_accents = remove_accents(strdup(user_name));
+        // remove_accents(user_name);
+        // char *letter = malloc(2 * sizeof(wchar_t));
+        // char *user_name_no_accents = remove_accents(strdup(user_name));
 
-        
-        //letter[0] = user_name_no_accents[0];
-        //letter[1] = '\0';
+        // letter[0] = user_name_no_accents[0];
+        // letter[1] = '\0';
 
-        //insert_or_update_dictionary(stats, strdup(letter), user);
-       // printf("NAME : %s\n",user_name_no_accents);
-        //printf("LETTER : %s\n",letter);
-        
-
+        // insert_or_update_dictionary(stats, strdup(letter), user);
+        // printf("NAME : %s\n",user_name_no_accents);
+        // printf("LETTER : %s\n",letter);
 
         // adiciona o user ao catálogo
         insert_user(usersCatalog, user, get_id(user));
 
         // frees
         free(user_name);
-        //free(letter);
-        //free(user_name_no_accents);
+        // free(letter);
+        // free(user_name_no_accents);
     } else {
         writeToErrorFileUser(line, "Resultados/users_errors.csv");
     }
@@ -290,9 +287,8 @@ void parseLine_passenger(char *line, void *catalog, USERS_CATALOG *usersCatalog,
         writeToErrorFilePassenger(line, "Resultados/passengers_errors.csv");
     }
 
-    free(lineCopy); // Release the memory allocated by strdup
+    free(lineCopy);  // Release the memory allocated by strdup
 }
-
 
 char *custom_strtok(char *str, const char *delim) {
     static char *lastToken = NULL;
@@ -329,7 +325,7 @@ void parseLine_reservation(char *line, void *catalog, USERS_CATALOG *usersCatalo
     RESERVATION *reservation = create_reservation();
 
     token = custom_strtok(lineCopy, ";");
-    while (fieldIndex<15) {
+    while (fieldIndex < 15) {
         if (isValidField_reservation(token, fieldIndex)) {
             switch (fieldIndex) {
                 case 1:

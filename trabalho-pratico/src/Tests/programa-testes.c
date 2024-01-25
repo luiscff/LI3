@@ -52,7 +52,6 @@ int main(int argc, char const *argv[]) {
     // Start time
     clock_t start = clock();
 
-
     if (argc != 4) {
         printf("Usage: %s <Dataset_Folder_Path> <Input_File_Path> <Expected_Results_Folder_Path\n", argv[0]);
         return 1;

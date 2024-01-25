@@ -5,7 +5,7 @@
 
 typedef struct user USER;
 
-USER * create_user();
+USER *create_user();
 void free_user(USER *user);
 
 // Setters
@@ -23,7 +23,7 @@ void set_payment_method(USER *user, const char *payment_method);
 void set_active_status(USER *user, const char *active_status);
 
 // Getters
-const char* get_id(const USER *user);
+const char *get_id(const USER *user);
 const char *get_name(const USER *user);
 const char *get_email(const USER *user);
 const char *get_birth_date(const USER *user);
@@ -53,9 +53,9 @@ void add_reservation(USER *user, const char *reservation_id);
 void remove_reservation(USER *user, const char *reservation_id);
 
 // adiciona um voo à lista de voos do utilizador
-void add_flight(USER *user,char *flight_id);
+void add_flight(USER *user, char *flight_id);
 
-//remove um voo da lista de voos do utilizador
+// remove um voo da lista de voos do utilizador
 void remove_flight(USER *user, const char *flight_id);
 
-#endif // USER_H
+#endif  // USER_H

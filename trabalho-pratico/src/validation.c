@@ -1,16 +1,15 @@
 #include "validation.h"
-#include "Entities/reservation.h"
 
-
+#include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "Entities/reservation.h"
+
 #define MAX_PHONE 12
 #define MAX_COUNTRY_CODE 2
-
 
 //=========== VALIDATION IN-PARSER =============
 // geral
@@ -18,15 +17,12 @@ bool isValidNotNull(const char *str) {
     return (str != NULL && strcmp(str, "\0") != 0);
 }
 // verifica se uma string é apenas composta por digitos
-bool isdigitAll (const char *string)
-{   if (strlen(string)==0) return isValidNotNull(string);
-    for (int i = 0; string[i]!= '\0'; i++)
-    {
-        if (!isdigit(string[i]))
-        {
+bool isdigitAll(const char *string) {
+    if (strlen(string) == 0) return isValidNotNull(string);
+    for (int i = 0; string[i] != '\0'; i++) {
+        if (!isdigit(string[i])) {
             return false;
         }
-
     }
     return true;
 }
@@ -84,8 +80,6 @@ bool isValidDate_Time(const char *dateTime) {
     return isValidDate(date) && isValidTime(time);
 }
 
-
-
 // users
 bool isValidEmail(const char *email) {
     const char *atSymbol = strchr(email, '@');
@@ -139,7 +133,7 @@ bool isValidOriginAndDestination(const char *str) {
 // reservations
 bool isValidHotelStars(const char *str) {
     double stars = atoi(str);
-    return (stars >= 1 && stars <= 5 && (stars-(int)stars) == 0);
+    return (stars >= 1 && stars <= 5 && (stars - (int)stars) == 0);
 }
 
 bool isValidCityTax(const char *str) {
@@ -165,7 +159,6 @@ bool isValidPricePerNight(const char *str) {
 bool isValidInclude_Breakfast(const char *str) {
     return (strlen(str) == 0 || strcasecmp(str, "f") == 0 || strcasecmp(str, "false") == 0 || strcasecmp(str, "0") == 0 || strcasecmp(str, "t") == 0 || strcasecmp(str, "true") == 0 || strcasecmp(str, "1") == 0);
 }
-
 
 bool isValidRating(const char *str) {
     if (str[0] == '\0') {  // Allow empty strings
@@ -214,7 +207,7 @@ bool isValidField_user(const char *value, int fieldIndex) {
     return false;
 }
 
-bool isValidField_flight(const char *value, int fieldIndex){
+bool isValidField_flight(const char *value, int fieldIndex) {
     switch (fieldIndex) {
         case 1:  // ID
             return isValidNotNull(value);
@@ -222,19 +215,19 @@ bool isValidField_flight(const char *value, int fieldIndex){
             return isValidNotNull(value);
         case 3:  // plain_model
             return isValidNotNull(value);
-        case 4:           // total_seats
+        case 4:  // total_seats
             return isdigitAll(value);
-        case 5:           // origin
+        case 5:  // origin
             return isValidOriginAndDestination(value);
         case 6:  // destination
             return isValidOriginAndDestination(value);
-        case 7:                              // schedule_departure_date
+        case 7:  // schedule_departure_date
             return isValidDate_Time(value);
-        case 8:                              // schedule_arrival_date
+        case 8:  // schedule_arrival_date
             return isValidDate_Time(value);
-        case 9:                              // real_departure_date
+        case 9:  // real_departure_date
             return isValidDate_Time(value);
-        case 10:                             // real_arrival_date
+        case 10:  // real_arrival_date
             return isValidDate_Time(value);
         case 11:  // pilot
             return isValidNotNull(value);
@@ -248,7 +241,6 @@ bool isValidField_flight(const char *value, int fieldIndex){
 
     return false;
 }
-
 
 bool isValidField_passenger(const char *value, int fieldIndex) {
     switch (fieldIndex) {
@@ -275,7 +267,7 @@ bool isValidField_reservation(const char *value, int fieldIndex) {
         case 4:  // hotel_name
             return isValidNotNull(value);
         case 5:  // hotel_stars
-            return (isValidHotelStars(value)&& isdigitAll(value));
+            return (isValidHotelStars(value) && isdigitAll(value));
         case 6:  // city_tax
             return isValidCityTax(value);
         case 7:  // address

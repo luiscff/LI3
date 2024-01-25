@@ -58,7 +58,7 @@ int sort_function_q2_nocat(gconstpointer a, gconstpointer b) {
     free(id1);
     free(id2);
 
-    if (result == 0)printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
+    if (result == 0) printf("ERRO no sort da query2: os voos têm a mesma data e o mesmo id\n");
     return result;
 }
 
@@ -81,7 +81,6 @@ int sort_function_q2(gconstpointer a, gconstpointer b) {
     // If dates are equal, compare flight IDs
     return get_flight_id(flight1) - get_flight_id(flight2);
 }
-
 
 // aux 4
 int sort_function_q4(gconstpointer a, gconstpointer b) {
@@ -113,7 +112,6 @@ void free_strings(char* date1, char* date2, char* airport1, char* airport2) {
     free(airport2);
 }
 
-
 int sort_function_q5(gconstpointer a, gconstpointer b) {
     const FLIGHT* flight1 = a;
     const FLIGHT* flight2 = b;
@@ -131,7 +129,7 @@ int sort_function_q5(gconstpointer a, gconstpointer b) {
     }
 
     // If dates are equal, compare reservation IDs
-    return get_flight_id(flight1)- get_flight_id(flight2);
+    return get_flight_id(flight1) - get_flight_id(flight2);
 }
 
 // aux q7
@@ -442,7 +440,6 @@ char* query2_nocat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, US
         aux_list = g_list_append(aux_list, aux);
 
         reservations = reservations->next;
-        
     }
 
     GList* sorted_list = g_list_sort(aux_list, sort_function_q2_nocat);
@@ -527,7 +524,6 @@ char* query2_cat(FLIGHTS_CATALOG* fcatalog, RESERVATIONS_CATALOG* rcatalog, USER
             strcat(output, line);
             free(flight_id_char);
             free(formated_date);
-            
         }
         // tira o ultimo \n
         if (flag == 2) output[strlen(output) - 1] = '\0';
@@ -679,7 +675,7 @@ char* query5(char* token, char* dataI, char* dataF, STATS* stats, int flag) {
         free(sch_dep);
         free(sch_arr);
     }
-    
+
     if (flag == 2 && strlen(output) > 0) output[strlen(output) - 1] = '\0';
 
     return output;
@@ -699,16 +695,16 @@ typedef struct query6 {
 
 void free_q6(void* data) {
     Q6* q6 = (Q6*)data;
-        if (q6->airport) {
-            free(q6->airport);
-            q6->airport = NULL;
-            }
-        free(q6);
+    if (q6->airport) {
+        free(q6->airport);
+        q6->airport = NULL;
     }
+    free(q6);
+}
 
 Q6* create_q6_aux(char* airport, int passageiros) {
     Q6* curr = malloc(sizeof(Q6));
-    curr->airport = strdup(airport);  // Duplicate only if necessary
+    curr->airport = strdup(airport);
     curr->passageiros = passageiros;
     return curr;
 }
@@ -742,7 +738,7 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     GList* airportS_list = g_hash_table_get_values(get_airportS_hash(stats));
     int tamanho = g_list_length(airportS_list);
     // printf ("\n1 : %d\n",tamanho);
-    GHashTable* q6_aux = g_hash_table_new_full(g_str_hash, g_str_equal, free,free_q6);
+    GHashTable* q6_aux = g_hash_table_new_full(g_str_hash, g_str_equal, free, free_q6);
 
     for (int i = 0; i < tamanho; i++) {
         AIRPORTS* airportS = g_list_nth_data(airportS_list, i);
@@ -764,21 +760,19 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
                 free(airport_d);
             }
             free(sch_dep);
-        
         }
-        
     }
 
     GList* q6_aux_list = g_hash_table_get_values(q6_aux);
-    GList* sorted = g_list_sort(q6_aux_list, sort_function_q6);
+    q6_aux_list = g_list_sort(q6_aux_list, sort_function_q6);
 
-    int tamanho_f = g_list_length(sorted);
+    int tamanho_f = g_list_length(q6_aux_list);
     int reg_num = 1;
     char* output = malloc(1);
     output[0] = '\0';
 
     for (size_t h = 0; h < atoi(top_n) && h < tamanho_f; h++) {
-        Q6* curr_airport = g_list_nth_data(sorted, h);
+        Q6* curr_airport = g_list_nth_data(q6_aux_list, h);
         char line[200];
 
         if (flag == 1) sprintf(line, "%s;%d\n", curr_airport->airport, curr_airport->passageiros);
@@ -791,10 +785,10 @@ char* query6(char* ano, char* top_n, STATS* stats, int flag) {
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
 
-    //TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
+    // TODO arranjar de dar free a tudo sem dar erro (dificil porque as glists estao interligadas e a hash table tambem)
     g_hash_table_destroy(q6_aux);
-    g_list_free(sorted);
-    
+    g_list_free(q6_aux_list);
+
     return output;
 }
 
@@ -825,7 +819,7 @@ char* query7(char* token, STATS* stats, int flag) {
         strcat(output, line);
     }
     if (flag == 2) output[strlen(output) - 1] = '\0';
-    
+
     g_list_free(sorted);
     return output;
 }

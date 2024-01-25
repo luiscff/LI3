@@ -4,7 +4,7 @@
 
 char* fix_flight_id(int num);
 bool isDateTime1BeforeDateTime2(const char* date1, const char* date2);
-bool isDate1BeforeDate2(const char *date1, const char *date2);
+bool isDate1BeforeDate2(const char* date1, const char* date2);
 
 int isNumber(char s[]);
 char* convert_to_upper_case(char* str);
@@ -19,7 +19,6 @@ int verificaPrefixo(const char* string, const char* prefixo);
 
 void convert_to_lower_case(char* str);
 char* remove_accents(const char* str);
-void removeAspas(char *str);
-
+void removeAspas(char* str);
 
 #endif

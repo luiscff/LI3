@@ -6,7 +6,6 @@
 // ficheiros de resultados
 void create_result_file(const char *folderPath, int lineNumber, const char *content);
 
-
 // ficheiros de erros
 void writeToErrorFileUser(char *line, const char *filename);
 

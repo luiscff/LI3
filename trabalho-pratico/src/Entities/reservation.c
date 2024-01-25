@@ -7,9 +7,9 @@
 #include <string.h>
 
 typedef struct reservation {
-    char *reservation_id;  // identificador da reserva (se for 0 é inválido)
-    char *user_id;              // identificador do utilizador (se for 0 é inválido)
-    char *hotel_id;             // identificador do hotel (se for 0 é inválido)
+    char *reservation_id;     // identificador da reserva (se for 0 é inválido)
+    char *user_id;            // identificador do utilizador (se for 0 é inválido)
+    char *hotel_id;           // identificador do hotel (se for 0 é inválido)
     char *hotel_name;         // nome do hotel
     int hotel_stars;          // número de estrelas do hotel de 1 a 5
     int city_tax;             // percentagem do imposto da cidade (sobre o valor total)
@@ -58,9 +58,9 @@ void free_reservation(RESERVATION *reservation) {
 }
 
 // Getters
-const char* get_reservation_id(const RESERVATION *r) { return r->reservation_id; }
-const char* get_user_id(const RESERVATION *r) { return r->user_id; }
-const char* get_hotel_id(const RESERVATION *r) { return r->hotel_id; }
+const char *get_reservation_id(const RESERVATION *r) { return r->reservation_id; }
+const char *get_user_id(const RESERVATION *r) { return r->user_id; }
+const char *get_hotel_id(const RESERVATION *r) { return r->hotel_id; }
 const char *get_hotel_name(const RESERVATION *r) { return r->hotel_name; }
 int get_hotel_stars(const RESERVATION *r) { return r->hotel_stars; }
 int get_city_tax(const RESERVATION *r) { return r->city_tax; }
@@ -78,14 +78,14 @@ void set_reservation_id(RESERVATION *r, const char *reservation_id_string) {
     if (r->reservation_id) free(r->reservation_id);
     r->reservation_id = strdup(reservation_id_string);
 }
-void set_user_id(RESERVATION *r, const char* user_id) { 
+void set_user_id(RESERVATION *r, const char *user_id) {
     if (r->user_id) free(r->user_id);
     r->user_id = strdup(user_id);
- }
-void set_hotel_id(RESERVATION *r, const char* hotel_id) { 
+}
+void set_hotel_id(RESERVATION *r, const char *hotel_id) {
     if (r->hotel_id) free(r->hotel_id);
     r->hotel_id = strdup(hotel_id);
- }
+}
 void set_hotel_name(RESERVATION *r, const char *hotel_name) {
     if (r->hotel_name) free(r->hotel_name);
     r->hotel_name = strdup(hotel_name);
@@ -116,25 +116,25 @@ void set_comment(RESERVATION *r, const char *comment) {
     r->comment = strdup(comment);
 }
 
-double calc_total_price(RESERVATION *r){
+double calc_total_price(RESERVATION *r) {
     int tax = get_city_tax(r);
     int ppn = get_price_per_night(r);
     double total_price = 0;
-    const char* begin = get_begin_date(r);
-    const char* end = get_end_date(r);
-    int num_nights = calc_nights(begin,end);
-    
+    const char *begin = get_begin_date(r);
+    const char *end = get_end_date(r);
+    int num_nights = calc_nights(begin, end);
+
     total_price = ppn * num_nights + (((ppn * num_nights) / ((double)100)) * ((double)tax));
     return total_price;
 }
 
-int calc_nights(const char *begin ,const char *end){
+int calc_nights(const char *begin, const char *end) {
     int year1, month1, day1;
     int year2, month2, day2;
     sscanf(begin, "%4d/%2d/%2d", &year1, &month1, &day1);
     sscanf(end, "%4d/%2d/%2d", &year2, &month2, &day2);
     int m = month2 - month1;
     int y = year2 - year1;
-    
+
     return 365 * y + 30 * m + day2 - day1;
 }

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 #include "utils.h"
 
 typedef struct flight {
@@ -166,14 +167,14 @@ int calc_departure_delay(char *schedule_departure, char *real_departure) {
 
     delay = difftime(real_departure_time, schedule_departure_time);
 
-    return (int) delay;
+    return (int)delay;
 }
-//STATS
+// STATS
 
-int get_passageiros(FLIGHT* flight){
+int get_passageiros(FLIGHT *flight) {
     return flight->passageiros;
 }
 
-void add_passageiro(FLIGHT *flight){
+void add_passageiro(FLIGHT *flight) {
     flight->passageiros++;
 }

@@ -12,9 +12,7 @@
 #include "batch.h"
 #include "interactive.h"
 
-
-
-void end_program(USERS_CATALOG *users_catalog,FLIGHTS_CATALOG *flights_catalog,RESERVATIONS_CATALOG *reservations_catalog,PASSENGERS_CATALOG *passengers_catalog,STATS* stats){
+void end_program(USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog, RESERVATIONS_CATALOG *reservations_catalog, PASSENGERS_CATALOG *passengers_catalog, STATS *stats) {
     printf("Freeing memory...\n");
     printf("Users\n");
     free_users_catalog(users_catalog);
@@ -59,12 +57,11 @@ int main(int argc, char const *argv[]) {
         wordfree(&p);
 
         interactiveMode(folderPathDataset, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
-        
+
     } else if (argc == 3) {
         printf("Inicializando o modo Batch...\n");
 
         batchMode(argv[1], argv[2], users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
-
 
     } else {
         printf("Command for Batch Mode: %s <DatasetFolderPath> <InputFilePath>\n", argv[0]);
@@ -73,7 +70,7 @@ int main(int argc, char const *argv[]) {
     }
 
     // Libera a memória no final do programa
-    end_program(users_catalog,flights_catalog,reservations_catalog,passengers_catalog,stats);
+    end_program(users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
     clock_t end = clock();
     double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
     printf("Time spent: %f seconds\n", time_spent);

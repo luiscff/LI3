@@ -14,4 +14,4 @@ void set_user_id2(PASSENGER *p, const char *user_id2);
 int get_flight_id2(const PASSENGER *p);
 const char *get_user_id2(const PASSENGER *p);
 
-#endif // PASSENGERS_H
+#endif  // PASSENGERS_H

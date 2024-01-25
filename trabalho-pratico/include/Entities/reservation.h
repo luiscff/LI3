@@ -9,9 +9,9 @@ RESERVATION *create_reservation();
 void free_reservation(RESERVATION *reservation);
 
 // Getters
-const char* get_reservation_id(const RESERVATION *r);
-const char* get_user_id(const RESERVATION *r);
-const char* get_hotel_id(const RESERVATION *r) ;
+const char *get_reservation_id(const RESERVATION *r);
+const char *get_user_id(const RESERVATION *r);
+const char *get_hotel_id(const RESERVATION *r);
 const char *get_hotel_name(const RESERVATION *r);
 int get_hotel_stars(const RESERVATION *r);
 int get_city_tax(const RESERVATION *r);
@@ -26,8 +26,8 @@ const char *get_comment(const RESERVATION *r);
 
 // Setters
 void set_reservation_id(RESERVATION *r, const char *id);
-void set_user_id(RESERVATION *r, const char* user_id);
-void set_hotel_id(RESERVATION *r, const char* hotel_id);
+void set_user_id(RESERVATION *r, const char *user_id);
+void set_hotel_id(RESERVATION *r, const char *hotel_id);
 void set_hotel_name(RESERVATION *r, const char *hotel_name);
 void set_hotel_stars(RESERVATION *r, int hotel_stars);
 void set_city_tax(RESERVATION *r, int city_tax);
@@ -42,6 +42,6 @@ void set_comment(RESERVATION *r, const char *comment);
 
 // Func
 double calc_total_price(RESERVATION *r);
-int calc_nights(const char *begin ,const char *end);
+int calc_nights(const char *begin, const char *end);
 
-#endif // RESERVATION_H
+#endif  // RESERVATION_H

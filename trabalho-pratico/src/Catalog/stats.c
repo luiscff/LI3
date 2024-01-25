@@ -1,42 +1,37 @@
+#include "Catalog/stats.h"
+
 #include <glib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Catalog/stats.h"
-
-
 
 typedef struct stats {
-    GHashTable *hotel_hash;
-    GHashTable *dictionary_hash;
-    GHashTable *airports_hash;
+    GHashTable* hotel_hash;
+    GHashTable* dictionary_hash;
+    GHashTable* airports_hash;
 } STATS;
 
-typedef struct hotel
-{
-   char* hotel_id;
-   int sum_rating;
-   int num_reservations;
-   GList* reservations;
-}HOTEL;
+typedef struct hotel {
+    char* hotel_id;
+    int sum_rating;
+    int num_reservations;
+    GList* reservations;
+} HOTEL;
 
-
-typedef struct airportS{
+typedef struct airportS {
     char* origin;
     GList* delays;
     int mediana;
     GList* flights;
-}AIRPORTS;
+} AIRPORTS;
 
-
-typedef struct dictionary{
+typedef struct dictionary {
     char* letter;
     GList* users;
-}DICTIONARY;
+} DICTIONARY;
 
-
-void free_hotel(HOTEL *hotel) {
+void free_hotel(HOTEL* hotel) {
     if (hotel) {
         if (hotel->hotel_id) free(hotel->hotel_id);
         if (hotel->reservations) g_list_free(hotel->reservations);
@@ -44,13 +39,12 @@ void free_hotel(HOTEL *hotel) {
     }
 }
 
-void free_airportS(AIRPORTS *airportS) {
+void free_airportS(AIRPORTS* airportS) {
     if (airportS->origin) free(airportS->origin);
     if (airportS->delays) g_list_free(airportS->delays);
     if (airportS->flights) g_list_free(airportS->flights);
     if (airportS) free(airportS);
 }
-
 
 void free_dictionary(DICTIONARY* dictionary) {
     if (dictionary) {
@@ -60,23 +54,19 @@ void free_dictionary(DICTIONARY* dictionary) {
     }
 }
 
-
-
 STATS* create_stats_catalog() {
-    STATS *new_catalog = calloc(1, sizeof(STATS)); 
+    STATS* new_catalog = calloc(1, sizeof(STATS));
 
     new_catalog->hotel_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
-                                                 (GDestroyNotify)free_hotel);
-    new_catalog->dictionary_hash=  g_hash_table_new_full(g_str_hash, g_str_equal, free,
-                                                 (GDestroyNotify)free_dictionary);
+                                                    (GDestroyNotify)free_hotel);
+    new_catalog->dictionary_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
+                                                         (GDestroyNotify)free_dictionary);
     new_catalog->airports_hash = g_hash_table_new_full(g_str_hash, g_str_equal, free,
-                                                 (GDestroyNotify)free_airportS);
+                                                       (GDestroyNotify)free_airportS);
     return new_catalog;
 }
 
-
-
-void free_stats(STATS *catalog) {
+void free_stats(STATS* catalog) {
     if (catalog) {
         g_hash_table_destroy(catalog->hotel_hash);
         g_hash_table_destroy(catalog->dictionary_hash);
@@ -85,85 +75,84 @@ void free_stats(STATS *catalog) {
     }
 }
 
-///HOTEL
+/// HOTEL
 
-HOTEL* create_hotel(char* hotel_id, int rating,RESERVATION* reservation){
-    HOTEL* hotel = calloc(1, sizeof(HOTEL)); 
-    if(hotel){
+HOTEL* create_hotel(char* hotel_id, int rating, RESERVATION* reservation) {
+    HOTEL* hotel = calloc(1, sizeof(HOTEL));
+    if (hotel) {
         hotel->hotel_id = strdup(hotel_id);
         hotel->sum_rating = rating;
         hotel->num_reservations = 1;
         hotel->reservations = NULL;
-        hotel->reservations = g_list_append(hotel->reservations,reservation);
+        hotel->reservations = g_list_append(hotel->reservations, reservation);
     }
     return hotel;
-
 }
 
-void insert_hotel(STATS *catalog, HOTEL *hotel, char* key) {
+void insert_hotel(STATS* catalog, HOTEL* hotel, char* key) {
     g_hash_table_insert(catalog->hotel_hash, strdup(key), hotel);
 }
 
-void update_hotel(STATS *catalog, char *hotel_id, int rating, RESERVATION *reservation) {
-    HOTEL *curr = g_hash_table_lookup(catalog->hotel_hash, hotel_id);
+void update_hotel(STATS* catalog, char* hotel_id, int rating, RESERVATION* reservation) {
+    HOTEL* curr = g_hash_table_lookup(catalog->hotel_hash, hotel_id);
     curr->sum_rating += rating;
     curr->reservations = g_list_append(curr->reservations, reservation);
     curr->num_reservations++;
     // Append the reservation to the list and update the HOTEL structure
-   
 }
 
-void insert_or_update_hotel(STATS* catalog, char* hotel_id, int rating,RESERVATION* reservation){
+void insert_or_update_hotel(STATS* catalog, char* hotel_id, int rating, RESERVATION* reservation) {
     HOTEL* hotel = NULL;
-    hotel = g_hash_table_lookup(catalog->hotel_hash,hotel_id);
+    hotel = g_hash_table_lookup(catalog->hotel_hash, hotel_id);
     if (hotel == NULL) {
-                            HOTEL* hotel = create_hotel(hotel_id,rating,reservation);
-                            insert_hotel(catalog,hotel,hotel_id);
-                        }
-    else  update_hotel(catalog,hotel_id,rating,reservation);
-
+        HOTEL* hotel = create_hotel(hotel_id, rating, reservation);
+        insert_hotel(catalog, hotel, hotel_id);
+    } else
+        update_hotel(catalog, hotel_id, rating, reservation);
 }
 
-GHashTable *get_hotel_hash(STATS *catalog) {
+GHashTable* get_hotel_hash(STATS* catalog) {
     return catalog->hotel_hash;
 }
 
-void set_hotel_id_hash(HOTEL *hotel, const char *hotel_id) {
+void set_hotel_id_hash(HOTEL* hotel, const char* hotel_id) {
     if (hotel->hotel_id) free(hotel->hotel_id);
     hotel->hotel_id = strdup(hotel_id);
 }
 
-char* get_hotel_id_hash(HOTEL* hotel){
+char* get_hotel_id_hash(HOTEL* hotel) {
     return hotel->hotel_id;
 }
 
-int get_hotel_sum_rating(HOTEL* hotel){
-    if (hotel == NULL) return 0;
-    else return hotel->sum_rating;
+int get_hotel_sum_rating(HOTEL* hotel) {
+    if (hotel == NULL)
+        return 0;
+    else
+        return hotel->sum_rating;
 }
 
-int get_hotel_num_reservations(HOTEL* hotel){
-    if (hotel == NULL) return 0;
-    else return hotel->num_reservations;
+int get_hotel_num_reservations(HOTEL* hotel) {
+    if (hotel == NULL)
+        return 0;
+    else
+        return hotel->num_reservations;
 }
 
-HOTEL *get_hotel_by_hotel_id(STATS *catalog, const char *hotel_id) {
+HOTEL* get_hotel_by_hotel_id(STATS* catalog, const char* hotel_id) {
     HOTEL* res = g_hash_table_lookup(catalog->hotel_hash, hotel_id);
     return res;
 }
 
-GList *get_hotel_reservations_list(HOTEL* hotel) {
-    
+GList* get_hotel_reservations_list(HOTEL* hotel) {
     GList* list = hotel->reservations;
     return list;
 }
 
-
-//Dictiniorary
-
+// Dictiniorary
 
 DICTIONARY* create_page(const char* letter, USER* user) {
-    DICTIONARY* dictionary = calloc(1, sizeof(DICTIONARY)); ;
+    DICTIONARY* dictionary = calloc(1, sizeof(DICTIONARY));
+    ;
     if (dictionary) {
         dictionary->letter = (letter != NULL) ? strdup(letter) : NULL;
         dictionary->users = (user != NULL) ? g_list_append(NULL, user) : NULL;
@@ -202,65 +191,60 @@ void insert_or_update_dictionary(STATS* catalog, char* letter, USER* user) {
     }
 }
 
-        
 // AIRPORT
 
-void insert_airportS(STATS *catalog, AIRPORTS *airportS,const char* key) {
+void insert_airportS(STATS* catalog, AIRPORTS* airportS, const char* key) {
     g_hash_table_insert(catalog->airports_hash, strdup(key), airportS);
 }
 
-void add_delay_to_airportS(AIRPORTS* airportS, int delay){
-    airportS->delays = g_list_append(airportS->delays,GINT_TO_POINTER(delay));
+void add_delay_to_airportS(AIRPORTS* airportS, int delay) {
+    airportS->delays = g_list_append(airportS->delays, GINT_TO_POINTER(delay));
 }
 
-
-void add_flight_to_airportS(AIRPORTS* airportS, FLIGHT* flight){
-    airportS->flights = g_list_append(airportS->flights,flight);
+void add_flight_to_airportS(AIRPORTS* airportS, FLIGHT* flight) {
+    airportS->flights = g_list_append(airportS->flights, flight);
 }
 
-
-GList* get_flights_list(AIRPORTS* airportS){
+GList* get_flights_list(AIRPORTS* airportS) {
     return airportS->flights;
 }
 
-AIRPORTS* create_airportS(const char* origin, int delay,FLIGHT* flight){
-    AIRPORTS* airportS = calloc(1, sizeof(AIRPORTS)); 
-    if(airportS){
+AIRPORTS* create_airportS(const char* origin, int delay, FLIGHT* flight) {
+    AIRPORTS* airportS = calloc(1, sizeof(AIRPORTS));
+    if (airportS) {
         airportS->origin = strdup(origin);
         airportS->delays = NULL;
-        add_delay_to_airportS(airportS,delay);
-        airportS->flights=NULL;
-        add_flight_to_airportS(airportS,flight);
-        airportS->mediana=0;
+        add_delay_to_airportS(airportS, delay);
+        airportS->flights = NULL;
+        add_flight_to_airportS(airportS, flight);
+        airportS->mediana = 0;
     }
     return airportS;
 }
 
-void insert_or_update_airport(STATS* stats, const char* origin, int delay,FLIGHT* flight){
+void insert_or_update_airport(STATS* stats, const char* origin, int delay, FLIGHT* flight) {
     AIRPORTS* airportS = g_hash_table_lookup(stats->airports_hash, origin);
     if (airportS == NULL) {
-        AIRPORTS* new_airportS = create_airportS(origin,delay,flight);
-        insert_airportS(stats,new_airportS, origin);
+        AIRPORTS* new_airportS = create_airportS(origin, delay, flight);
+        insert_airportS(stats, new_airportS, origin);
+    } else {
+        add_delay_to_airportS(airportS, delay);
+        // if (get_flight_id(flight) == 70 || get_flight_id(flight) == 938|| get_flight_id(flight) == 487||get_flight_id(flight) == 398) printf ("\n ESTA AQUI %d : %s \nDEPARTURE:%s\nARRIVAL: %s\n\n",get_flight_id(flight), get_origin(flight),get_schedule_departure_date(flight),get_schedule_arrival_date(flight));
+        add_flight_to_airportS(airportS, flight);
     }
-    else {
-            add_delay_to_airportS(airportS,delay);
-            //if (get_flight_id(flight) == 70 || get_flight_id(flight) == 938|| get_flight_id(flight) == 487||get_flight_id(flight) == 398) printf ("\n ESTA AQUI %d : %s \nDEPARTURE:%s\nARRIVAL: %s\n\n",get_flight_id(flight), get_origin(flight),get_schedule_departure_date(flight),get_schedule_arrival_date(flight));
-            add_flight_to_airportS(airportS,flight);
-         }
 }
 
-GHashTable *get_airportS_hash(STATS *catalog) {
+GHashTable* get_airportS_hash(STATS* catalog) {
     return catalog->airports_hash;
 }
 
-char* get_airport_name(const AIRPORTS* airportS){
+char* get_airport_name(const AIRPORTS* airportS) {
     return airportS->origin;
 }
 
-GList* get_airport_delay_list (const AIRPORTS* airportS){
+GList* get_airport_delay_list(const AIRPORTS* airportS) {
     return airportS->delays;
 }
-
 
 int compare_ints2(gconstpointer a, gconstpointer b) {
     int int_a = GPOINTER_TO_INT(a);
@@ -309,6 +293,6 @@ void calculate_and_set_median_for_all(GList* airport_list) {
     g_list_foreach(airport_list, calculate_and_set_median_for_one, NULL);
 }
 
-int get_mediana(const AIRPORTS* airportS){
+int get_mediana(const AIRPORTS* airportS) {
     return airportS->mediana;
 }

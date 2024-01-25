@@ -1,13 +1,13 @@
 #ifndef PASSENGERS_CATALOG_H
 #define PASSENGERS_CATALOG_H
 
-#include "Entities/passenger.h"
-
 #include <glib.h>
+
+#include "Entities/passenger.h"
 
 typedef struct passengers_catalog PASSENGERS_CATALOG;
 
-PASSENGERS_CATALOG* create_passengers_catalog();
+PASSENGERS_CATALOG *create_passengers_catalog();
 
 void insert_passenger(PASSENGERS_CATALOG *catalog, PASSENGER *passenger);
 
@@ -19,4 +19,4 @@ GList *find_users_by_flight(PASSENGERS_CATALOG *catalog, int flight_id2);
 
 void free_passengers_catalog(PASSENGERS_CATALOG *catalog);
 
-#endif // PASSENGERS_CATALOG_H
+#endif  // PASSENGERS_CATALOG_H

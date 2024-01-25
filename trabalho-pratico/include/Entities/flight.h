@@ -1,7 +1,6 @@
 #ifndef FLIGHTS_CATALOG_H
 #define FLIGHTS_CATALOG_H
 
-
 typedef struct flight FLIGHT;
 
 FLIGHT *create_flight();
@@ -36,8 +35,8 @@ void set_real_arrival_date(FLIGHT *f, const char *real_arrival_date);
 void set_pilot(FLIGHT *f, const char *pilot);
 void set_copilot(FLIGHT *f, const char *copilot);
 void set_notes(FLIGHT *f, const char *notes);
-int calc_departure_delay(char* schedule_departure, char* real_departure);
-int get_passageiros(FLIGHT* flight);
+int calc_departure_delay(char *schedule_departure, char *real_departure);
+int get_passageiros(FLIGHT *flight);
 void add_passageiro(FLIGHT *flight);
 
 #endif
