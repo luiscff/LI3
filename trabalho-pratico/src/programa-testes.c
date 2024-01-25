@@ -72,7 +72,16 @@ int main(int argc, char const *argv[]) {
     // Cria o catálogo de passageiros
     PASSENGERS_CATALOG *passengers_catalog = create_passengers_catalog();
 
+
+    //mede o tempo do parser
+    clock_t startParser = clock();
+
     parseFiles(folderPathDataset, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
+
+    clock_t endParser = clock();
+    double time_spent_parser = (double)(endParser - startParser) / CLOCKS_PER_SEC;
+    printf("Tempo de execução do parser: %f segundos\n\n", time_spent_parser);
+
 
     // Faz o parse do ficheiro de input
     if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats, true)) {
