@@ -27,7 +27,6 @@ void end_program(USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog,
 }
 
 int main(int argc, char const *argv[]) {
-    clock_t start = clock();
 
     // Cria o catálogo de estatísticas
     STATS *stats = create_stats_catalog();
@@ -71,9 +70,6 @@ int main(int argc, char const *argv[]) {
 
     // Libera a memória no final do programa
     end_program(users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
-    clock_t end = clock();
-    double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Time spent: %f seconds\n", time_spent);
 
     return 0;
 }

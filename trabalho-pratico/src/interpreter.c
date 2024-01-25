@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // função que vai tratar do input e chamar as queries respetivas para cada linha do ficheiro passado como argumento
-int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG *f_catalog, RESERVATIONS_CATALOG *r_catalog, PASSENGERS_CATALOG *p_catalog, STATS *stats) {
+int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG *f_catalog, RESERVATIONS_CATALOG *r_catalog, PASSENGERS_CATALOG *p_catalog, STATS *stats, bool isTestes) {
     char buffer[256];
     FILE *file = fopen(inputPath, "r");
     int lineNumber = 1;
@@ -14,6 +14,9 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         buffer[strcspn(buffer, "\n")] = '\0';
 
         char *token = strtok(buffer, " ");
+
+        // começa a contar o tempo de execução da query
+        clock_t start = clock();
 
         if (strcmp(token, "1") == 0) {
             // executa query 1
@@ -188,6 +191,12 @@ int inputParser(const char *inputPath, USERS_CATALOG *u_catalog, FLIGHTS_CATALOG
         } else if (strcmp(token, "10F") == 0) {
             // ignora
         }
+
+
+        // termina a contagem do tempo de execução da query
+        clock_t end = clock();
+        double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
+        if (isTestes) printf("Tempo de execução da query: %f segundos\n\n", time_spent);
 
         lineNumber++;  // incrementa o nº de linhas lidas para depois ser utilizado na criação do ficheiro commandX.txt
     }

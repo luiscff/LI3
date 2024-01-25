@@ -9,7 +9,7 @@ programa-principal: src/programa-principal.o src/batch.o src/interactive.o src/p
 	gcc -g -Wall -Wextra -Wdouble-promotion -Wconversion -Wsign-conversion -pedantic $^ -lglib-2.0 -o $@
 
 
-programa-testes: src/Tests/programa-testes.o src/Tests/interpreter-testes.o src/parser.o src/queries.o src/output.o src/validation.o src/Catalog/flights_catalog.o src/Catalog/passengers_catalog.o src/Catalog/users_catalog.o src/Catalog/reservations_catalog.o src/utils.o src/Catalog/stats.o src/Entities/flight.o src/Entities/passenger.o src/Entities/user.o src/Entities/reservation.o
+programa-testes: src/programa-testes.o src/parser.o src/interpreter.o src/queries.o src/output.o src/validation.o src/Catalog/flights_catalog.o src/Catalog/passengers_catalog.o src/Catalog/users_catalog.o src/Catalog/reservations_catalog.o src/utils.o src/Catalog/stats.o src/Entities/flight.o src/Entities/passenger.o src/Entities/user.o src/Entities/reservation.o
 	gcc -g $^ -lglib-2.0 -o $@
 	
 
@@ -24,12 +24,11 @@ clean_results:
 	> Resultados/reservations_errors.csv
 
 src/programa-principal.o: src/programa-principal.c
-src/programa-testes.o: src/Tests/programa-testes.c
+src/programa-testes.o: src/programa-testes.c
 src/batch.o: src/batch.c
 src/interactive.o: src/interactive.c
 src/parser.o: src/parser.c
 src/interpreter.o: src/interpreter.c
-src/interpreter-testes.o: src/Tests/interpreter-testes.c
 src/queries.o: src/queries.c
 src/output.o: src/output.c
 src/validation.o: src/validation.c

@@ -9,6 +9,6 @@
 #include "queries.h"
 #include "utils.h"
 
-int inputParser(const char *inputPath, USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog, RESERVATIONS_CATALOG *reservations_catalog, PASSENGERS_CATALOG *passengers_catalog, STATS *stats);
+int inputParser(const char *inputPath, USERS_CATALOG *users_catalog, FLIGHTS_CATALOG *flights_catalog, RESERVATIONS_CATALOG *reservations_catalog, PASSENGERS_CATALOG *passengers_catalog, STATS *stats, bool isTestes);
 
 #endif

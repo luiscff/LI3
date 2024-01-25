@@ -9,7 +9,7 @@
 #include "Catalog/reservations_catalog.h"
 #include "Catalog/stats.h"
 #include "Catalog/users_catalog.h"
-#include "interpreter-testes.h"
+#include "interpreter.h"
 #include "parser.h"
 
 // Função que compara dois ficheiros linha a linha.
@@ -75,7 +75,7 @@ int main(int argc, char const *argv[]) {
     parseFiles(folderPathDataset, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats);
 
     // Faz o parse do ficheiro de input
-    if (!inputParserTestes(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats)) {
+    if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats, true)) {
         printf("Error parsing input file\n");
         // Libera a memória antes de retornar
         free_users_catalog(users_catalog);
@@ -91,6 +91,7 @@ int main(int argc, char const *argv[]) {
     free_flights_catalog(flights_catalog);
     free_reservations_catalog(reservations_catalog);
     free_passengers_catalog(passengers_catalog);
+    free_stats(stats);
 
     // End time
     clock_t end = clock();

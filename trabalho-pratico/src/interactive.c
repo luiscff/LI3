@@ -114,7 +114,7 @@ void interactiveMode(const char *folderPathDataset, void *users_catalog, void *f
         rewind(fp);
 
         // Faz o parse do ficheiro de input (e executa a query)
-        if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats)) {
+        if (!inputParser(inputPath, users_catalog, flights_catalog, reservations_catalog, passengers_catalog, stats, false)) {
             printf("Error parsing input file\n");
             break;
         }
