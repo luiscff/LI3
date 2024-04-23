@@ -1,8 +1,5 @@
-a100902,Fábio Daniel Rodrigues Leite,fabsi299 
+Autores: luiscff, fabsi299 e GoncaloFGoncalves 
 
-a100833,Gonçalo Faria Gonçalves,GoncaloFGoncalves 
-
-a100549,Luís Carlos Fragoso Figueiredo,luiscff 
 
 #### Compilar o programa
 ```bash
@@ -27,3 +24,5 @@ $ cd trabalho-pratico
 $ make programa-testes
 ./programa-principal <path to dataset with *.csv files> <path to input file> <path to folder with the expected outputs>
 ```
+
+## Nota final do trabalho: 14
